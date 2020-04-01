@@ -1,46 +1,34 @@
 package ac.project.Robal.models;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+
+@Entity
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@Table(name="STORES")
 public class Store {
-
-	private Long storeId;
-	private String storeName;
-	private String storeAddress;
-	private String storeCity;
-	private String storeProvince;
 	
-	public Long getStoreId() {
-		return storeId;
-	}
-	public void setStoreId(Long storeId) {
-		this.storeId = storeId;
-	}
-	public String getStoreName() {
-		return storeName;
-	}
-	public void setStoreName(String storeName) {
-		this.storeName = storeName;
-	}
-	public String getStoreAddress() {
-		return storeAddress;
-	}
-	public void setStoreAddress(String storeAddress) {
-		this.storeAddress = storeAddress;
-	}
-	public String getStoreCity() {
-		return storeCity;
-	}
-	public void setStoreCity(String storeCity) {
-		this.storeCity = storeCity;
-	}
-	public String getStoreProvince() {
-		return storeProvince;
-	}
-	public void setStoreProvince(String storeProvince) {
-		this.storeProvince = storeProvince;
-	}
-
+	@Id
+	@GeneratedValue(strategy=GenerationType.TABLE)
+	private int storeId;
+	private String branchAdd;
+	private String name;
+	
 	
 	
 }

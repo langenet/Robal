@@ -1,40 +1,30 @@
 package ac.project.Robal.models;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+
+@Entity
+@Inheritance(strategy=InheritanceType.JOINED)
+@Table(name="USER_ACCOUNTS")
 public class Account {
 
-	private Long id;
-	private List<String> s_owner;
-	private List<String> customers;
-	private String administrator;
+	private Long userId;
+	private String userRoll;
+	private int storeId;
 	
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public List<String> getS_owner() {
-		return s_owner;
-	}
-	public void setS_owner(List<String> s_owner) {
-		this.s_owner = s_owner;
-	}
-	public List<String> getCustomers() {
-		return customers;
-	}
-	public void setCustomers(List<String> customers) {
-		this.customers = customers;
-	}
-	public String getAdministrator() {
-		return administrator;
-	}
-	public void setAdministrator(String administrator) {
-		this.administrator = administrator;
-	}
-	
+
 	
 	
 }
