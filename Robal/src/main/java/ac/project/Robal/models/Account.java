@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -29,10 +30,10 @@ public abstract class Account {
 
 	@Id
 	@GeneratedValue
-	private Long userId;
+	private Long id;
 	private String name;
 	private String email;
-	private int storeId;
+	
 	
 	@OneToMany(targetEntity = Product.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ap_fk", referencedColumnName = "id")

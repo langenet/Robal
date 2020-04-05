@@ -1,7 +1,7 @@
 package ac.project.Robal.models;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
@@ -14,12 +14,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 
-public class Product {
-
+@Entity
+public class Administrator {
+	
 	@Id
 	@GeneratedValue
-	private Long pid;
-	private String productName;
-	private String description;
-	private Long sku;
+	private Long Id;
+	private Long userType;
+	private String name;
+	
+	
 }

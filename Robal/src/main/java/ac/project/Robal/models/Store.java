@@ -1,11 +1,16 @@
 package ac.project.Robal.models;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -19,14 +24,13 @@ import lombok.ToString;
 @ToString
 
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-@Table(name="STORES")
+@Table(name="stores")
 public class Store {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
-	private int storeId;
-	private String branchAdd;
+	@GeneratedValue
+	private Long sId;
+	private String address;
 	private String name;
 	
 	
