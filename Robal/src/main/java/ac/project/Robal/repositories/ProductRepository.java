@@ -1,5 +1,10 @@
 package ac.project.Robal.repositories;
 
-public class ProductRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import ac.project.Robal.models.Account;
+import ac.project.Robal.models.Product;
+
+public interface ProductRepository extends JpaRepository<Product,Integer>{ 
 
 }
