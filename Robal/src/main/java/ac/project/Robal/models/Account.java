@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -17,9 +18,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 
-@Entity
+@MappedSuperclass
 @Inheritance(strategy=InheritanceType.JOINED)
-@Table(name="account_table")
+@Table(name="accounts")
 public abstract class Account {
 
 	@Id

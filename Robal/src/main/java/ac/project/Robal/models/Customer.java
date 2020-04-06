@@ -16,9 +16,8 @@ import lombok.ToString;
 @ToString
 
 @Entity
-public class Customer {
-	@Id
-	private Long customerId;
+public class Customer extends Account {
+	
 	
 	   	@ManyToOne(optional = false)
 	    @JoinColumn(name = "order_id")

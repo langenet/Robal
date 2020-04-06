@@ -13,7 +13,7 @@ import lombok.ToString;
 @ToString
 
 
-public class Administrator {
+public class Administrator extends Account{
 	
 	
 }
