@@ -19,7 +19,7 @@ import lombok.ToString;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-@Table
+@Table(name="account_table")
 public abstract class Account {
 
 	@Id

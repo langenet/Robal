@@ -35,15 +35,15 @@ public class Store {
 	private String address;
 	private String name;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	private Long ownerId;
-	
-	@ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-        name = "Store_Products", 
-        joinColumns = { @JoinColumn(name = "store_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "product_id") }
-    )
-	private List<Product> products;
-	
+//	@OneToOne(cascade = CascadeType.ALL)
+//	private Long ownerId;
+//	
+//	@ManyToMany(cascade = { CascadeType.ALL })
+//    @JoinTable(
+//        name = "Store_Products", 
+//        joinColumns = { @JoinColumn(name = "store_id") }, 
+//        inverseJoinColumns = { @JoinColumn(name = "product_id") }
+//    )
+//	private List<Product> products;
+//	
 }
