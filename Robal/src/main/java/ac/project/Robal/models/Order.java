@@ -12,6 +12,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -33,13 +34,19 @@ public class Order {
 	@Id
 	@GeneratedValue
 	private Long orderId;	
+	
 	private Long invoiceNumber;
-	private Long storeId;
-	private Long customerId;
 	private Date purchaseDate;
+	
+	//Are these going to be transient and not stored in the database?
 	private Double subTotal;
 	private Double total;
 
+	@OneToOne
+	private Store store;
+	
+	@OneToOne
+	private Customer customer;
 	
 	@ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(

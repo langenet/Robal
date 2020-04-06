@@ -20,7 +20,6 @@ public class Owner extends Account {
 
 	
 //	
-//	@OneToOne(cascade = CascadeType.ALL, targetEntity = Store.class)
-//	@JoinColumn(name = "account_id", referencedColumnName = "store_id")
-//	private Store store;
+	@OneToOne
+	private Store store;
 }
