@@ -1,7 +1,5 @@
 package ac.project.Robal.models;
 
-import javax.persistence.Entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +7,10 @@ import lombok.ToString;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @ToString
 
 
 public class Administrator extends Account{
-	
-	
+
 }

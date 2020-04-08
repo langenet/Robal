@@ -1,7 +1,8 @@
 package ac.project.Robal.models;
 
+import java.util.List;
+
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -21,6 +22,6 @@ public class Customer extends Account {
 	
 	   	@ManyToOne(optional = false)
 	    @JoinColumn(name = "order_id")
-	    private Order orders;
+	    private List<Order> orders;
 
 }

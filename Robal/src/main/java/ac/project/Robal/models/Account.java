@@ -21,7 +21,8 @@ import lombok.ToString;
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="accounts")
-public abstract class Account {
+@Entity
+public class Account {
 
 	@Id
 	@GeneratedValue
@@ -29,9 +30,6 @@ public abstract class Account {
 	private String name;
 	private String email;
 
-
-
-	
 
 	
 	

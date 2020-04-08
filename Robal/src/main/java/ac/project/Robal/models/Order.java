@@ -38,13 +38,13 @@ public class Order {
 	private Long invoiceNumber;
 	private Date purchaseDate;
 	
-	//Are these going to be transient and not stored in the database?
+	//Are these going to be transient and not stored in the database? No
 	private Double subTotal;
 	private Double total;
 
-	@OneToOne
-	private Store store;
-	
+//	@OneToOne
+//	private Store store;
+//	
 	@OneToOne
 	private Customer customer;
 	

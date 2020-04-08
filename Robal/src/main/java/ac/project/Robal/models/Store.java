@@ -35,6 +35,7 @@ public class Store {
 	@OneToOne
 	private Owner owner;
 	
+	//verify how we could add extra columns to this for price and quantity.
 	@ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
         name = "Store_Products", 
