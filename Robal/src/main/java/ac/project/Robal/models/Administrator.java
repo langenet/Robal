@@ -7,10 +7,11 @@ import lombok.ToString;
 
 @Data
 @AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor
 @ToString
 
 
 public class Administrator extends Account{
-
+	
+private boolean isAdmin;
 }

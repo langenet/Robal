@@ -18,8 +18,8 @@ public class AccountService {
 	}
 
 	public Account save(Account account) throws Exception {
-		if (account.getAccountId() != null && account.getName().isEmpty()) {
-			throw new ClientException("Cannot create account without a name");
+		if (account.getAccountId() != null && account.getName().isEmpty() && account.getEmail().isEmpty()) {
+			throw new ClientException("Cannot create account without a name and email");
 
 		}
 		return accountRepository.save(account);
