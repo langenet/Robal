@@ -32,14 +32,14 @@ public class AccountController {
 //		return accountService.find(id);
 //	}
 
-	@PutMapping("/accounts/{id}")
-	public Account updateAccount(@PathVariable Long id, @RequestBody Account account) throws Exception {
-		if (id.equals(account.getAccountId())) {
-			return accountService.save(account);
-		} else {
-			throw new Exception("Path error. mismatch Account id");
-		}
-	}
+//	@PutMapping("/accounts/{id}")
+//	public Account updateAccount(@PathVariable Long id, @RequestBody Account account) throws Exception {
+//		if (id.equals(account.getAccountId())) {
+//			return accountService.save(account);
+//		} else {
+//			throw new Exception("Path error. mismatch Account id");
+//		}
+//	}
 
 //	@DeleteMapping("/accounts/{id}")
 //	public void deleteAccount(@PathVariable Long id) {

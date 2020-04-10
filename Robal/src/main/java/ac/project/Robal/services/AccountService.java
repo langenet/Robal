@@ -20,9 +20,8 @@ public class AccountService {
 	private AdministratorRepository administratorRepository;
 
 	@Autowired
-	public AccountService(CustomerRepository customerRepository,
-						OwnerRepository ownerRepository,
-						AdministratorRepository administratorRepository) {
+	public AccountService(CustomerRepository customerRepository, OwnerRepository ownerRepository,
+			AdministratorRepository administratorRepository) {
 		this.customerRepository = customerRepository;
 		this.ownerRepository = ownerRepository;
 		this.administratorRepository = administratorRepository;
@@ -32,17 +31,18 @@ public class AccountService {
 		if (account.getAccountId() != null && account.getName().isEmpty() && account.getEmail().isEmpty()) {
 			throw new ClientException("Cannot create account without a name and email");
 		}
-		
+
 		if (account.getAccountType().equals("Customer")) {
-			// We should cast this properly
 			Customer customer = new Customer(account);
 			return customerRepository.save(customer);
 
 		} else if (account.getAccountType().equals("Owner")) {
-
-			return ownerRepository.save((Owner)account);
-		} else if (account.getAccountType().equals("Administrator")) {
-			return administratorRepository.save((Administrator)account);
+			Owner owner = new Owner(account);
+			return ownerRepository.save(owner);
+			
+		} else if (account.getAccountType().equals("Admin")) {
+			Administrator administrator = new Administrator(account);
+			return administratorRepository.save(administrator);
 
 		} else {
 			throw new Exception("Path error. mismatch Account id");

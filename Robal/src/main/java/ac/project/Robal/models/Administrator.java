@@ -16,4 +16,12 @@ import lombok.ToString;
 public class Administrator extends Account{
 	
 private boolean isAdmin;
+
+	public Administrator(Account account) {
+   		this.setAccountId(account.getAccountId());
+   		this.setAccountType(account.getAccountType());
+   		this.setEmail(account.getEmail());
+   		this.setName(account.getName());
+   		this.isAdmin = true;
+   	   	}
 }
