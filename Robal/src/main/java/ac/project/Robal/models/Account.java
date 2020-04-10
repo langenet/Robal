@@ -21,7 +21,6 @@ import lombok.ToString;
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="accounts")
-@Entity
 public class Account {
 
 	@Id
@@ -29,6 +28,7 @@ public class Account {
 	private Long accountId;
 	private String name;
 	private String email;
+	private String accountType;
 
 
 	

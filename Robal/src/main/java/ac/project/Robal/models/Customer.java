@@ -20,8 +20,15 @@ import lombok.ToString;
 public class Customer extends Account {
 	
 	
-	   	@ManyToOne(optional = false)
+	   	@ManyToOne(optional = true, targetEntity = Order.class)
 	    @JoinColumn(name = "order_id")
 	    private List<Order> orders;
 
+	   	public Customer(Account account) {
+	   		this.setAccountId(account.getAccountId());
+	   		this.setAccountType(account.getAccountType());
+	   		this.setEmail(account.getEmail());
+	   		this.setName(account.getName());
+	   	}
+	   	
 }
