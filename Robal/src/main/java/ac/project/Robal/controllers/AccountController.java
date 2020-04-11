@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
+import ac.project.Robal.models.Order;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.services.AccountService;
 import javassist.NotFoundException;
@@ -33,6 +34,12 @@ public class AccountController<A extends Account> {
 	public Customer saveCustomer(@RequestBody Customer customer) throws Exception {
 		return accountService.saveCustomer(customer);
 	}
+	
+	@PutMapping("/customers/{id}/newOrder")
+	public Customer newCustomerOrder(@RequestBody Order order, @RequestBody Long id) throws Exception {
+		return accountService.newCustomerOrder(order, id);
+	}
+
 
 	@PostMapping("/owners")
 	public Owner saveOwner(@RequestBody Owner owner) throws Exception {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ac.project.Robal.exceptions.ClientException;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
+import ac.project.Robal.models.Order;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.CustomerRepository;
@@ -36,6 +37,18 @@ public class AccountService {
 		}
 		return customerRepository.save(customer);
 	}
+	
+	public Customer newCustomerOrder(Order order, Long id) throws Exception {
+		// Removed null check on iD but maybe that's needed?
+		Customer customer = findCustomer(id);
+		customer.getOrders().add(order);
+		
+		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
+			throw new ClientException("Cannot create Customer without a name and email");
+		}
+		return customerRepository.save(customer);
+	}
+
 
 	public Owner saveOwner(Owner owner) throws Exception {
 		// Removed null check on iD but maybe that's needed?
