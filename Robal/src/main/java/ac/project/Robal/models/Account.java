@@ -22,7 +22,7 @@ import lombok.ToString;
 
 //@MappedSuperclass
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="accounts")
 public class Account {
 
