@@ -73,7 +73,7 @@ public class AccountService {
 		administratorRepository.delete(administratorRepository.findById(id).orElseThrow(accountNotFound()));
 	}
 
-	public void deleteCustomerr(Long id) throws NotFoundException {
+	public void deleteCustomer(Long id) throws NotFoundException {
 		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound()));
 	}
 
