@@ -2,10 +2,12 @@ package ac.project.Robal.models;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import ac.project.Robal.enums.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +28,7 @@ public class Customer extends Account {
 
 	   	public Customer(Account account) {
 	   		this.setAccountId(account.getAccountId());
-	   		this.setAccountType(account.getAccountType());
+	   		this.setAccountType(AccountType.CUSTOMER);
 	   		this.setEmail(account.getEmail());
 	   		this.setName(account.getName());
 	   	}

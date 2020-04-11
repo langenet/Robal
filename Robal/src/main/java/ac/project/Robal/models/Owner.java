@@ -25,7 +25,7 @@ public class Owner extends Account {
    		this.setAccountType(account.getAccountType());
    		this.setEmail(account.getEmail());
    		this.setName(account.getName());
-   	//	this.setStore(store);
+   		this.setStore(store);
 
    	}
 	
