@@ -26,6 +26,7 @@ import lombok.ToString;
 public class Product {
 
 	@Id
+	@GeneratedValue
 	private Long productId;
 	private String name;
 	private String description;
