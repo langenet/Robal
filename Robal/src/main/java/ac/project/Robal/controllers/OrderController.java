@@ -19,6 +19,6 @@ public class OrderController {
 
 	@PostMapping("/orders")
 	public Order saveOrder(@RequestBody Order order, @RequestBody Customer customer) throws Exception {
-		return OrderService.saveOrder(order, customer);
+		return orderService.saveOrder(order, customer);
 	}
 }

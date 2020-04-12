@@ -42,9 +42,6 @@ public class Order {
 	private Double subTotal;
 	private Double total;
 
-//	@OneToOne
-//	private Store store;
-//	
 	@OneToOne
 	private Customer customer;
 	

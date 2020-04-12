@@ -47,7 +47,7 @@ public class AccountController<A extends Account> {
 	}
 
 	@PutMapping("/customers/{id}/newOrder")
-	public Customer newCustomerOrder(@RequestBody Order order, @RequestBody Long id) throws Exception {
+	public Customer newCustomerOrder(@RequestBody Order order, @PathVariable Long id) throws Exception {
 		return accountService.newCustomerOrder(order, id);
 	}
 
