@@ -30,6 +30,7 @@ public class AccountService {
 		this.administratorRepository = administratorRepository;
 	}
 
+	// Customer
 	public Customer saveCustomer(Customer customer) throws Exception {
 		// Removed null check on iD but maybe that's needed?
 		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
@@ -37,19 +38,27 @@ public class AccountService {
 		}
 		return customerRepository.save(customer);
 	}
-	
+
 	public Customer newCustomerOrder(Order order, Long id) throws Exception {
 		// Removed null check on iD but maybe that's needed?
 		Customer customer = findCustomer(id);
 		customer.getOrders().add(order);
-		
+
 		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
 			throw new ClientException("Cannot create Customer without a name and email");
 		}
 		return customerRepository.save(customer);
 	}
 
+	public Customer findCustomer(Long id) {
+		return customerRepository.findById(id).orElse(null);
+	}
 
+	public void deleteCustomer(Long id) throws NotFoundException {
+		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound()));
+	}
+
+	// Owner
 	public Owner saveOwner(Owner owner) throws Exception {
 		// Removed null check on iD but maybe that's needed?
 		if (owner.getName().isEmpty() && owner.getEmail().isEmpty() && owner.getStore() != null) {
@@ -58,40 +67,30 @@ public class AccountService {
 		return ownerRepository.save(owner);
 	}
 
-	public Administrator saveAdministrator(Administrator administrator) throws Exception {
-		// Removed null check on iD but maybe that's needed?
-		if (administrator.getName().isEmpty() && administrator.getEmail().isEmpty()) {
-			throw new ClientException("Cannot create Administrator without a name and email");
-		}
-
-		return administratorRepository.save(administrator);
-	}
-
-	public Administrator findAdministrator(Long id) {
-
-		return administratorRepository.findById(id).orElse(null);
-	}
-
-	public Customer findCustomer(Long id) {
-
-		return customerRepository.findById(id).orElse(null);
-	}
-
 	public Owner findOwner(Long id) {
 
 		return ownerRepository.findById(id).orElse(null);
 	}
 
-	public void deleteAdministrator(Long id) throws NotFoundException {
-		administratorRepository.delete(administratorRepository.findById(id).orElseThrow(accountNotFound()));
-	}
-
-	public void deleteCustomer(Long id) throws NotFoundException {
-		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound()));
-	}
-
 	public void deleteOwner(Long id) throws NotFoundException {
 		ownerRepository.delete(ownerRepository.findById(id).orElseThrow(accountNotFound()));
+	}
+
+	// Administrator
+	public Administrator saveAdministrator(Administrator administrator) throws Exception {
+		// Removed null check on iD but maybe that's needed?
+		if (administrator.getName().isEmpty() && administrator.getEmail().isEmpty()) {
+			throw new ClientException("Cannot create Administrator without a name and email");
+		}
+		return administratorRepository.save(administrator);
+	}
+
+	public Administrator findAdministrator(Long id) {
+		return administratorRepository.findById(id).orElse(null);
+	}
+
+	public void deleteAdministrator(Long id) throws NotFoundException {
+		administratorRepository.delete(administratorRepository.findById(id).orElseThrow(accountNotFound()));
 	}
 
 	private Supplier<NotFoundException> accountNotFound() {
