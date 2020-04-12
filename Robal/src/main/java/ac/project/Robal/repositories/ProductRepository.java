@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import ac.project.Robal.models.Product;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product,Integer>{ 
+public interface ProductRepository extends JpaRepository<Product,Long>{ 
 
 }
