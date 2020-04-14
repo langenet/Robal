@@ -42,7 +42,7 @@ public class AccountService {
 	public Customer newCustomerOrder(Order order, Long id) throws Exception {
 		// Removed null check on iD but maybe that's needed?
 		Customer customer = findCustomer(id);
-		customer.getOrders().add(order);
+//		customer.getOrders().add(order);
 
 		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
 			throw new ClientException("Cannot create Customer without a name and email");
@@ -61,7 +61,7 @@ public class AccountService {
 	// Owner
 	public Owner saveOwner(Owner owner) throws Exception {
 		// Removed null check on iD but maybe that's needed?
-		if (owner.getName().isEmpty() && owner.getEmail().isEmpty() && owner.getStore() != null) {
+		if (owner.getName().isEmpty() && owner.getEmail().isEmpty()) {
 			throw new ClientException("Cannot create Owner without a name and email");
 		}
 		return ownerRepository.save(owner);

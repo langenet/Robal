@@ -7,13 +7,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,9 +26,7 @@ import lombok.ToString;
 @ToString
 
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="orders")
-
 public class Order {
 
 	@Id
@@ -36,13 +34,15 @@ public class Order {
 	private Long orderId;	
 	
 	private Long invoiceNumber;
+	
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date purchaseDate;
 	
-	//Are these going to be transient and not stored in the database? No
 	private Double subTotal;
 	private Double total;
 
-	@OneToOne
+	@ManyToOne(targetEntity = Order.class, cascade = CascadeType.ALL)
+	@JoinColumn(name = "account_id", referencedColumnName="orderId")
 	private Customer customer;
 	
 	@ManyToMany(cascade = { CascadeType.ALL })

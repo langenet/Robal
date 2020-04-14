@@ -10,19 +10,10 @@ import lombok.ToString;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @Entity
 public class Administrator extends Account{
 	
-	
-	public Administrator() {
-		
-	}
-	public Administrator(Account account) {
-   		this.setAccountId(account.getAccountId());
-   		this.setAccountType(account.getAccountType());
-   		this.setEmail(account.getEmail());
-   		this.setName(account.getName());
-   	   	}
 	boolean isAdmin;
 }

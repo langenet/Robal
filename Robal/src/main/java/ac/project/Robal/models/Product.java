@@ -32,11 +32,11 @@ public class Product {
 	private String description;
 	private Long sku;
 	
-	@ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-        name = "Store_Products", 
-        joinColumns = { @JoinColumn(name = "store_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "product_id") }
-    )
-	private List<Store> stores;
+//	@ManyToMany(cascade = { CascadeType.ALL })
+//    @JoinTable(
+//        name = "Store_Products", 
+//        joinColumns = { @JoinColumn(name = "store_id") }, 
+//        inverseJoinColumns = { @JoinColumn(name = "product_id") }
+//    )
+//	private List<Store> stores;
 }

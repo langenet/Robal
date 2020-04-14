@@ -20,9 +20,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 
-//@MappedSuperclass
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="accounts")
 public class Account {
 
