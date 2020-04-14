@@ -15,5 +15,6 @@ import lombok.ToString;
 @Entity
 public class Administrator extends Account{
 	
+	//remove this
 	boolean isAdmin;
 }

@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import ac.project.Robal.enums.AccountType;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class Account {
 	
 	
 	@Enumerated(EnumType.STRING)
+	@Transient
 	private AccountType accountType;
 	
 

@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import ac.project.Robal.models.Customer;
+import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
-import ac.project.Robal.services.AccountService;
+import ac.project.Robal.models.StoreProduct;
 import ac.project.Robal.services.StoreService;
 import javassist.NotFoundException;
 
@@ -28,6 +28,12 @@ public class StoreController {
 	@PostMapping("/stores")
 	public Store saveStore(@RequestBody Store store) throws Exception {
 		return storeService.saveStore(store);
+	}
+	
+	// TODO This should actually return a Store object
+	@PostMapping("/stores/{id}/products")
+	public StoreProduct saveStoreProduct(@PathVariable Long id, @RequestBody Product product) throws Exception {
+		return storeService.saveStoreProduct(product, id);
 	}
 	
 	@GetMapping("/stores/{id}")
