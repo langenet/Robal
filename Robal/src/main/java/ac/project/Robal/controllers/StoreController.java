@@ -1,5 +1,7 @@
 package ac.project.Robal.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ac.project.Robal.models.Product;
@@ -32,8 +35,16 @@ public class StoreController {
 	
 	// TODO This should actually return a Store object
 	@PostMapping("/stores/{id}/products")
-	public StoreProduct saveStoreProduct(@PathVariable Long id, @RequestBody Product product) throws Exception {
-		return storeService.saveStoreProduct(product, id);
+	public StoreProduct saveStoreProduct(@PathVariable Long id, 
+								  @RequestBody Product product,
+								  @RequestParam Integer quantity,
+								  @RequestParam Double price) throws Exception {
+		return storeService.saveStoreProduct(id, product, quantity, price);
+	}
+	
+	@GetMapping("/stores/{id}/products")
+	public List<StoreProduct> findStoreProduct(@PathVariable Long id) throws Exception {
+		return storeService.findStoreProducts(id);
 	}
 	
 	@GetMapping("/stores/{id}")

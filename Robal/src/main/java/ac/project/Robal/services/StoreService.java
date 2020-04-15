@@ -1,5 +1,6 @@
 package ac.project.Robal.services;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,35 @@ public class StoreService {
 		return storeRepository.save(store);
 	}
 	
-	public StoreProduct saveStoreProduct(Product product, Long id) throws Exception {
+	public StoreProduct saveStoreProduct( Long storeId, Product product, int quantity, double price) throws Exception {
 		
-		StoreProduct storeProduct = new StoreProduct();
-//		if (product.getName().isEmpty()) {
-//			throw new ClientException("Cannot create store without a name");
-//		}
+		Store store = storeRepository.findById(storeId).orElse(null);
+		Product dbProduct = null;
+		
+		if(store == null) {
+			//throw exception
+		}
+		
+		if(product.getProductId() == 0) {
+			dbProduct = productRepository.save(product);
+		}else {
+			dbProduct = productRepository.findById(product.getProductId()).orElse(null);
+		}
+		
+		if(dbProduct == null) {
+			dbProduct = productRepository.save(product);
+		}
+		
+		
+		
+		StoreProduct storeProduct = new StoreProduct(0L, store, dbProduct, quantity, price);
+	
 		return storeProductRepository.save(storeProduct);
+	}
+	
+	public List<StoreProduct> findStoreProducts(Long storeId) throws Exception{
+		List<StoreProduct> storeProducts = storeProductRepository.findByStore(storeId);
+		return storeProducts;
 	}
 
 	public Store findStore(Long id) {

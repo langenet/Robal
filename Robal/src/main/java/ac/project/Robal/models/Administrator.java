@@ -9,12 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @Entity
 public class Administrator extends Account{
 	
-	//remove this
-	boolean isAdmin;
+
 }
