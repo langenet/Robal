@@ -1,14 +1,17 @@
 package ac.project.Robal.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ac.project.Robal.exceptions.ClientException;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
+import ac.project.Robal.models.OrderProduct;
 import ac.project.Robal.repositories.CustomerRepository;
+import ac.project.Robal.repositories.OrderProductRepository;
 import ac.project.Robal.repositories.OrderRepository;
 import javassist.NotFoundException;
 
@@ -17,22 +20,39 @@ public class OrderService {
 	
 	private OrderRepository orderRepository;
 	private CustomerRepository customerRepository;
+	private OrderProductRepository orderProductRepository;
 
 	@Autowired
 	public OrderService(OrderRepository orderRepository,
-						CustomerRepository customerRepository) {
+						CustomerRepository customerRepository,
+						OrderProductRepository orderProductRepository) {
 		this.orderRepository = orderRepository;
 		this.customerRepository = customerRepository;
+		this.orderProductRepository = orderProductRepository;
 	}
 	
 	
 	public Order saveOrder(Order order) throws Exception {
 		
+		Customer customer = customerRepository.findById(order.getCustomer().getAccountId()).orElse(null);
+		
+		order.setCustomer(customer);
+		
+		List<OrderProduct> orderProducts = new ArrayList<>();
+		
+		for(OrderProduct orderProduct:order.getOrderProducts()) {
+			orderProducts.add(orderProductRepository.findById(orderProduct.getId()).orElse(null));
+		}
+		
+		order.setOrderProducts(orderProducts);
+		
+		
+		
+		return orderRepository.save(order);
 		//TODO: add validation on the mandatory fields
 //		if (order.getInvoiceNumber().isEmpty() && order.getEmail().isEmpty()) {
 //			throw new ClientException("Cannot create Customer without a name and email");
 //		}
-		return orderRepository.save(order);
 	}
 	
 	public Order findOrder(Long id) {

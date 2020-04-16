@@ -12,29 +12,32 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 
 @Entity
-public class StoreProduct {
-
+public class OrderProduct {
+	
 	@Id
 	@GeneratedValue
 	private Long id;
 
 	@ManyToOne
+	@JoinColumn(name="order_id")
+	private Order order;
+	
+	@ManyToOne
 	@JoinColumn(name="store_id")
 	private Store store;
-	
-	
+		
 	@ManyToOne
 	@JoinColumn(name="product_id")
 	private Product product;
 	
 	private int inventory;
 	private double price;
+	
 	
 }

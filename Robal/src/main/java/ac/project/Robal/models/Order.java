@@ -8,9 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -45,13 +44,16 @@ public class Order {
 	@JoinColumn(name = "account_id", referencedColumnName="orderId")
 	private Customer customer;
 	
-	@ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-        name = "Order_Products", 
-        joinColumns = { @JoinColumn(name = "order_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "product_id") }
-    )
-	//TODO change this to storeproduct
-	private List<Product> products;
+//	@ManyToMany(cascade = { CascadeType.ALL })
+//    @JoinTable(
+//        name = "Order_Products", 
+//        joinColumns = { @JoinColumn(name = "order_id") }, 
+//        inverseJoinColumns = { @JoinColumn(name = "store_product_id") }
+//    )
+	
+	@OneToMany(targetEntity = OrderProduct.class)
+	@JoinColumn(name="order_id")
+	private List<OrderProduct> orderProducts;
+	
 	
 }
