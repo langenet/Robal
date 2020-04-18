@@ -38,17 +38,19 @@ public class OrderService {
 		
 		order.setCustomer(customer);
 		
-		List<OrderProduct> orderProducts = new ArrayList<>();
+		order = orderRepository.save(order);
+
+		//TODO Validate OrderProducts
+		List<OrderProduct> orderProducts = new ArrayList<>(order.getOrderProducts());
 		
-		for(OrderProduct orderProduct:order.getOrderProducts()) {
-			orderProducts.add(orderProductRepository.findById(orderProduct.getId()).orElse(null));
+		for(OrderProduct orderProduct:orderProducts) {
+			orderProduct.setOrder(order);
 		}
 		
+		orderProducts = orderProductRepository.saveAll(orderProducts);
 		order.setOrderProducts(orderProducts);
 		
-		
-		
-		return orderRepository.save(order);
+		return order;
 		//TODO: add validation on the mandatory fields
 //		if (order.getInvoiceNumber().isEmpty() && order.getEmail().isEmpty()) {
 //			throw new ClientException("Cannot create Customer without a name and email");

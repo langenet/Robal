@@ -7,10 +7,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -30,7 +32,8 @@ import lombok.ToString;
 public class Order {
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(name = "order_seq", sequenceName = "order_seq", initialValue = 1, allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="order_seq")
 	private Long orderId;	
 	
 	private Long invoiceNumber;
@@ -41,8 +44,8 @@ public class Order {
 	private Double subTotal;
 	private Double total;
 
-	@ManyToOne(targetEntity = Order.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "account_id_fk", referencedColumnName="orderId")
+	@ManyToOne(targetEntity = Customer.class, cascade = CascadeType.ALL)
+	@JoinColumn(name="account_id_fk")
 	private Customer customer;
 
 	@OneToMany(targetEntity = OrderProduct.class, cascade = CascadeType.ALL)

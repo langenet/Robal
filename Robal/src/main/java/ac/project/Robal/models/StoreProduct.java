@@ -2,9 +2,11 @@ package ac.project.Robal.models;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +22,9 @@ import lombok.ToString;
 public class StoreProduct {
 
 	@Id
-	@GeneratedValue
-	private Long id;
+	@SequenceGenerator(name = "store_product_seq", sequenceName = "store_product_seq", initialValue = 1, allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="store_product_seq")
+	private Long storeProductid;
 
 	@ManyToOne
 	@JoinColumn(name="store_id")

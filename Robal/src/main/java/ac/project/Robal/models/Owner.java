@@ -2,6 +2,9 @@ package ac.project.Robal.models;
 
 import javax.persistence.Entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import ac.project.Robal.enums.OwnerType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +17,7 @@ import lombok.ToString;
 @ToString
 
 @Entity
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class Owner extends Account {
 
 //	
