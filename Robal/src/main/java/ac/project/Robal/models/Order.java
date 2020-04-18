@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -41,18 +42,11 @@ public class Order {
 	private Double total;
 
 	@ManyToOne(targetEntity = Order.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "account_id", referencedColumnName="orderId")
+	@JoinColumn(name = "account_id_fk", referencedColumnName="orderId")
 	private Customer customer;
-	
-//	@ManyToMany(cascade = { CascadeType.ALL })
-//    @JoinTable(
-//        name = "Order_Products", 
-//        joinColumns = { @JoinColumn(name = "order_id") }, 
-//        inverseJoinColumns = { @JoinColumn(name = "store_product_id") }
-//    )
-	
-	@OneToMany(targetEntity = OrderProduct.class)
-	@JoinColumn(name="order_id")
+
+	@OneToMany(targetEntity = OrderProduct.class, cascade = CascadeType.ALL)
+	@JoinColumn(name="order_id_fk")
 	private List<OrderProduct> orderProducts;
 	
 	

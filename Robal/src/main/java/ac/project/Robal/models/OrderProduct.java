@@ -25,15 +25,15 @@ public class OrderProduct {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name="order_id")
+	@JoinColumn(name="order_id_fk")
 	private Order order;
 	
 	@ManyToOne
-	@JoinColumn(name="store_id")
+	@JoinColumn(name="store_id_fk")
 	private Store store;
 		
 	@ManyToOne
-	@JoinColumn(name="product_id")
+	@JoinColumn(name="product_id_fk")
 	private Product product;
 	
 	private int inventory;
