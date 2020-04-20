@@ -1,26 +1,20 @@
 package ac.project.Robal.models;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import ac.project.Robal.enums.OwnerType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-@ToString
 
 @Entity
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Owner extends Account {
 
-//	
-//	private OwnerType ownerType;
-//	
+@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+private List<Store> stores;
+
 }

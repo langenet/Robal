@@ -1,11 +1,10 @@
 package ac.project.Robal.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,16 +15,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Setter
+@Getter
 
 @Entity
 @Table(name="orders")
@@ -39,18 +40,18 @@ public class Order {
 	private Long invoiceNumber;
 	
 	@JsonFormat(pattern="yyyy-MM-dd")
-	private Date purchaseDate;
+	private LocalDate purchaseDate;
 	
 	private Double subTotal;
 	private Double total;
 
-	@ManyToOne(targetEntity = Customer.class, cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="account_id_fk")
 	private Customer customer;
 
-	@OneToMany(targetEntity = OrderProduct.class, cascade = CascadeType.ALL)
-	@JoinColumn(name="order_id_fk")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+//	@JoinColumn(name="order_id_fk")
 	private List<OrderProduct> orderProducts;
-	
+
 	
 }

@@ -1,7 +1,5 @@
 package ac.project.Robal.models;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,13 +9,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-@Data
+import lombok.Setter;
+
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Setter
+@Getter
 
 @Entity
 public class OrderProduct {
@@ -41,6 +40,5 @@ public class OrderProduct {
 	
 	private int quantity;
 	private double price;
-	
 	
 }

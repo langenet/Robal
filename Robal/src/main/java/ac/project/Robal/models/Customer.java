@@ -11,14 +11,14 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Setter
+@Getter
 
 @Entity
 @OnDelete(action = OnDeleteAction.CASCADE)
@@ -27,9 +27,7 @@ public class Customer extends Account {
 	private String billingAddress;
 	private String paymentMethod;
 	
-	@OneToMany(targetEntity = Order.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "account_id_fk", referencedColumnName="account_id")
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 	private List<Order> orders;
-
 
 }
