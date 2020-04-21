@@ -1,31 +1,33 @@
 package ac.project.Robal.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
+import ac.project.Robal.models.OrderProduct;
+import ac.project.Robal.services.AccountService;
 import ac.project.Robal.services.OrderService;
 import javassist.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class OrderController {
 
 	private OrderService orderService;
+	private AccountService accountService;
 
 	@Autowired
-	public OrderController(OrderService orderService) {
+	public OrderController(OrderService orderService,
+						   AccountService accountService) {
 		this.orderService = orderService;
+		this.accountService = accountService;
 	}
 
 	@PostMapping("/orders")
-	public Order saveOrder(@RequestBody Order order) throws Exception {
-		return orderService.saveOrder(order);
+	public Order saveOrder(@RequestBody List<OrderProduct> orderProducts) throws Exception {
+		Customer customer = accountService.findCustomer(1L);
+		return orderService.saveOrder(customer, orderProducts);
 	}
 
 	@GetMapping("/orders/{id}")
@@ -38,9 +40,9 @@ public class OrderController {
 		orderService.deleteOrder(id);
 	}
 
-	@PutMapping("/orders/{id}")
+/*	@PutMapping("/orders/{id}")
 	public Order updateOrder(@RequestBody Order order) throws Exception {
 		return orderService.saveOrder(order);
-	}
+	}*/
 
 }

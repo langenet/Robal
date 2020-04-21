@@ -1,11 +1,5 @@
 package ac.project.Robal.services;
 
-import java.util.List;
-import java.util.function.Supplier;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import ac.project.Robal.exceptions.ClientException;
 import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
@@ -14,6 +8,10 @@ import ac.project.Robal.repositories.ProductRepository;
 import ac.project.Robal.repositories.StoreProductRepository;
 import ac.project.Robal.repositories.StoreRepository;
 import javassist.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.function.Supplier;
 
 @Service
 public class StoreService {
@@ -61,15 +59,19 @@ public class StoreService {
 		
 		
 		
-		StoreProduct storeProduct = new StoreProduct(0L, store, dbProduct, quantity, price);
+		StoreProduct storeProduct = StoreProduct.builder()
+				.inventory(quantity)
+				.price(price)
+				.product(product)
+				.build();
 	
 		return storeProductRepository.save(storeProduct);
 	}
-	
-	public List<StoreProduct> findStoreProducts(Long storeId) throws Exception{
+
+/*	public List<StoreProduct> findStoreProducts(Long storeId) throws Exception{
 		List<StoreProduct> storeProducts = storeProductRepository.findByStore(storeId);
 		return storeProducts;
-	}
+	}*/
 
 	public Store findStore(Long id) {
 		return storeRepository.findById(id).orElse(null);

@@ -1,22 +1,12 @@
 package ac.project.Robal.models;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -40,10 +30,6 @@ public class Store {
 	@JoinColumn(name = "account_id")
 	private Owner owner;
 	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<StoreProduct> storeProducts;
-	
-	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-	private List<OrderProduct> orderProducts;
-
 }
