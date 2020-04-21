@@ -1,12 +1,5 @@
 package ac.project.Robal.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
 import ac.project.Robal.models.OrderProduct;
@@ -14,10 +7,19 @@ import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.repositories.OrderProductRepository;
 import ac.project.Robal.repositories.OrderRepository;
 import javassist.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Supplier;
 
 @Service
 public class OrderService {
-	
+
+	private final static double GST = 1.13;
+
 	private OrderRepository orderRepository;
 	private CustomerRepository customerRepository;
 	private OrderProductRepository orderProductRepository;
@@ -32,23 +34,21 @@ public class OrderService {
 	}
 	
 	
-	public Order saveOrder(Order order) throws Exception {
-		
-		Customer customer = customerRepository.findById(order.getCustomer().getAccountId()).orElse(null);
-		
-		order.setCustomer(customer);
-		
+	public Order saveOrder(Customer customer, List<OrderProduct> orderProducts) throws Exception {
+
+		double subTotal = orderProducts.stream().mapToDouble(OrderProduct::getPrice).sum();
+
+		Order order = Order.builder()
+				.orderProducts(orderProducts)
+				.purchaseDate(LocalDate.now())
+				.invoiceNumber(new Random().nextLong())
+				.subTotal(subTotal)
+				.total(subTotal * GST)
+				.build();
 		order = orderRepository.save(order);
 
-		//TODO Validate OrderProducts
-		List<OrderProduct> orderProducts = new ArrayList<>(order.getOrderProducts());
-		
-		for(OrderProduct orderProduct:orderProducts) {
-			orderProduct.setOrder(order);
-		}
-		
-		orderProducts = orderProductRepository.saveAll(orderProducts);
-		order.setOrderProducts(orderProducts);
+		customer.getOrders().add(order);
+		customerRepository.save(customer);
 		
 		return order;
 		//TODO: add validation on the mandatory fields
