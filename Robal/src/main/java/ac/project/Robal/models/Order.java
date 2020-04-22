@@ -29,8 +29,8 @@ public class Order {
 	private Double subTotal;
 	private Double total;
 
+	
 	@OneToMany(cascade = CascadeType.ALL)
-//	@JoinColumn(name="order_id_fk")
 	private List<OrderProduct> orderProducts;
 
 	

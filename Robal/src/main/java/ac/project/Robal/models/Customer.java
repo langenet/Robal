@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 
 @Entity
-@OnDelete(action = OnDeleteAction.CASCADE)
 public class Customer extends Account {
 
 	private String billingAddress;

@@ -13,7 +13,6 @@ import lombok.ToString;
 
 
 
-@OnDelete(action = OnDeleteAction.CASCADE)
 @Entity
 public class Administrator extends Account{
 	

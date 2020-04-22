@@ -45,16 +45,12 @@ public class OrderService {
 				.subTotal(subTotal)
 				.total(subTotal * GST)
 				.build();
-		order = orderRepository.save(order);
+//		order = orderRepository.save(order);
 
 		customer.getOrders().add(order);
 		customerRepository.save(customer);
 		
-		return order;
-		//TODO: add validation on the mandatory fields
-//		if (order.getInvoiceNumber().isEmpty() && order.getEmail().isEmpty()) {
-//			throw new ClientException("Cannot create Customer without a name and email");
-//		}
+		return customer.getOrders().get(customer.getOrders().size() - 1);
 	}
 	
 	public Order findOrder(Long id) {

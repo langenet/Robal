@@ -27,9 +27,8 @@ public class Store {
 
 
 	@ManyToOne
-	@JoinColumn(name = "account_id")
 	private Owner owner;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany
 	private List<StoreProduct> storeProducts;
 }

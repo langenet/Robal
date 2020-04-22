@@ -11,10 +11,9 @@ import org.hibernate.annotations.OnDeleteAction;
 
 
 @Entity
-@OnDelete(action = OnDeleteAction.CASCADE)
 public class Owner extends Account {
 
-@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+@OneToMany
 private List<Store> stores;
 
 }
