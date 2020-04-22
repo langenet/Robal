@@ -62,7 +62,7 @@ public class OrderService {
 				.subTotal(subTotal)
 				.total(subTotal * GST)
 				.build();
-//		order = orderRepository.save(order);
+		order = orderRepository.save(order);
 
 		customer.getOrders().add(order);
 		customerRepository.save(customer);
