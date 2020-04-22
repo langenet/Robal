@@ -6,6 +6,7 @@ import ac.project.Robal.models.OrderProduct;
 import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.repositories.OrderProductRepository;
 import ac.project.Robal.repositories.OrderRepository;
+import ac.project.Robal.repositories.ProductRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -23,20 +25,35 @@ public class OrderService {
 	private OrderRepository orderRepository;
 	private CustomerRepository customerRepository;
 	private OrderProductRepository orderProductRepository;
+	private ProductRepository productRepository;
 
 	@Autowired
 	public OrderService(OrderRepository orderRepository,
 						CustomerRepository customerRepository,
-						OrderProductRepository orderProductRepository) {
+						OrderProductRepository orderProductRepository,
+						ProductRepository productRepository) {
 		this.orderRepository = orderRepository;
 		this.customerRepository = customerRepository;
 		this.orderProductRepository = orderProductRepository;
+		this.productRepository = productRepository;
 	}
-	
-	
-	public Order saveOrder(Customer customer, List<OrderProduct> orderProducts) throws Exception {
 
-		double subTotal = orderProducts.stream().mapToDouble(OrderProduct::getPrice).sum();
+	public Order saveOrder(Customer customer, List<OrderProduct> orderProducts) throws Exception {
+		/* For each order product received from the user, we retrieve each product from the db via id.
+		 We do this to ensure that the product actually exists. If this cascades, the user would be creating product!
+		 So that shouldn't happen. Furthermore, by going through the repository, product entity gets attached.
+		 Obviously the product must exist in the db beforehand. */
+		orderProducts = orderProducts.stream()
+				.map(orderProduct -> OrderProduct.builder()
+						.product(productRepository.findById(orderProduct.getProduct().getProductId())
+							.orElse(null))
+						.build())
+				.collect(Collectors.toList());
+		orderProducts = orderProductRepository.saveAll(orderProducts);
+
+		double subTotal = orderProducts.stream()
+				.mapToDouble(OrderProduct::getPrice)
+				.sum();
 
 		Order order = Order.builder()
 				.orderProducts(orderProducts)
