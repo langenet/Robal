@@ -1,18 +1,17 @@
 package ac.project.Robal.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.List;
 
-@AllArgsConstructor
+import ac.project.Robal.enums.AccountType;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @NoArgsConstructor
 @Setter
 @Getter
@@ -22,7 +21,21 @@ public class Customer extends Account {
 
 	private String billingAddress;
 	private String paymentMethod;
-	
+
+	@Builder
+	public Customer (Long accountId, 
+					 String name,
+					 String email,
+					 AccountType accountType,
+					 String billingAddress, 
+					 String paymentMethod, 
+					 List<Order> orders) {
+		super(accountId,name,email,accountType);
+		this.billingAddress = billingAddress;
+		this.paymentMethod = paymentMethod;
+		this.orders = orders;
+	}
+
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Order> orders;
 

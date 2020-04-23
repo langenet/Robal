@@ -1,6 +1,9 @@
 package ac.project.Robal.controllers;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,19 +12,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
-import ac.project.Robal.models.Order;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.services.AccountService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 
 //To-Do: Add response codes for all endpoints.
 //To-Do: Add Get and Delete Mappings for single account and for list.
 //To-Do: Why is the account table not being created?
 @RestController
-public class AccountController<A extends Account> {
+public class AccountController{
 
 	private AccountService accountService;
 
@@ -31,9 +35,15 @@ public class AccountController<A extends Account> {
 	}
 
 	// Customers
+	@ApiOperation(value = "Create an account", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully created account"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PostMapping("/customers")
-	public Customer saveCustomer(@RequestBody Customer customer) throws Exception {
-		return accountService.saveCustomer(customer);
+	public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) throws Exception {
+		Customer result = accountService.saveCustomer(customer);
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
 	}
 
 	@GetMapping("/customers/{id}")
@@ -44,11 +54,6 @@ public class AccountController<A extends Account> {
 	@DeleteMapping("/customers/{id}")
 	public void deleteCustomer(@PathVariable Long id) throws NotFoundException {
 		accountService.deleteCustomer(id);
-	}
-
-	@PutMapping("/customers/{id}/newOrder")
-	public Customer newCustomerOrder(@RequestBody Order order, @PathVariable Long id) throws Exception {
-		return accountService.newCustomerOrder(order, id);
 	}
 
 	@PutMapping("/customers/{id}")

@@ -33,9 +33,9 @@ public class AccountService {
 	// Customer
 	public Customer saveCustomer(Customer customer) throws Exception {
 		// Removed null check on iD but maybe that's needed?
-		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
-			throw new ClientException("Cannot create Customer without a name and email");
-		}
+//		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
+//			throw new ClientException("Cannot create Customer without a name and email");
+//		}
 		return customerRepository.save(customer);
 	}
 

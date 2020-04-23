@@ -14,17 +14,15 @@ import javax.persistence.Transient;
 
 import ac.project.Robal.enums.AccountType;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-
 
 // TODO cascade deletes. not sure where to add that.  Deleting a customer from the account table did not cascade.
 @Entity
