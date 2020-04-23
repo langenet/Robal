@@ -1,6 +1,7 @@
 package ac.project.Robal.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,10 +13,13 @@ import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +46,16 @@ public class CustomerControllerTest {
 
 	@Autowired
 	private CustomerRepository customerRepository;
+	
+	@MockBean
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	private Customer customer;
 	
 	private static final String NAME = "Andy Ta";
 	private static final String EMAIL = "Andy@test.com";
+	private static final String PASSWORD = "password";
+	
 	private static final AccountType ACCOUNT_TYPE = AccountType.CUSTOMER;
 //	private static final List<Order> ORDERS = new ArrayList<Order>();
 	private static final String BILLING_ADDRESS = "123 Main Street";
@@ -66,8 +75,9 @@ public class CustomerControllerTest {
 				.billingAddress(BILLING_ADDRESS)
 				.paymentMethod(PAYMENT_METHOD)
 				.build();
+		Mockito.when(bCryptPasswordEncoder.encode(any())).thenReturn(PASSWORD);
+		Mockito.when(bCryptPasswordEncoder.matches(any(), any())).thenReturn(true);
 	}
-	
 	
 	@Test
 	void createCustomer() throws Exception {
@@ -80,7 +90,7 @@ public class CustomerControllerTest {
 				.andExpect(jsonPath("$.accountId").isNumber())
 				.andExpect(jsonPath("$.name").value(NAME))
 				.andExpect(jsonPath("$.email").value(EMAIL))
-//				.andExpect(jsonPath("$.accountType").value(ACCOUNT_TYPE)) /*TODO verify the json name for account type field*/
+				.andExpect(jsonPath("$.accountType").value(ACCOUNT_TYPE.name())) /*TODO verify the json name for account type field*/
 				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS)) 
 				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD)); 
 		

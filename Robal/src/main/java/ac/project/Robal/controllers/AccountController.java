@@ -1,9 +1,11 @@
 package ac.project.Robal.controllers;
 
 import java.net.URI;
+import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,8 +53,9 @@ public class AccountController{
 		return accountService.findCustomer(id);
 	}
 
+//	@PreAuthorize("ADMIN")
 	@DeleteMapping("/customers/{id}")
-	public void deleteCustomer(@PathVariable Long id) throws NotFoundException {
+	public void deleteCustomer(Principal principal, @PathVariable Long id) throws NotFoundException {
 		accountService.deleteCustomer(id);
 	}
 

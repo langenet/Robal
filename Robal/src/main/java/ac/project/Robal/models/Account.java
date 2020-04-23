@@ -36,6 +36,7 @@ public class Account {
 	private Long accountId;
 	private String name;
 	private String email;
+	private String password;
 	
 	
 	@Enumerated(EnumType.STRING)

@@ -8,4 +8,5 @@ import ac.project.Robal.models.Customer;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Long>{
 
+	Customer findByEmail(String s);
 }

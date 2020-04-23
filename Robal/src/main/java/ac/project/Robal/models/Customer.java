@@ -26,11 +26,12 @@ public class Customer extends Account {
 	public Customer (Long accountId, 
 					 String name,
 					 String email,
+					 String password,
 					 AccountType accountType,
 					 String billingAddress, 
 					 String paymentMethod, 
 					 List<Order> orders) {
-		super(accountId,name,email,accountType);
+		super(accountId,name,email,password, accountType);
 		this.billingAddress = billingAddress;
 		this.paymentMethod = paymentMethod;
 		this.orders = orders;
