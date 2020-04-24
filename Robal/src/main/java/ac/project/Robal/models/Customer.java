@@ -6,7 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import ac.project.Robal.enums.AccountType;
+import ac.project.Robal.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,11 +27,11 @@ public class Customer extends Account {
 					 String name,
 					 String email,
 					 String password,
-					 AccountType accountType,
+					 Role role,
 					 String billingAddress, 
 					 String paymentMethod, 
 					 List<Order> orders) {
-		super(accountId,name,email,password, accountType);
+		super(accountId,name,email,password, role);
 		this.billingAddress = billingAddress;
 		this.paymentMethod = paymentMethod;
 		this.orders = orders;

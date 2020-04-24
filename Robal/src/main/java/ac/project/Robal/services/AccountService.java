@@ -3,6 +3,7 @@ package ac.project.Robal.services;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ac.project.Robal.exceptions.ClientException;
@@ -21,37 +22,57 @@ public class AccountService {
 	private CustomerRepository customerRepository;
 	private OwnerRepository ownerRepository;
 	private AdministratorRepository administratorRepository;
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
 	@Autowired
-	public AccountService(CustomerRepository customerRepository, OwnerRepository ownerRepository,
-			AdministratorRepository administratorRepository) {
+	public AccountService(CustomerRepository customerRepository, 
+							OwnerRepository ownerRepository,
+							AdministratorRepository administratorRepository,
+							BCryptPasswordEncoder bCryptPasswordEncoder) {
 		this.customerRepository = customerRepository;
 		this.ownerRepository = ownerRepository;
 		this.administratorRepository = administratorRepository;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+
 	}
 
 	// Customer
-	public Customer saveCustomer(Customer customer) throws Exception {
-		// Removed null check on iD but maybe that's needed?
-//		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
-//			throw new ClientException("Cannot create Customer without a name and email");
-//		}
-		return customerRepository.save(customer);
-	}
-
-	public Customer newCustomerOrder(Order order, Long id) throws Exception {
-		// Removed null check on iD but maybe that's needed?
-		Customer customer = findCustomer(id);
-//		customer.getOrders().add(order);
-
-		if (customer.getName().isEmpty() && customer.getEmail().isEmpty()) {
-			throw new ClientException("Cannot create Customer without a name and email");
+	public Customer saveCustomer(Customer customer) throws ClientException, NotFoundException {
+		if (customer.getName() == null 
+				|| customer.getEmail() == null
+				|| customer.getPassword() == null) {
+			//TODO Logging
+			//TODO jUnit test saveCustomer null values
+			throw new ClientException("Cannot create or update customer without Name, Email or Password.");
 		}
-		return customerRepository.save(customer);
+		if (customer.getAccountId() == 0) {
+			customer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));
+			return customerRepository.save(customer);
+		} else {
+			//TODO jUnit test update customer
+			Customer dbCustomer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound());
+			
+			dbCustomer.setName(customer.getName());
+			dbCustomer.setBillingAddress(customer.getBillingAddress());
+			dbCustomer.setEmail(customer.getEmail());
+			dbCustomer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));	
+			dbCustomer.setRole(customer.getRole());
+			dbCustomer.setPaymentMethod(customer.getPaymentMethod());
+
+			//TODO test that this does not wipe out any orders or duplicate them
+			for(Order order:customer.getOrders()) {
+				if (!dbCustomer.getOrders().contains(order)) {
+					dbCustomer.getOrders().add(order);
+				}
+			}
+			
+			return customerRepository.save(dbCustomer);
+		}
 	}
 
-	public Customer findCustomer(Long id) {
-		return customerRepository.findById(id).orElse(null);
+	public Customer findCustomer(Long id) throws NotFoundException {
+		return customerRepository.findById(id).orElseThrow(accountNotFound());
 	}
 
 	public void deleteCustomer(Long id) throws NotFoundException {
@@ -67,9 +88,9 @@ public class AccountService {
 		return ownerRepository.save(owner);
 	}
 
-	public Owner findOwner(Long id) {
+	public Owner findOwner(Long id) throws NotFoundException {
 
-		return ownerRepository.findById(id).orElse(null);
+		return ownerRepository.findById(id).orElseThrow(accountNotFound());
 	}
 
 	public void deleteOwner(Long id) throws NotFoundException {
@@ -94,6 +115,7 @@ public class AccountService {
 	}
 
 	private Supplier<NotFoundException> accountNotFound() {
+		//TODO Logging
 		return () -> new NotFoundException("The account was not found.");
 	}
 }

@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,9 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import ac.project.Robal.TestUtil;
-import ac.project.Robal.enums.AccountType;
+import ac.project.Robal.enums.Role;
 import ac.project.Robal.models.Customer;
-import ac.project.Robal.models.Order;
 import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.services.AccountService;
 
@@ -56,7 +54,7 @@ public class CustomerControllerTest {
 	private static final String EMAIL = "Andy@test.com";
 	private static final String PASSWORD = "password";
 	
-	private static final AccountType ACCOUNT_TYPE = AccountType.CUSTOMER;
+	private static final Role ROLE = Role.CUSTOMER;
 //	private static final List<Order> ORDERS = new ArrayList<Order>();
 	private static final String BILLING_ADDRESS = "123 Main Street";
 	private static final String PAYMENT_METHOD = "MasterCard";
@@ -71,7 +69,7 @@ public class CustomerControllerTest {
 		customer = Customer.builder()
 				.name(NAME)
 				.email(EMAIL)
-				.accountType(ACCOUNT_TYPE)
+				.role(ROLE)
 				.billingAddress(BILLING_ADDRESS)
 				.paymentMethod(PAYMENT_METHOD)
 				.build();
@@ -90,7 +88,7 @@ public class CustomerControllerTest {
 				.andExpect(jsonPath("$.accountId").isNumber())
 				.andExpect(jsonPath("$.name").value(NAME))
 				.andExpect(jsonPath("$.email").value(EMAIL))
-				.andExpect(jsonPath("$.accountType").value(ACCOUNT_TYPE.name())) /*TODO verify the json name for account type field*/
+				.andExpect(jsonPath("$.role").value(ROLE.name())) /*TODO verify the json name for account type field*/
 				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS)) 
 				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD)); 
 		

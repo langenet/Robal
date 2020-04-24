@@ -1,6 +1,6 @@
 package ac.project.Robal.enums;
 
-public enum AccountType {
+public enum Role {
 
 	CUSTOMER, OWNER, ADMINISTRATOR;
 }

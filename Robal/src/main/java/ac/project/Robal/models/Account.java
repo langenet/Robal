@@ -12,9 +12,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import ac.project.Robal.enums.AccountType;
+import ac.project.Robal.enums.Role;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +40,6 @@ public class Account {
 	
 	@Enumerated(EnumType.STRING)
 	@Transient
-	private AccountType accountType;
+	private Role role;
 
 }

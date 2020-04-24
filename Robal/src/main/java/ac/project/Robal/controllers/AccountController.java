@@ -49,7 +49,7 @@ public class AccountController{
 	}
 
 	@GetMapping("/customers/{id}")
-	public Customer findCustomer(@PathVariable Long id) {
+	public Customer findCustomer(@PathVariable Long id) throws NotFoundException {
 		return accountService.findCustomer(id);
 	}
 
@@ -71,7 +71,7 @@ public class AccountController{
 	}
 
 	@GetMapping("/owners/{id}")
-	public Owner findOwner(@PathVariable Long id) {
+	public Owner findOwner(@PathVariable Long id) throws NotFoundException {
 		return accountService.findOwner(id);
 	}
 
