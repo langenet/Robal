@@ -40,6 +40,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 //	            .antMatchers("/api/v1/accounts")
 //	            .authenticated()
 	            .and()
+	            .headers().frameOptions().sameOrigin()
+	            .and()
 	            .httpBasic()
 	            .and()
 	            .formLogin()
@@ -47,5 +49,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	            .csrf()
 	            .disable()
 	            .logout();
+
 	    }
 }

@@ -1,5 +1,16 @@
 package ac.project.Robal.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
 import ac.project.Robal.models.OrderProduct;
@@ -8,14 +19,6 @@ import ac.project.Robal.repositories.OrderProductRepository;
 import ac.project.Robal.repositories.OrderRepository;
 import ac.project.Robal.repositories.ProductRepository;
 import javassist.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -55,12 +58,17 @@ public class OrderService {
 				.mapToDouble(OrderProduct::getPrice)
 				.sum();
 
+		BigDecimal totalPrice = BigDecimal.valueOf(subTotal * GST);
+		totalPrice = totalPrice.setScale(2, RoundingMode.HALF_UP);
+	  
+	    
 		Order order = Order.builder()
 				.orderProducts(orderProducts)
 				.purchaseDate(LocalDate.now())
-				.invoiceNumber(new Random().nextLong())
+				.invoiceNumber((long) new Random().nextInt(999999)) //number between +1 and +999999
+	//			.invoiceNumber(new Random().nextLong())
 				.subTotal(subTotal)
-				.total(subTotal * GST)
+				.total(totalPrice.doubleValue())
 				.build();
 		order = orderRepository.save(order);
 
