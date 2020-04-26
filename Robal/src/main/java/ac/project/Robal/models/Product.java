@@ -1,18 +1,24 @@
 package ac.project.Robal.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-
+@Builder
 @Entity
 @Table
 public class Product {

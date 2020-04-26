@@ -18,6 +18,7 @@ import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.repositories.OrderProductRepository;
 import ac.project.Robal.repositories.OrderRepository;
 import ac.project.Robal.repositories.ProductRepository;
+import ac.project.Robal.repositories.StoreProductRepository;
 import javassist.NotFoundException;
 
 @Service
@@ -28,17 +29,17 @@ public class OrderService {
 	private OrderRepository orderRepository;
 	private CustomerRepository customerRepository;
 	private OrderProductRepository orderProductRepository;
-	private ProductRepository productRepository;
+	private StoreProductRepository storeProductRepository;
 
 	@Autowired
 	public OrderService(OrderRepository orderRepository,
 						CustomerRepository customerRepository,
 						OrderProductRepository orderProductRepository,
-						ProductRepository productRepository) {
+						StoreProductRepository storeProductRepository) {
 		this.orderRepository = orderRepository;
 		this.customerRepository = customerRepository;
 		this.orderProductRepository = orderProductRepository;
-		this.productRepository = productRepository;
+		this.storeProductRepository = storeProductRepository;
 	}
 
 	public Order saveOrder(Customer customer, List<OrderProduct> orderProducts) throws Exception {
@@ -48,15 +49,21 @@ public class OrderService {
 		 Obviously the product must exist in the db beforehand. */
 		orderProducts = orderProducts.stream()
 				.map(orderProduct -> OrderProduct.builder()
-						.product(productRepository.findById(orderProduct.getProduct().getProductId())
+						.storeProduct(storeProductRepository.findById(orderProduct.getStoreProduct().getStoreProductid())
 							.orElse(null))
+						.price(orderProduct.getStoreProduct().getPrice())
 						.build())
 				.collect(Collectors.toList());
 		orderProducts = orderProductRepository.saveAll(orderProducts);
 
-		double subTotal = orderProducts.stream()
-				.mapToDouble(OrderProduct::getPrice)
-				.sum();
+		double subTotal = 0;
+		
+		for (OrderProduct orderProduct: orderProducts) {
+			subTotal += orderProduct.getPrice() * orderProduct.getQuantity();
+		}
+//		double subTotal = orderProducts.stream()
+//				.mapToDouble(OrderProduct::getPrice).
+//				.sum();
 
 		BigDecimal totalPrice = BigDecimal.valueOf(subTotal * GST);
 		totalPrice = totalPrice.setScale(2, RoundingMode.HALF_UP);

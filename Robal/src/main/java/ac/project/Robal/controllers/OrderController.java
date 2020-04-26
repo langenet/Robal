@@ -26,6 +26,7 @@ public class OrderController {
 
 	@PostMapping("/orders")
 	public Order saveOrder(@RequestBody List<OrderProduct> orderProducts) throws Exception {
+		//TODO once principal is implemented, get the customer from that id.
 		Customer customer = accountService.findCustomer(1L);
 		return orderService.saveOrder(customer, orderProducts);
 	}

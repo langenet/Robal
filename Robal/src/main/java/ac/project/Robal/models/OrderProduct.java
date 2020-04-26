@@ -18,12 +18,12 @@ public class OrderProduct {
 	private Long orderProductId;
 
 	@ManyToOne
-	@JoinColumn(name="store_id_fk")
-	private Store store;
+	@JoinColumn(name="store_product_id_fk")
+	private StoreProduct storeProduct;
 		
-	@ManyToOne
-	@JoinColumn(name="product_id_fk")
-	private Product product;
+//	@ManyToOne
+//	@JoinColumn(name="product_id_fk")
+//	private Product product;
 	
 	private int quantity;
 	private double price;

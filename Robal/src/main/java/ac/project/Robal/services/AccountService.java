@@ -46,7 +46,7 @@ public class AccountService {
 			//TODO jUnit test saveCustomer null values
 			throw new ClientException("Cannot create or update customer without Name, Email or Password.");
 		}
-		if (customer.getAccountId() == 0) {
+		if ((customer.getAccountId() == null ||customer.getAccountId() == 0)) {
 			customer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));
 			return customerRepository.save(customer);
 		} else {
@@ -61,6 +61,7 @@ public class AccountService {
 			dbCustomer.setPaymentMethod(customer.getPaymentMethod());
 
 			//TODO test that this does not wipe out any orders or duplicate them
+			//TODO validation that order is complete
 			for(Order order:customer.getOrders()) {
 				if (!dbCustomer.getOrders().contains(order)) {
 					dbCustomer.getOrders().add(order);

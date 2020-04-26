@@ -12,6 +12,8 @@ import javax.persistence.*;
 @Entity
 public class StoreProduct {
 
+	
+	//TODO verify why this ID isn't sequential
 	@Id
 	@SequenceGenerator(name = "store_product_seq", sequenceName = "store_product_seq", initialValue = 1, allocationSize=1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="store_product_seq")

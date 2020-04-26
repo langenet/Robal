@@ -69,6 +69,7 @@ public class CustomerControllerTest {
 		customer = Customer.builder()
 				.name(NAME)
 				.email(EMAIL)
+				.password(PASSWORD)
 				.role(ROLE)
 				.billingAddress(BILLING_ADDRESS)
 				.paymentMethod(PAYMENT_METHOD)
