@@ -81,13 +81,34 @@ public class AccountService {
 	}
 
 	// Owner
-	public Owner saveOwner(Owner owner) throws Exception {
-		// Removed null check on iD but maybe that's needed?
-		if (owner.getName().isEmpty() && owner.getEmail().isEmpty()) {
-			throw new ClientException("Cannot create Owner without a name and email");
+	public Owner saveOwner(Owner owner) throws Exception {			
+		if (owner.getName() == null 
+				|| owner.getEmail() == null
+				|| owner.getPassword() == null) {
+			//TODO Logging
+			//TODO jUnit test saveowner null values
+			throw new ClientException("Cannot create or update owner without Name, Email or Password.");
 		}
-		return ownerRepository.save(owner);
+		if ((owner.getAccountId() == null ||owner.getAccountId() == 0)) {
+			owner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));
+			return ownerRepository.save(owner);
+		} else {
+			//TODO jUnit test update owner
+			Owner dbOwner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound());
+			
+			dbOwner.setName(owner.getName());
+			dbOwner.setEmail(owner.getEmail());
+			dbOwner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));	
+			dbOwner.setRole(owner.getRole());
+		
+
+			//TODO test that this does not wipe out any orders or duplicate them
+			//TODO validation that order is complete
+	
+			return ownerRepository.save(dbOwner);
+		}
 	}
+	
 
 	public Owner findOwner(Long id) throws NotFoundException {
 

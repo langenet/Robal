@@ -1,25 +1,20 @@
 package ac.project.Robal.services;
 
-import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ac.project.Robal.enums.Role;
 import ac.project.Robal.exceptions.ClientException;
-import ac.project.Robal.models.Customer;
-import ac.project.Robal.models.Order;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
 import ac.project.Robal.models.StoreProduct;
-import ac.project.Robal.repositories.AccountRepository;
 import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.ProductRepository;
 import ac.project.Robal.repositories.StoreProductRepository;
 import ac.project.Robal.repositories.StoreRepository;
-import ch.qos.logback.classic.spi.STEUtil;
 import javassist.NotFoundException;
 
 @Service
@@ -32,7 +27,7 @@ public class StoreService {
 
 	@Autowired
 	public StoreService(StoreRepository storeRepository, StoreProductRepository storeProductRepository,
-			ProductRepository productRepository,OwnerRepository ownerRepository ) {
+			ProductRepository productRepository, OwnerRepository ownerRepository) {
 		this.storeRepository = storeRepository;
 		this.productRepository = productRepository;
 		this.storeProductRepository = storeProductRepository;
@@ -40,105 +35,90 @@ public class StoreService {
 	}
 
 	public Store saveStore(Store store) throws Exception {
-		//TODO add owner here
-		if (store.getName() == null
-				|| store.getAddress() == null) {
+		// TODO add owner here
+
+		Owner storeOwner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
+		if (storeOwner.getRole() != Role.OWNER) {
+			throw new ClientException("Cannot create store without an Owner Account");
+		}
+
+		if (store.getName() == null || store.getAddress() == null) {
 			throw new ClientException("Cannot create store without a name");
 		}
 		if (store.getStoreId() == null || store.getStoreId() == 0) {
-			
+
 			Owner owner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
 			if (owner == null) {
-				
-				//TODO validate owner first
+
+				// TODO validate owner first
 				store.getOwner().getStores().add(store);
-				owner = Owner.builder()
-						.email(store.getOwner().getEmail())
-						.name(store.getOwner().getName())
-						.password(store.getOwner().getPassword())
-						.role(store.getOwner().getRole())
+				owner = Owner.builder().email(store.getOwner().getEmail()).name(store.getOwner().getName())
+						.password(store.getOwner().getPassword()).role(store.getOwner().getRole())
 						.stores(store.getOwner().getStores()) // TODO this might loop
 						.build();
 			}
-			
+
 			store.setOwner(owner);
 
 			return storeRepository.save(store);
 		} else {
 			Store dbStore = storeRepository.findById(store.getStoreId()).orElseThrow(storeNotFound());
-			
+
 			dbStore.setName(store.getName());
 			dbStore.setAddress(store.getAddress());
-			
+
 			Owner owner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
 			if (owner == null) {
-				
-				//TODO Validate Owner
+
+				// TODO Validate Owner
 				store.getOwner().getStores().add(dbStore);
-				owner = Owner.builder()
-						.email(store.getOwner().getEmail())
-						.name(store.getOwner().getName())
-						.password(store.getOwner().getPassword())
-						.role(store.getOwner().getRole())
+				owner = Owner.builder().email(store.getOwner().getEmail()).name(store.getOwner().getName())
+						.password(store.getOwner().getPassword()).role(store.getOwner().getRole())
 						.stores(store.getOwner().getStores()) // TODO this might loop
 						.build();
 			}
-			
+
 			dbStore.setOwner(owner);
-			
-			
-			//TODO validation that the store product is complete
-			for(StoreProduct storeProduct: store.getStoreProducts()) {
+
+			// TODO validation that the store product is complete
+			for (StoreProduct storeProduct : store.getStoreProducts()) {
 				if (!dbStore.getStoreProducts().contains(storeProduct)) {
 					dbStore.getStoreProducts().add(storeProduct);
 				}
 			}
-			
-			//TODO not sure if we need to saveAll storeproducts first
+
+			// TODO not sure if we need to saveAll storeproducts first
 			return storeRepository.save(dbStore);
 		}
 	}
-	
 
 	public StoreProduct saveStoreProduct(Long storeId, Product product, int inventory, double price) throws Exception {
 
-		
 		Product dbProduct = productRepository.findById(product.getProductId()).orElse(null);
-		if(dbProduct == null) {
-			dbProduct = Product.builder()
-							.description(product.getDescription())
-							.name(product.getName())
-							.sku(product.getSku())
-							.build();
+		if (dbProduct == null) {
+			dbProduct = Product.builder().description(product.getDescription()).name(product.getName())
+					.sku(product.getSku()).build();
 		}
-		
-		
-		StoreProduct storeProduct= StoreProduct.builder()
-											.inventory(inventory)
-											.price(price)
-											.product(dbProduct)
-											.build();
-		
-		
+
+		StoreProduct storeProduct = StoreProduct.builder().inventory(inventory).price(price).product(dbProduct).build();
+
 		storeProduct = storeProductRepository.save(storeProduct);
 
 		Store dbStore = storeRepository.findById(storeId).orElseThrow(storeNotFound());
-			
-		
-		//TODO validation that the store product is complete
+
+		// TODO validation that the store product is complete
 //		for(StoreProduct dbStoreProduct: dbStore.getStoreProducts()) {
-			//TODO verify if that specific Product ID exists in the list.  If it does, update the inventory and price only
-			
+		// TODO verify if that specific Product ID exists in the list. If it does,
+		// update the inventory and price only
+
 //			if (!dbStore.getStoreProducts().contains(storeProduct)) {
-				dbStore.getStoreProducts().add(storeProduct);
+		dbStore.getStoreProducts().add(storeProduct);
 //			}
 //		}
-				
-				
-//		storeProduct = storeProductRepository.save(storeProduct);
-		
-		dbStore = storeRepository.save(dbStore);
 
+//		storeProduct = storeProductRepository.save(storeProduct);
+
+		dbStore = storeRepository.save(dbStore);
 
 		// TODO verify if there is a better way of returning the storeProduct
 		return storeProduct;
@@ -162,9 +142,9 @@ public class StoreService {
 	private Supplier<NotFoundException> storeNotFound() {
 		return () -> new NotFoundException("The store was not found.");
 	}
-	
+
 	private Supplier<NotFoundException> accountNotFound() {
-		//TODO Logging
+		// TODO Logging
 		return () -> new NotFoundException("The account was not found.");
 	}
 }
