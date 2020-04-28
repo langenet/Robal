@@ -48,17 +48,21 @@ public class AccountController{
 		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
 	}
 
+	// TODO should there be a preauth for getting accounts?
 	@GetMapping("/customers/{id}")
 	public Customer findCustomer(@PathVariable Long id) throws NotFoundException {
 		return accountService.findCustomer(id);
 	}
 
-//	@PreAuthorize("ADMIN")
+//TODO add PreAuth for "CUSTOMER"
+//	@PreAuthorize("CUSTOMER")
 	@DeleteMapping("/customers/{id}")
 	public void deleteCustomer(Principal principal, @PathVariable Long id) throws NotFoundException {
 		accountService.deleteCustomer(id);
 	}
 
+	
+//TODO add PreAuth for "CUSTOMER"
 	@PutMapping("/customers/{id}")
 	public Customer updateCustomer(@RequestBody Customer customer) throws Exception {
 		return accountService.saveCustomer(customer);
@@ -75,11 +79,12 @@ public class AccountController{
 		return accountService.findOwner(id);
 	}
 
+//TODO add PreAuth for "OWNER"
 	@DeleteMapping("/owners/{id}")
 	public void deleteOwner(@PathVariable Long id) throws NotFoundException {
 		accountService.deleteOwner(id);
 	}
-
+//TODO add PreAuth for "OWNER"
 	@PutMapping("/owners/{id}")
 	public Owner updateOwner(@RequestBody Owner owner) throws Exception {
 		return accountService.saveOwner(owner);

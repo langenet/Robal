@@ -34,61 +34,51 @@ public class StoreService {
 		this.ownerRepository = ownerRepository;
 	}
 
-	public Store saveStore(Store store) throws Exception {
-		// TODO add owner here
+	public Store saveStore(Store store, Owner authOwner) throws NotFoundException, ClientException {
 
-		Owner storeOwner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
-		if (storeOwner.getRole() != Role.OWNER) {
-			throw new ClientException("Cannot create store without an Owner Account");
+		if (store.getName() == null || store.getAddress() == null || store.getOwner().getAccountId() == null
+				|| store.getOwner().getAccountId() == 0) {
+			throw new ClientException("Cannot create store without a name, address or Owner");
 		}
 
-		if (store.getName() == null || store.getAddress() == null) {
-			throw new ClientException("Cannot create store without a name");
-		}
-		if (store.getStoreId() == null || store.getStoreId() == 0) {
+		Owner newOwner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
 
-			Owner owner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
-			if (owner == null) {
+		if (newOwner != null) {
 
-				// TODO validate owner first
-				store.getOwner().getStores().add(store);
-				owner = Owner.builder().email(store.getOwner().getEmail()).name(store.getOwner().getName())
-						.password(store.getOwner().getPassword()).role(store.getOwner().getRole())
-						.stores(store.getOwner().getStores()) // TODO this might loop
-						.build();
-			}
+			// New store
+			if (store.getStoreId() == null || store.getStoreId() == 0) {
 
-			store.setOwner(owner);
+				// compare if owners are the same
 
-			return storeRepository.save(store);
-		} else {
-			Store dbStore = storeRepository.findById(store.getStoreId()).orElseThrow(storeNotFound());
+				if (newOwner == authOwner) {
 
-			dbStore.setName(store.getName());
-			dbStore.setAddress(store.getAddress());
+					// Authenticated Owner is the same owner being set for this store.
+					store.setOwner(authOwner);
 
-			Owner owner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
-			if (owner == null) {
-
-				// TODO Validate Owner
-				store.getOwner().getStores().add(dbStore);
-				owner = Owner.builder().email(store.getOwner().getEmail()).name(store.getOwner().getName())
-						.password(store.getOwner().getPassword()).role(store.getOwner().getRole())
-						.stores(store.getOwner().getStores()) // TODO this might loop
-						.build();
-			}
-
-			dbStore.setOwner(owner);
-
-			// TODO validation that the store product is complete
-			for (StoreProduct storeProduct : store.getStoreProducts()) {
-				if (!dbStore.getStoreProducts().contains(storeProduct)) {
-					dbStore.getStoreProducts().add(storeProduct);
 				}
-			}
 
-			// TODO not sure if we need to saveAll storeproducts first
-			return storeRepository.save(dbStore);
+				return storeRepository.save(store);
+
+			} else {
+				Store dbStore = storeRepository.findById(store.getStoreId()).orElseThrow(storeNotFound());
+
+				dbStore.setName(store.getName());
+				dbStore.setAddress(store.getAddress());
+
+				dbStore.setOwner(newOwner);
+
+				// TODO validation that the store product is complete
+				for (StoreProduct storeProduct : store.getStoreProducts()) {
+					if (!dbStore.getStoreProducts().contains(storeProduct)) {
+						dbStore.getStoreProducts().add(storeProduct);
+					}
+				}
+
+				// TODO not sure if we need to saveAll storeproducts first
+				return storeRepository.save(dbStore);
+			}
+		}else {
+			throw new NotFoundException("Owner not found");
 		}
 	}
 
@@ -145,6 +135,6 @@ public class StoreService {
 
 	private Supplier<NotFoundException> accountNotFound() {
 		// TODO Logging
-		return () -> new NotFoundException("The account was not found.");
+		return () -> new NotFoundException("The Owner was not found.");
 	}
 }
