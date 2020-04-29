@@ -22,7 +22,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-
 @Entity
 @Builder
 @Table(name="stores")

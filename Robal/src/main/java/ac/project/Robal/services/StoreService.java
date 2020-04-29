@@ -95,43 +95,34 @@ public class StoreService {
 
 					dbProduct = Product.builder().description(product.getDescription()).name(product.getName())
 							.sku(product.getSku()).build();
-					dbProduct = productRepository.save(dbProduct);
+					dbProduct = productRepository.save(product);
 				} else {
-					throw new Exception("Product must have a name.");
+					throw new Exception("Product must have a name");
 				}
 			}
-
 			if (inventory < 0) {
-				throw new Exception("Must be a positive Inventory number.");
+				throw new Exception("Must be a positive Inventory numer.");
 			} else if (price < 0) {
-				throw new Exception("Must be a positive Price.");
+				throw new Exception("Must be a positive Pricer.");
 			} else {
 
 				StoreProduct storeProduct = StoreProduct.builder().inventory(inventory).price(price).product(dbProduct)
 						.build();
 
 				storeProduct = storeProductRepository.save(storeProduct);
-
 				// TODO verify if that specific Product ID exists in the list. If it does,
-				// update the inventory and price only
-				// This will be how we update storeProducts.
-
 				// if (!dbStore.getStoreProducts().contains(storeProduct)) {
+
 				dbStore.getStoreProducts().add(storeProduct);
 
 				dbStore = storeRepository.save(dbStore);
 
 				return storeProduct;
 			}
-
-			//
-
-			// }
-			// }
-
 		} else {
-			// TODO verify if there is a better exception for this.
-			throw new NotFoundException("Only the Owner of the Store can modify it.");
+
+			// TODO verify if there is a better error exceptiom
+			throw new NotFoundException("Only the owner of the store can modify it.");
 		}
 	}
 

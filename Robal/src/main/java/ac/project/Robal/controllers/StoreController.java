@@ -51,7 +51,6 @@ public class StoreController {
 								  @RequestParam Double price) throws Exception {
 		Owner owner = accountService.findOwnerByEmail(principal.getName());
 		//TODO add owner to saveStoreProduct parameters and test that it is the owner trying to save a product.
-
 		return storeService.saveStoreProduct(id, product, quantity, price, owner);
 	}
 	
