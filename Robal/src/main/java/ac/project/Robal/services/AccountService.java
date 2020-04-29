@@ -115,8 +115,8 @@ public class AccountService {
 		return ownerRepository.findById(id).orElseThrow(accountNotFound());
 	}
 
-	public Owner findOwnerByEmail(String email) {
-		return ownerRepository.findByEmail(email);
+	public Owner findOwnerByEmail(String email) throws NotFoundException {
+		return ownerRepository.findByEmail(email).orElseThrow(accountNotFound());
 	}
 	
 	public void deleteOwner(Long id) throws NotFoundException {

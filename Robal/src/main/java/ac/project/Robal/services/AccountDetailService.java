@@ -2,7 +2,7 @@ package ac.project.Robal.services;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 
 import ac.project.Robal.models.Account;
 import ac.project.Robal.repositories.AdministratorRepository;
@@ -35,12 +36,12 @@ public class AccountDetailService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
-		Account user = customerRepository.findByEmail(s);
+		Account user = customerRepository.findByEmail(s).orElseThrow(accountNotFound("Customer"));
 		String role;
 
 		if (user == null) {
 
-			user = ownerRepository.findByEmail(s);
+			user = ownerRepository.findByEmail(s).orElseThrow(accountNotFound("Owner"));
 			role = "OWNER";
 		} else {
 			role = "CUSTOMER";
@@ -48,7 +49,7 @@ public class AccountDetailService implements UserDetailsService {
 
 		if (user == null) {
 
-			user = administratorRepository.findByEmail(s);
+			user = administratorRepository.findByEmail(s).orElseThrow(accountNotFound("Administrator"));
 			role = "ADMIN";
 		}
 
@@ -65,6 +66,10 @@ public class AccountDetailService implements UserDetailsService {
 						true, 
 						authorities); // authorities);
 
+	}
+	
+	private Supplier<UsernameNotFoundException> accountNotFound(String accountType){
+		return () -> new UsernameNotFoundException( accountType + " Not Found.");
 	}
 
 }

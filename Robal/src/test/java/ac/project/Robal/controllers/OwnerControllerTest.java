@@ -25,13 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Role;
 import ac.project.Robal.models.Customer;
-import ac.project.Robal.repositories.CustomerRepository;
-import ac.project.Robal.services.AccountService;
+import ac.project.Robal.repositories.StoreRepository;
+import ac.project.Robal.services.StoreService;
 
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class StoreControllerTest {
+public class OwnerControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -40,10 +40,10 @@ public class StoreControllerTest {
 	private EntityManager entityManager;
 
 	@Autowired
-	private AccountService accountService;
+	private StoreService storeService;
 
 	@Autowired
-	private CustomerRepository customerRepository;
+	private StoreRepository storeRepository;
 	
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -80,7 +80,7 @@ public class StoreControllerTest {
 	
 	@Test
 	void createCustomer() throws Exception {
-		int databaseSizeBeforeCreate = customerRepository.findAll().size();
+		int databaseSizeBeforeCreate = ownerRepository.findAll().size();
 		
 		this.mockMvc.perform(post("/customers/")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
