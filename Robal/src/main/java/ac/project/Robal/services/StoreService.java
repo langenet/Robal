@@ -77,41 +77,53 @@ public class StoreService {
 				// TODO not sure if we need to saveAll storeproducts first
 				return storeRepository.save(dbStore);
 			}
-		}else {
-			throw new NotFoundException("Owner not found");
+		} else {
+			throw new NotFoundException("Only the Owner of the Store can modify it");
 		}
 	}
 
-	public StoreProduct saveStoreProduct(Long storeId, Product product, int inventory, double price) throws Exception {
-
-		Product dbProduct = productRepository.findById(product.getProductId()).orElse(null);
-		if (dbProduct == null) {
-			dbProduct = Product.builder().description(product.getDescription()).name(product.getName())
-					.sku(product.getSku()).build();
-		}
-
-		StoreProduct storeProduct = StoreProduct.builder().inventory(inventory).price(price).product(dbProduct).build();
-
-		storeProduct = storeProductRepository.save(storeProduct);
+	public StoreProduct saveStoreProduct(Long storeId, Product product, int inventory, double price, Owner owner)
+			throws Exception {
 
 		Store dbStore = storeRepository.findById(storeId).orElseThrow(storeNotFound());
 
-		// TODO validation that the store product is complete
-//		for(StoreProduct dbStoreProduct: dbStore.getStoreProducts()) {
-		// TODO verify if that specific Product ID exists in the list. If it does,
-		// update the inventory and price only
+		if (dbStore.getOwner().equals(owner)) {
 
-//			if (!dbStore.getStoreProducts().contains(storeProduct)) {
-		dbStore.getStoreProducts().add(storeProduct);
-//			}
-//		}
+			Product dbProduct = productRepository.findById(product.getProductId()).orElse(null);
+			if (dbProduct == null) {
+				if (product.getName() != null) {
 
-//		storeProduct = storeProductRepository.save(storeProduct);
+					dbProduct = Product.builder().description(product.getDescription()).name(product.getName())
+							.sku(product.getSku()).build();
+					dbProduct = productRepository.save(product);
+				} else {
+					throw new Exception("Product must have a name");
+				}
+			}
+			if (inventory < 0) {
+				throw new Exception("Must be a positive Inventory numer.");
+			} else if (price < 0) {
+				throw new Exception("Must be a positive Pricer.");
+			} else {
 
-		dbStore = storeRepository.save(dbStore);
+				StoreProduct storeProduct = StoreProduct.builder().inventory(inventory).price(price).product(dbProduct)
+						.build();
 
-		// TODO verify if there is a better way of returning the storeProduct
-		return storeProduct;
+				storeProduct = storeProductRepository.save(storeProduct);
+				// TODO verify if that specific Product ID exists in the list. If it does,
+				// if (!dbStore.getStoreProducts().contains(storeProduct)) {
+
+				dbStore.getStoreProducts().add(storeProduct);
+
+				dbStore = storeRepository.save(dbStore);
+
+				return storeProduct;
+			}
+		} else {
+
+			// TODO verify if there is a better error exceptiom
+			throw new NotFoundException("Only the owner of the store can modify it.");
+		}
 	}
 
 	/*
@@ -137,4 +149,5 @@ public class StoreService {
 		// TODO Logging
 		return () -> new NotFoundException("The Owner was not found.");
 	}
+
 }
