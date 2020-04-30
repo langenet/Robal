@@ -1,5 +1,7 @@
 package ac.project.Robal.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,8 @@ public class AccountService {
 			return customerRepository.save(customer);
 		} else {
 			//TODO jUnit test update customer
-			Customer dbCustomer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound());
+			Customer dbCustomer = customerRepository.findById(customer.getAccountId())
+					.orElseThrow(accountNotFound("Customer"));
 			
 			dbCustomer.setName(customer.getName());
 			dbCustomer.setBillingAddress(customer.getBillingAddress());
@@ -73,12 +76,17 @@ public class AccountService {
 	}
 
 	public Customer findCustomer(Long id) throws NotFoundException {
-		return customerRepository.findById(id).orElseThrow(accountNotFound());
+		return customerRepository.findById(id).orElseThrow(accountNotFound("Customer"));
+	}
+
+	public List<Customer> listCustomers() {
+		return new ArrayList<Customer>(customerRepository.findAll());
 	}
 
 	public void deleteCustomer(Long id) throws NotFoundException {
-		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound()));
+		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound("Customer")));
 	}
+
 
 	// Owner
 	public Owner saveOwner(Owner owner) throws Exception {			
@@ -94,7 +102,7 @@ public class AccountService {
 			return ownerRepository.save(owner);
 		} else {
 			//TODO jUnit test update owner
-			Owner dbOwner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound());
+			Owner dbOwner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
 			
 			dbOwner.setName(owner.getName());
 			dbOwner.setEmail(owner.getEmail());
@@ -112,36 +120,66 @@ public class AccountService {
 
 	public Owner findOwner(Long id) throws NotFoundException {
 
-		return ownerRepository.findById(id).orElseThrow(accountNotFound());
+		return ownerRepository.findById(id).orElseThrow(accountNotFound("Owner"));
+	}
+
+	public List<Owner> listOwners() {
+		return new ArrayList<Owner>(ownerRepository.findAll());
 	}
 
 	public Owner findOwnerByEmail(String email) throws NotFoundException {
-		return ownerRepository.findByEmail(email).orElseThrow(accountNotFound());
+		return ownerRepository.findByEmail(email).orElseThrow(accountNotFound("Owner"));
 	}
 	
 	public void deleteOwner(Long id) throws NotFoundException {
-		ownerRepository.delete(ownerRepository.findById(id).orElseThrow(accountNotFound()));
+		ownerRepository.delete(ownerRepository.findById(id).orElseThrow(accountNotFound("Owner")));
 	}
 
 	// Administrator
 	public Administrator saveAdministrator(Administrator administrator) throws Exception {
-		// Removed null check on iD but maybe that's needed?
-		if (administrator.getName().isEmpty() && administrator.getEmail().isEmpty()) {
-			throw new ClientException("Cannot create Administrator without a name and email");
+
+		if (administrator.getName() == null
+				|| administrator.getEmail() == null
+				|| administrator.getPassword() == null) {
+			// TODO Logging
+			// TODO jUnit test saveowner null values
+			throw new ClientException("Cannot create or update Administrator without Name, Email or Password.");
 		}
-		return administratorRepository.save(administrator);
+		if ((administrator.getAccountId() == null || administrator.getAccountId() == 0)) {
+			administrator.setPassword(bCryptPasswordEncoder.encode(administrator.getPassword()));
+			return administratorRepository.save(administrator);
+		} else {
+			// TODO jUnit test update owner
+			Administrator dbAdmin = administratorRepository.findById(administrator.getAccountId())
+					.orElseThrow(accountNotFound("Administrator"));
+
+			dbAdmin.setName(administrator.getName());
+			dbAdmin.setEmail(administrator.getEmail());
+			dbAdmin.setPassword(bCryptPasswordEncoder.encode(administrator.getPassword()));
+			dbAdmin.setRole(administrator.getRole());
+
+			// TODO test that this does not wipe out any orders or duplicate them
+			// TODO validation that order is complete
+
+			return administratorRepository.save(dbAdmin);
+		}
 	}
 
-	public Administrator findAdministrator(Long id) {
-		return administratorRepository.findById(id).orElse(null);
+	public Administrator findAdministrator(Long id) throws NotFoundException {
+		return administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator"));
+	}
+
+	public List<Administrator> listAdministrators() {
+		return new ArrayList<Administrator>(administratorRepository.findAll());
 	}
 
 	public void deleteAdministrator(Long id) throws NotFoundException {
-		administratorRepository.delete(administratorRepository.findById(id).orElseThrow(accountNotFound()));
+		administratorRepository
+				.delete(administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator")));
 	}
 
-	private Supplier<NotFoundException> accountNotFound() {
+	private Supplier<NotFoundException> accountNotFound(String accountType) {
 		//TODO Logging
-		return () -> new NotFoundException("The account was not found.");
+		return () -> new NotFoundException("The " + accountType + " account was not found.");
 	}
 }

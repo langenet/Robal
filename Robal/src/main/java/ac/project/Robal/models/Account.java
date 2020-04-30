@@ -10,7 +10,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ac.project.Robal.enums.Role;
 import lombok.AllArgsConstructor;
@@ -39,7 +38,6 @@ public class Account {
 	
 	
 	@Enumerated(EnumType.STRING)
-	@Transient
 	private Role role;
 
 }
