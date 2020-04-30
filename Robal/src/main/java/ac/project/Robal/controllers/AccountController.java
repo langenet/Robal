@@ -69,9 +69,15 @@ public class AccountController{
 	}
 
 	// Owners
+	@ApiOperation(value = "Create an Owner account", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully created account"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PostMapping("/owners")
-	public Owner saveOwner(@RequestBody Owner owner) throws Exception {
-		return accountService.saveOwner(owner);
+	public ResponseEntity<Owner> saveOwner(@RequestBody Owner owner) throws Exception {
+		Owner result = accountService.saveOwner(owner);
+		return ResponseEntity.created(new URI("/owners/" + result.getAccountId())).body(result);
 	}
 
 	@GetMapping("/owners/{id}")

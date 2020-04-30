@@ -102,7 +102,7 @@ public class OwnerControllerTest {
 		int databaseSizeBeforeCreate = ownerRepository.findAll().size();
 
 		this.mockMvc
-				.perform(post("/owner/").contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.perform(post("/owners/").contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.content(TestUtil.convertObjectToJsonBytes(this.owner)))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.accountId").isNumber())
 				.andExpect(jsonPath("$.name").value(NAME)).andExpect(jsonPath("$.email").value(EMAIL)).andExpect(
