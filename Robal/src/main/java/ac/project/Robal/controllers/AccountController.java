@@ -68,7 +68,7 @@ public class AccountController {
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/customers/")
+	@GetMapping("/customers")
 	public ResponseEntity<List<Customer>> listCustomers(Principal principal) throws Exception {
 
 		Account user = AccountUtil.getAccount(principal.getName());
@@ -143,47 +143,83 @@ public class AccountController {
 	}
 
 	// Owners
-	@PostMapping("/owners")
-	public Owner saveOwner(@RequestBody Owner owner) throws Exception {
-		return accountService.saveOwner(owner);
-	}
-
 	@GetMapping("/owners/{id}")
 	public Owner findOwner(@PathVariable Long id) throws NotFoundException {
 		return accountService.findOwner(id);
 	}
 
-//TODO add PreAuth for "OWNER"
-	@DeleteMapping("/owners/{id}")
-	public void deleteOwner(@PathVariable Long id) throws NotFoundException {
-		accountService.deleteOwner(id);
+	@PostMapping("/owners")
+	public Owner saveOwner(@RequestBody Owner owner) throws Exception {
+		return accountService.saveOwner(owner);
 	}
 
-//TODO add PreAuth for "OWNER"
+	// TODO add PreAuth for "OWNER"
 	@PutMapping("/owners/{id}")
 	public Owner updateOwner(@RequestBody Owner owner) throws Exception {
 		return accountService.saveOwner(owner);
 	}
 
+	// TODO add PreAuth for "OWNER"
+	@DeleteMapping("/owners/{id}")
+	public void deleteOwner(@PathVariable Long id) throws NotFoundException {
+		accountService.deleteOwner(id);
+	}
+
+
 	// Administratrators
-	@PostMapping("/administrators")
+
+	@ApiOperation(value = "Find a Customer", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully retrieved Customer"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@GetMapping("/admins/{id}")
+	public ResponseEntity<Administrator> findAdministrator(Principal principal, @PathVariable Long id)
+			throws Exception, NotFoundException {
+		Account user = AccountUtil.getAccount(principal.getName());
+
+		if (user.getAccountId() == id
+				|| user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.findAdministrator(id), HttpStatus.OK);
+		} else {
+			throw new Exception("You are not authorized to view");
+		}
+	}
+
+	@ApiOperation(value = "List all Adminstrators", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Administrator"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/admins")
+	public ResponseEntity<List<Administrator>> listAdministrators(Principal principal) throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+
+		if (user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.listAdministrators(), HttpStatus.OK);
+		} else {
+
+			throw new Exception("You are not authorized to view these accounts.");
+		}
+	}
+
+	@PostMapping("/admins")
 	public Administrator saveAdministrator(@RequestBody Administrator adminsitrator) throws Exception {
 		return accountService.saveAdministrator(adminsitrator);
 	}
 
-	@GetMapping("/administrators/{id}")
-	public Administrator findAdministrator(@PathVariable Long id) {
-		return accountService.findAdministrator(id);
+	@PutMapping("/admins/{id}")
+	public Administrator updateAdministrator(@RequestBody Administrator adminsitrator) throws Exception {
+		return accountService.saveAdministrator(adminsitrator);
 	}
 
-	@DeleteMapping("/administrators/{id}")
+	@DeleteMapping("/admins/{id}")
 	public void deleteAdministrator(@PathVariable Long id) throws NotFoundException {
 		accountService.deleteAdministrator(id);
 	}
 
-	@PutMapping("/administrators/{id}")
-	public Administrator updateAdministrator(@RequestBody Administrator adminsitrator) throws Exception {
-		return accountService.saveAdministrator(adminsitrator);
-	}
 
 }

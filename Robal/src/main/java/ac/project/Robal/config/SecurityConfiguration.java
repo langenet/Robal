@@ -2,6 +2,7 @@ package ac.project.Robal.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,16 +34,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	    protected void configure(HttpSecurity http) throws Exception {
 	        http
 	            .authorizeRequests()
-	            .antMatchers("/swagger-ui.html").permitAll()
-	            .antMatchers("/h2-console/**").permitAll()
-//				.antMatchers(HttpMethod.POST, "/admins").permitAll()
-//				.antMatchers(HttpMethod.POST, "/owners").permitAll()
-//				.antMatchers(HttpMethod.POST, "/customers").permitAll()
-//	            .antMatchers(HttpMethod.GET, "/stores").permitAll()
-				.antMatchers("/admins").authenticated()
-				.antMatchers("/owners").authenticated()
-				.antMatchers("/customers").authenticated()
-				.antMatchers("/stores").authenticated()
+				.antMatchers("/swagger-ui.html").permitAll()
+				.antMatchers("/h2-console/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/admins/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/owners/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/customers/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/stores/**").permitAll()
+				.antMatchers("/admins/**").authenticated()
+				.antMatchers("/owners/**").authenticated()
+				.antMatchers("/customers/**").authenticated()
+				.antMatchers("/stores/**").authenticated()
 				.and()
 	            .headers().frameOptions().sameOrigin()
 				.and()

@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
@@ -16,6 +17,7 @@ import lombok.Getter;
 
 @Getter
 
+@Component
 public class AccountUtil {
 
 	private static CustomerRepository customerRepository;
