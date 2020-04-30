@@ -1,5 +1,7 @@
 package ac.project.Robal.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +80,10 @@ public class AccountService {
 
 	public void deleteCustomer(Long id) throws NotFoundException {
 		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound()));
+	}
+
+	public List<Customer> listCustomers() {
+		return new ArrayList<Customer>(customerRepository.findAll());
 	}
 
 	// Owner
