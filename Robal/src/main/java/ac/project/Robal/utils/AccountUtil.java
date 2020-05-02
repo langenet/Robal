@@ -27,9 +27,9 @@ public class AccountUtil {
 	@Autowired
 	public AccountUtil(CustomerRepository customerRepository, OwnerRepository ownerRepository,
 			AdministratorRepository administratorRepository) {
-		this.customerRepository = customerRepository;
-		this.ownerRepository = ownerRepository;
-		this.administratorRepository = administratorRepository;
+		AccountUtil.customerRepository = customerRepository;
+		AccountUtil.ownerRepository = ownerRepository;
+		AccountUtil.administratorRepository = administratorRepository;
 	}
 
 	// TODO Andy, how can i return either a Customer, Owner or administrator with a

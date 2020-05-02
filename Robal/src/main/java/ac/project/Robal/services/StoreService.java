@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ac.project.Robal.enums.Role;
 import ac.project.Robal.exceptions.ClientException;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Product;
