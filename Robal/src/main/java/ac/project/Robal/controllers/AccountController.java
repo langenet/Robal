@@ -157,7 +157,7 @@ public class AccountController {
 		Account user = AccountUtil.getAccount(principal.getName());
 
 		if (user.getAccountId() == id
-				|| user.getRole() == Role.OWNER || user.getRole() == Role.ADMIN) { //admins should be able to check right?
+				|| user.getRole() == Role.ADMIN) { //admins should be able to check right?
 			return new ResponseEntity<>(accountService.findOwner(id), HttpStatus.OK);
 		} else {
 			throw new Exception("You are not authorized to view");
@@ -176,7 +176,7 @@ public class AccountController {
 
 		Account user = AccountUtil.getAccount(principal.getName());
 
-		if (user.getRole() == Role.OWNER || user.getRole() == Role.ADMIN) { //admins should be able to check right?
+		if (user.getRole() == Role.ADMIN) { //admins should be able to check right?
 			return new ResponseEntity<>(accountService.listOwners(), HttpStatus.OK);
 		} else {
 
@@ -197,7 +197,7 @@ public class AccountController {
 		Owner result;
 
 		if (user.getAccountId() == owner.getAccountId()
-				|| user.getRole() == Role.ADMIN || user.getRole() == Role.OWNER) {
+				|| user.getRole() == Role.ADMIN ) {
 
 			result = accountService.saveOwner(owner);
 
@@ -222,7 +222,7 @@ public class AccountController {
 		Account user = AccountUtil.getAccount(principal.getName());
 
 		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN || user.getRole() == Role.OWNER) {
+				|| user.getRole() == Role.ADMIN ) {
 			accountService.deleteOwner(id);
 		}
 	}
@@ -230,9 +230,9 @@ public class AccountController {
 
 	// Administratrators
 
-	@ApiOperation(value = "Find a Customer", response = Customer.class)
+	@ApiOperation(value = "Find a Administrator", response = Administrator.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully retrieved Customer"),
+			@ApiResponse(code = 200, message = "Successfully retrieved Administrator"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN')")
@@ -249,7 +249,7 @@ public class AccountController {
 		}
 	}
 
-	@ApiOperation(value = "List all Adminstrators", response = Customer.class)
+	@ApiOperation(value = "List all Adminstrators", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully found Administrator"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -268,6 +268,8 @@ public class AccountController {
 		}
 	}
 
+	
+	//TODO finish implementing Admin
 	@PostMapping("/admins")
 	public Administrator saveAdministrator(@RequestBody Administrator adminsitrator) throws Exception {
 		return accountService.saveAdministrator(adminsitrator);
