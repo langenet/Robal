@@ -1,5 +1,6 @@
 package ac.project.Robal.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +34,7 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="account_seq")
 	private Long accountId;
 	private String name;
+	@Column(unique = true)
 	private String email;
 	private String password;
 	

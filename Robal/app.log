@@ -1,0 +1,4 @@
+2020-05-03 17:21:30,097 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on MyWin10 with PID 32296 (started by Robert in C:\Users\Robert\Desktop\AlgonquinCollege Course\CST-8277 Enterprise App. Prog\gitRepository\Robal)
+2020-05-03 17:21:30,098 DEBUG ac.project.Robal.RobalApplication [restartedMain] Running with Spring Boot v2.2.5.RELEASE, Spring v5.2.4.RELEASE
+2020-05-03 17:21:30,098 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-03 17:21:34,892 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 4.889 seconds (JVM running for 100.56)
