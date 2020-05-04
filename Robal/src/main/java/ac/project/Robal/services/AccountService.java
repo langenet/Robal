@@ -2,12 +2,16 @@ package ac.project.Robal.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import ac.project.Robal.controllers.AccountController;
 import ac.project.Robal.exceptions.ClientException;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
@@ -38,9 +42,10 @@ public class AccountService {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 
 	}
+	Logger logger = LoggerFactory.getLogger(AccountService.class);
 
 	// Customer
-	public Customer saveCustomer(Customer customer) throws ClientException, NotFoundException {
+	public Customer saveCustomer(Customer customer) throws Exception {
 		if (customer.getName() == null 
 				|| customer.getEmail() == null
 				|| customer.getPassword() == null) {
@@ -48,6 +53,12 @@ public class AccountService {
 			//TODO jUnit test saveCustomer null values
 			throw new ClientException("Cannot create or update customer without Name, Email or Password.");
 		}
+		
+		if (customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+			logger.info("***saveCustomer method account already exists for " + customer.getName() +" with email " + customer.getEmail()  + "***");
+			throw new Exception("Customer account already exist.");
+		}
+		
 		if ((customer.getAccountId() == null ||customer.getAccountId() == 0)) {
 			customer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));
 			return customerRepository.save(customer);
@@ -70,11 +81,11 @@ public class AccountService {
 					dbCustomer.getOrders().add(order);
 				}
 			}
-			
 			return customerRepository.save(dbCustomer);
 		}
 	}
 
+		
 	public Customer findCustomer(Long id) throws NotFoundException {
 		return customerRepository.findById(id).orElseThrow(accountNotFound("Customer"));
 	}
@@ -180,6 +191,9 @@ public class AccountService {
 
 	private Supplier<NotFoundException> accountNotFound(String accountType) {
 		//TODO Logging
+		
+		
 		return () -> new NotFoundException("The " + accountType + " account was not found.");
 	}
+
 }
