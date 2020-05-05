@@ -70,3 +70,129 @@ Identify and stop the process that's listening on port 8080 or configure this ap
 2020-05-04 14:48:49,032 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table product if exists
 2020-05-04 14:48:49,033 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table store_product if exists
 2020-05-04 14:48:49,033 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:33:53,720 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 2428 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:33:53,727 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:34:03,707 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 10.676 seconds (JVM running for 12.398)
+2020-05-04 20:35:49,766 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:35:49,775 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:35:49,777 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:35:49,778 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:35:49,781 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:35:49,783 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:35:49,783 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:35:49,784 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-6] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:36:02,088 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 13460 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:36:02,095 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:36:11,771 ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter [restartedMain] 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2020-05-04 20:36:11,796 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:36:11,804 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:36:11,806 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:36:11,807 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:36:11,810 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:36:11,812 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:36:11,813 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:36:11,814 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [restartedMain] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:38:37,592 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 14960 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:38:37,600 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:38:47,933 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 11.041 seconds (JVM running for 12.792)
+2020-05-04 20:39:54,077 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:39:54,085 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:39:54,086 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:39:54,087 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:39:54,089 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:39:54,091 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:39:54,091 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:39:54,092 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:39:56,007 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 14960 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:39:56,008 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:39:59,333 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 3.4 seconds (JVM running for 84.192)
+2020-05-04 20:40:31,921 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:40:31,925 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:40:31,928 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:40:31,929 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:40:31,931 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:40:31,933 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:40:31,934 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:40:31,934 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(11)-127.0.0.1] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:40:40,877 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 17252 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:40:40,883 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:40:50,746 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 10.563 seconds (JVM running for 12.305)
+2020-05-04 20:49:03,614 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:49:03,622 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:49:03,623 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:49:03,624 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:49:03,626 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:49:03,629 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:49:03,630 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:49:03,631 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:49:05,417 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 17252 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:49:05,417 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:49:08,446 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 3.129 seconds (JVM running for 510.004)
+2020-05-04 20:50:28,772 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:50:28,777 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:50:28,779 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:50:28,779 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:50:28,781 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:50:28,784 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:50:28,785 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:50:28,785 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-16] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:50:30,572 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 17252 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:50:30,573 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:50:33,579 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 3.079 seconds (JVM running for 595.138)
+2020-05-04 20:50:42,002 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:50:42,007 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:50:42,009 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:50:42,010 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:50:42,012 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:50:42,016 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:50:42,017 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:50:42,019 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-23] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:50:44,102 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 17252 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:50:44,103 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:50:46,964 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 2.936 seconds (JVM running for 608.524)
+2020-05-04 20:53:49,732 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:53:49,739 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:53:49,740 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:53:49,741 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:53:49,742 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:53:49,743 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:53:49,744 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:53:49,744 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-29] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:53:51,641 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 17252 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:53:51,642 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:53:54,515 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 2.98 seconds (JVM running for 796.075)
+2020-05-04 20:55:02,245 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:55:02,250 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:55:02,252 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:55:02,253 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:55:02,255 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:55:02,257 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:55:02,257 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:55:02,258 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [RMI TCP Connection(24)-127.0.0.1] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:55:11,160 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 4572 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:55:11,167 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:55:21,440 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 11.029 seconds (JVM running for 12.776)
+2020-05-04 20:59:08,788 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table accounts if exists
+2020-05-04 20:59:08,797 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table customer if exists
+2020-05-04 20:59:08,799 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table order_product if exists
+2020-05-04 20:59:08,800 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table orders if exists
+2020-05-04 20:59:08,801 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table owner if exists
+2020-05-04 20:59:08,803 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table product if exists
+2020-05-04 20:59:08,803 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table store_product if exists
+2020-05-04 20:59:08,804 ERROR org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl [Thread-8] HHH000478: Unsuccessful: drop table stores if exists
+2020-05-04 20:59:10,539 INFO ac.project.Robal.RobalApplication [restartedMain] Starting RobalApplication on Riccio-Dev with PID 4572 (started by alexr in C:\Users\alexr\Documents\Computer Programmer\CST8277\Git\Robal\Robal)
+2020-05-04 20:59:10,539 INFO ac.project.Robal.RobalApplication [restartedMain] No active profile set, falling back to default profiles: default
+2020-05-04 20:59:13,976 INFO ac.project.Robal.RobalApplication [restartedMain] Started RobalApplication in 3.513 seconds (JVM running for 245.311)
