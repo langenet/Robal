@@ -5,11 +5,12 @@ spring:
       path: /h2-console 
   datasource:
     platform: h2
-    url: jdbc:h2:file:~/projectdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
-    driverClassName: org.h2.Driver
-#    url: jdbc:postgresql://db:5432/postgres
-#    username: postgres
-#    password: mysecretpassword
+#    url: jdbc:h2:file:~/projectdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+#    driverClassName: org.h2.Driver
+    url: jdbc:postgresql://localhost:5434/postgres
+    username: postgres
+    password: admin
+    
   jpa:
     show-sql: true
     hibernate:
