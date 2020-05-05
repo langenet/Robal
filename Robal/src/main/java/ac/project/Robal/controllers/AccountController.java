@@ -2,12 +2,13 @@ package ac.project.Robal.controllers;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,12 +39,16 @@ import javassist.NotFoundException;
 public class AccountController {
 
 	Logger logger = LoggerFactory.getLogger(AccountController.class);
-	
+
 	private AccountService accountService;
 
+	private Environment environment;
+
 	@Autowired
-	public AccountController(AccountService accountService) {
+	public AccountController(AccountService accountService,
+			Environment environment) {
 		this.accountService = accountService;
+		this.environment = environment;
 	}
 
 	// Find a Customer
@@ -56,10 +61,10 @@ public class AccountController {
 	@GetMapping("/customers/{id}")
 	public ResponseEntity<Customer> findCustomer(Principal principal, @PathVariable Long id)
 			throws Exception, NotFoundException {
-		
+
 		Account user = AccountUtil.getAccount(principal.getName());
 		logger.info("***Get Customer by ID method accessed by " + user.getEmail() + "***");
-		
+
 		if (user.getAccountId() == id
 				|| user.getRole() == Role.ADMIN) {
 			return new ResponseEntity<>(accountService.findCustomer(id), HttpStatus.OK);
@@ -69,8 +74,7 @@ public class AccountController {
 		}
 	}
 
-	
-	//List all Customers
+	// List all Customers
 	@ApiOperation(value = "List all Customers", response = Customer.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully found Customers"),
@@ -79,20 +83,20 @@ public class AccountController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/customers")
 	public ResponseEntity<List<Customer>> listCustomers(Principal principal) throws Exception {
-		
+
 		Account user = AccountUtil.getAccount(principal.getName());
 		logger.info("******List Customer method accessed by " + user.getEmail() + "***");
 
 		if (user.getRole() == Role.ADMIN) {
 			return new ResponseEntity<>(accountService.listCustomers(), HttpStatus.OK);
 		} else {
-			logger.info("******List Customer - Need ADMIN role to list cusomters. Accessed by " + user.getEmail() + " role: " + user.getRole() + "***");
+			logger.info("******List Customer - Need ADMIN role to list cusomters. Accessed by " + user.getEmail()
+					+ " role: " + user.getRole() + "***");
 			throw new Exception("You are not authorized to view");
 		}
 	}
 
-	
-	//Create Customer
+	// Create Customer
 	@ApiOperation(value = "Create a Customer", response = Customer.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully created Customer"),
@@ -100,12 +104,10 @@ public class AccountController {
 	})
 	@PostMapping("/customers")
 	public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) throws Exception {
-		
+
 		logger.info("***saveCustomer method accessed by " + customer.getName() + "***");
 		Customer result;
 
-		
-		
 		if (customer.getAccountId() == null
 				|| customer.getAccountId() == 0) {
 			result = accountService.saveCustomer(customer);
@@ -116,8 +118,7 @@ public class AccountController {
 		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
 	}
 
-	
-	//Update a Customer
+	// Update a Customer
 	@ApiOperation(value = "Update a Customer", response = Customer.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated account"),
@@ -127,10 +128,10 @@ public class AccountController {
 	@PutMapping("/customers/{id}")
 	public ResponseEntity<Customer> updateCustomer(Principal principal, @RequestBody Customer customer)
 			throws Exception {
-		
+
 		Account user = AccountUtil.getAccount(principal.getName());
 		logger.info("***updateCustomer method accessed by " + user.getEmail() + "***");
-		
+
 		Customer result;
 
 		if (user.getAccountId() == customer.getAccountId()
@@ -139,15 +140,15 @@ public class AccountController {
 			result = accountService.saveCustomer(customer);
 
 		} else {
-			logger.info("***updateCustomer method failed. No priviledge for: " + user.getEmail() + " role: " + user.getRole() + "***");
+			logger.info("***updateCustomer method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
 			throw new Exception("Only the customer themselves or an Administrator can update this account.");
 		}
 		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
 
 	}
 
-	
-	//Delete a Customer
+	// Delete a Customer
 	@ApiOperation(value = "Delete a Customer", response = Customer.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully deleted Customer"),
@@ -165,7 +166,6 @@ public class AccountController {
 		}
 	}
 
-	
 	// Find Owner
 	@ApiOperation(value = "Find an owner", response = Owner.class)
 	@ApiResponses(value = {
@@ -176,12 +176,12 @@ public class AccountController {
 	@GetMapping("/owners/{id}")
 	public ResponseEntity<Owner> findOwner(Principal principal, @PathVariable Long id)
 			throws Exception, NotFoundException {
-		
+
 		Account user = AccountUtil.getAccount(principal.getName());
 		logger.info("***findOwner method accessed by " + user.getEmail() + "***");
 
 		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN) { 
+				|| user.getRole() == Role.ADMIN) {
 			return new ResponseEntity<>(accountService.findOwner(id), HttpStatus.OK);
 		} else {
 			logger.info("***findOwner method failed: " + user.getEmail() + " " + user.getRole() + "***");
@@ -189,7 +189,6 @@ public class AccountController {
 		}
 	}
 
-	
 	// List all owners
 	@ApiOperation(value = "List all Owners", response = Owner.class)
 	@ApiResponses(value = {
@@ -201,8 +200,8 @@ public class AccountController {
 	public ResponseEntity<List<Owner>> listOwners(Principal principal) throws Exception {
 		logger.info("***listOwners method accessed " + " by " + principal.getName() + "***");
 		Account user = AccountUtil.getAccount(principal.getName());
-		
-		if (user.getRole() == Role.ADMIN) { //admins should be able to check right?
+
+		if (user.getRole() == Role.ADMIN) { // admins should be able to check right?
 			return new ResponseEntity<>(accountService.listOwners(), HttpStatus.OK);
 		} else {
 
@@ -210,8 +209,7 @@ public class AccountController {
 		}
 	}
 
-	
-	//Update Owner
+	// Update Owner
 	@ApiOperation(value = "Update an Owner", response = Owner.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated account"),
@@ -226,20 +224,20 @@ public class AccountController {
 		Owner result;
 
 		if (user.getAccountId() == owner.getAccountId()
-				|| user.getRole() == Role.ADMIN ) {
+				|| user.getRole() == Role.ADMIN) {
 
 			result = accountService.saveOwner(owner);
 
 		} else {
-			logger.info("***updateOwner method failed. No priviledge for: " + user.getEmail() + " role: " + user.getRole() + "***");
+			logger.info("***updateOwner method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
 			throw new Exception("Only the owner themselves or an Administrator can update this account.");
 		}
 		return ResponseEntity.created(new URI("/owners/" + result.getAccountId())).body(result);
 
 	}
-	
 
-	//Delete Owner
+	// Delete Owner
 	@ApiOperation(value = "Delete an Owner", response = Owner.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully deleted Owner account"),
@@ -252,13 +250,12 @@ public class AccountController {
 		Account user = AccountUtil.getAccount(principal.getName());
 
 		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN ) {
+				|| user.getRole() == Role.ADMIN) {
 			accountService.deleteOwner(id);
 		}
 	}
 
-
-	// Add Administratrator	
+	// Add Administratrator
 	@ApiOperation(value = "Create an Administrator", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully created Administrator"),
@@ -268,7 +265,7 @@ public class AccountController {
 	public ResponseEntity<Administrator> saveAdministrator(@RequestBody Administrator administrator) throws Exception {
 		logger.info("***saveAdministrator method accessed by " + administrator.getName() + "***");
 		Administrator result;
-	
+
 		if (administrator.getAccountId() == null
 				|| administrator.getAccountId() == 0) {
 			result = accountService.saveAdministrator(administrator);
@@ -279,8 +276,31 @@ public class AccountController {
 		return ResponseEntity.created(new URI("/administrator/" + result.getAccountId())).body(result);
 	}
 
+	// Add Administratrator
+	@ApiOperation(value = "Create an Administrator", response = Administrator.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully created Administrator"),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PostMapping("/superadmin")
+	public Administrator saveAdministrator() throws Exception {
+		logger.info("***Creating SUPER ADMIN! ***");
+		if (!Arrays.stream(this.environment.getActiveProfiles()).noneMatch(p -> p.equals("dev"))) {
 
-	
+			Administrator admin = new Administrator();
+
+			admin.setAccountId(null);
+			admin.setEmail("super@admin.com");
+			admin.setName("SuperAdmin");
+			admin.setPassword("password");
+			admin.setRole(Role.ADMIN);
+
+			return accountService.saveAdministrator(admin);
+		}
+
+		return null;
+	}
+
 	// Find Administrator
 	@ApiOperation(value = "Find a Administrator", response = Administrator.class)
 	@ApiResponses(value = {
@@ -302,8 +322,7 @@ public class AccountController {
 		}
 	}
 
-	
-	//List all Administrators
+	// List all Administrators
 	@ApiOperation(value = "List all Adminstrators", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully found Administrator"),
@@ -323,9 +342,7 @@ public class AccountController {
 		}
 	}
 
-
-
-	//Update Administrator
+	// Update Administrator
 	@ApiOperation(value = "Update an Administrator", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated account"),
@@ -333,14 +350,15 @@ public class AccountController {
 	})
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/administrators/{id}")
-	public ResponseEntity<Administrator> updateAdministrator(Principal principal, @RequestBody Administrator administrator)
+	public ResponseEntity<Administrator> updateAdministrator(Principal principal,
+			@RequestBody Administrator administrator)
 			throws Exception {
 		logger.info("***updateAdministrator method accessed by " + principal.getName() + "***");
 		Account user = AccountUtil.getAccount(principal.getName());
 		Administrator result;
 
 		if (user.getAccountId() == administrator.getAccountId()
-				|| user.getRole() == Role.ADMIN ) {  //seems redundant here!
+				|| user.getRole() == Role.ADMIN) { // seems redundant here!
 
 			result = accountService.saveAdministrator(administrator);
 
@@ -352,8 +370,7 @@ public class AccountController {
 
 	}
 
-
-	//Delete Owner
+	// Delete Owner
 	@ApiOperation(value = "Delete an Administrator", response = Owner.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully deleted Administrator account"),
@@ -366,7 +383,7 @@ public class AccountController {
 		Account user = AccountUtil.getAccount(principal.getName());
 
 		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN ) { //seems redundant here!
+				|| user.getRole() == Role.ADMIN) { // seems redundant here!
 			accountService.deleteOwner(id);
 		}
 	}
