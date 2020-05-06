@@ -215,6 +215,26 @@ public class AccountController {
 			@ApiResponse(code = 201, message = "Successfully updated account"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PostMapping("/owners")
+	public ResponseEntity<Owner> saveOwner(Principal principal, @RequestBody Owner owner)
+			throws Exception {
+		logger.info("***saveOwner method accessed " + " by " + principal.getName() + "***");
+
+		Owner result;
+
+		result = accountService.saveOwner(owner);
+
+		return ResponseEntity.created(new URI("/owners/" + result.getAccountId())).body(result);
+
+	}
+
+	// Update Owner
+	@ApiOperation(value = "Update an Owner", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated account"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@PutMapping("/owners/{id}")
 	public ResponseEntity<Owner> updateOwner(Principal principal, @RequestBody Owner owner)
