@@ -210,9 +210,9 @@ public class AccountController {
 	}
 
 	// Update Owner
-	@ApiOperation(value = "Update an Owner", response = Owner.class)
+	@ApiOperation(value = "Create an Owner", response = Owner.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Successfully updated account"),
+			@ApiResponse(code = 201, message = "Successfully create account"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
