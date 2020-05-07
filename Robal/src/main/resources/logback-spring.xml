@@ -1,48 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<include
+		resource="org/springframework/boot/logging/logback/defaults.xml" />
 
-	<!-- Console Logging-->
-    <springProfile name="dev">
-        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+	<!-- Console Logging -->
+	<springProfile name="dev">
+		<include
+			resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-        <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
-        </root>
-        	
-        <logger name="ac.project.Robal" level="INFO"/>
-        
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+		</root>
+
+		<logger name="ac.project.Robal" level="INFO" />
 
 
-	<!-- File Logging-->
-	<property name="LOGS" value="./logs/robalApp.log" />
 
-        <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGS}</file>
+		<!-- File Logging -->
+		<property name="LOGS" value="./logs/robalApp.log" />
 
-            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-                <!-- each archived file, size max 10MB -->
-                <maxFileSize>5MB</maxFileSize>
-                <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
-                <totalSizeCap>10GB</totalSizeCap>
-                <!-- 10 days to keep -->
-                <maxHistory>10</maxHistory>
-            </rollingPolicy>
+		<appender name="FILE-ROLLING"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOGS}</file>
 
-            <encoder>
-                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
-            </encoder>
-        </appender>
-        
-        <!-- Log file (keep logging at minimum with ERROR or verbose with INFO -->
-       
-        <root level="ERROR">
-            <appender-ref ref="FILE-ROLLING"/>
-        </root>
-        
-         <logger name="ac.project.Robal"/>
-         
-    </springProfile>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log
+				</fileNamePattern>
+				<!-- each archived file, size max 10MB -->
+				<maxFileSize>5MB</maxFileSize>
+				<!-- total size of all archive files, if total size > 20GB, it will delete 
+					old archived file -->
+				<totalSizeCap>10GB</totalSizeCap>
+				<!-- 10 days to keep -->
+				<maxHistory>10</maxHistory>
+			</rollingPolicy>
+
+			<encoder>
+				<pattern>%d %p %c{1.} [%t] %m%n</pattern>
+			</encoder>
+		</appender>
+
+		<!-- Log file (keep logging at minimum with ERROR or verbose with INFO -->
+
+		<root level="ERROR">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="FILE-ROLLING" />
+		</root>
+
+		<logger name="ac.project.Robal" />
+
+	</springProfile>
+
+	<!-- Console Logging -->
+	<springProfile name="prod">
+		<include
+			resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+		</root>
+
+		<logger name="ac.project.Robal" level="INFO" />
+
+
+
+		<!-- File Logging -->
+		<property name="LOGS" value="./logs/robalApp.log" />
+
+		<appender name="FILE-ROLLING"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOGS}</file>
+
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log
+				</fileNamePattern>
+				<!-- each archived file, size max 10MB -->
+				<maxFileSize>5MB</maxFileSize>
+				<!-- total size of all archive files, if total size > 20GB, it will delete 
+					old archived file -->
+				<totalSizeCap>10GB</totalSizeCap>
+				<!-- 10 days to keep -->
+				<maxHistory>10</maxHistory>
+			</rollingPolicy>
+
+			<encoder>
+				<pattern>%d %p %c{1.} [%t] %m%n</pattern>
+			</encoder>
+		</appender>
+
+		<!-- Log file (keep logging at minimum with ERROR or verbose with INFO -->
+
+		<root level="ERROR">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="FILE-ROLLING" />
+		</root>
+
+		<logger name="ac.project.Robal" />
+
+	</springProfile>
 
 </configuration>

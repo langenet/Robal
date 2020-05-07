@@ -1,3 +1,4 @@
+FROM openjdk:8-jdk-alpine
 MAINTAINER Robert and Alex
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
@@ -11,7 +12,6 @@ EXPOSE 8080 8443
 
 
 
-#FROM openjdk:8-jdk-alpine
 #VOLUME /tmp
 #EXPOSE 8080
 #RUN mkdir -p /app/
