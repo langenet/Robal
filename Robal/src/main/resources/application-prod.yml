@@ -4,10 +4,14 @@ spring:
       enabled: true
       path: /h2-console 
   datasource:
-    url: jdbc:postgresql://db:5434/postgres
+    url: jdbc:postgresql://localhost:5434/postgres
+    driver-class-name: org.postgresql.Driver
     username: postgres
     password: admin
   jpa:
+    properties: 
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
       ddl-auto: update
