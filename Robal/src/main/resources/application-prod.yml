@@ -1,12 +1,16 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5434/postgres
+    driver-class-name: org.postgresql.Driver
     username: postgres
     password: admin
   jpa:
+    properties: 
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 server:
   port: 8443
   ssl:
@@ -14,3 +18,4 @@ server:
     key-store: classpath:keystore.p12
     key-store-type: PKCS12
     key-alias: tomcat
+

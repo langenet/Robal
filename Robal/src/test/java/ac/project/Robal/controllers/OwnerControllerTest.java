@@ -37,7 +37,7 @@ import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.StoreRepository;
 import ac.project.Robal.services.AccountService;
 
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = RobalApplication.class)
 @SpringBootTest
 //@Transactional
