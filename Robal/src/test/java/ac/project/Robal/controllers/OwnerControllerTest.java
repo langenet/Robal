@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
+import ac.project.Robal.RobalApplication;
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Role;
 import ac.project.Robal.models.Owner;
@@ -33,13 +37,18 @@ import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.StoreRepository;
 import ac.project.Robal.services.AccountService;
 
-
 //@RunWith(SpringRunner.class)
-//@ContextConfiguration(classes = RobalApplication.class)
+@ContextConfiguration(classes = RobalApplication.class)
 @SpringBootTest
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc
 public class OwnerControllerTest {
+//
+//	@Autowired
+//	private WebApplicationContext context;
+
+//	@Autowired
+//	private TestRestTemplate template;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -89,6 +98,11 @@ public class OwnerControllerTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 
+//		mockMvc = MockMvcBuilders
+//				.webAppContextSetup(context)
+//				.apply(springSecurity())
+//				.build();
+
 		owner = Owner.builder().name(NAME).email(EMAIL).password(PASSWORD).role(ROLE).build();
 
 		STORE_PRODUCTS.add(StoreProduct.builder().inventory(INVENTORY).price(PRICE).product(PRODUCT).build());
@@ -100,16 +114,27 @@ public class OwnerControllerTest {
 		Mockito.when(bCryptPasswordEncoder.matches(any(), any())).thenReturn(true);
 	}
 
+	@WithMockUser(roles = "ADMIN")
 	@Test
 	void createOwner() throws Exception {
+
 		int databaseSizeBeforeCreate = ownerRepository.findAll().size();
+
+//		ResponseEntity<Owner> result = template.withBasicAuth("super@admin.com", "password")
+//				.postForEntity("/owners", owner, Owner.class, HttpStatus.CREATED);
+//
+//		assertEquals(HttpStatus.CREATED, result.getStatusCode());
 
 		this.mockMvc
 				.perform(post("/owners/").contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.content(TestUtil.convertObjectToJsonBytes(this.owner)))
-				.andExpect(status().isCreated()).andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME)).andExpect(jsonPath("$.email").value(EMAIL)).andExpect(
-						jsonPath("$.role").value(ROLE.name())); /* TODO verify the json name for account type field */
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.accountId").isNumber())
+				.andExpect(jsonPath("$.name").value(NAME))
+				.andExpect(jsonPath("$.email").value(EMAIL))
+				.andExpect(jsonPath("$.role").value(ROLE.name())); /*
+																	 * TODO verify the json name for account type field
+																	 */
 
 		List<Owner> owners = ownerRepository.findAll();
 		assertThat(owners.size()).isEqualTo(databaseSizeBeforeCreate + 1);
