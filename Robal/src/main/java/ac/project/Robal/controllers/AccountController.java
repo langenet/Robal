@@ -524,7 +524,7 @@ public class AccountController {
 			@ApiResponse(code = 400, message = "Invalid input"),
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@PutMapping("/owners/{id}/email")
+	@PutMapping("/owners/{id}/password")
 	public ResponseEntity<Owner> updateOwnerPassword(Principal principal, @RequestBody Owner owner)
 			throws Exception {
 
