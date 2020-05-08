@@ -1,5 +1,6 @@
 package ac.project.Robal.services;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,11 +126,13 @@ public class StoreService {
 		}
 	}
 
-	/*
-	 * public List<StoreProduct> findStoreProducts(Long storeId) throws Exception{
-	 * List<StoreProduct> storeProducts =
-	 * storeProductRepository.findByStore(storeId); return storeProducts; }
-	 */
+	public StoreProduct findStoreProduct(Long id) throws Exception {
+		return storeProductRepository.findById(id).orElseThrow(storeProductNotFound());
+	}
+
+	public List<StoreProduct> findStoreProducts() throws Exception {
+		return storeProductRepository.findAll();
+	}
 
 	public Store findStore(Long id) throws NotFoundException {
 		return storeRepository.findById(id).orElseThrow(storeNotFound());
@@ -138,6 +141,10 @@ public class StoreService {
 	public void deleteStore(Long id) throws NotFoundException {
 		storeRepository.delete(storeRepository.findById(id).orElseThrow(storeNotFound()));
 
+	}
+
+	private Supplier<NotFoundException> storeProductNotFound() {
+		return () -> new NotFoundException("The storeProduct was not found.");
 	}
 
 	private Supplier<NotFoundException> storeNotFound() {
