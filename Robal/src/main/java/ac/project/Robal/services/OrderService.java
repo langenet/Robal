@@ -86,6 +86,15 @@ public class OrderService {
 		orderRepository.delete(orderRepository.findById(id).orElseThrow(orderNotFound()));
 	}
 
+	public void deleteOrderProduct(Long orderId, Long orderProductId) throws NotFoundException {
+
+		Order order = orderRepository.findById(orderId).orElseThrow(orderNotFound());
+
+		// TODO This needs to be tested.
+		order.getOrderProducts().removeIf(orderProduct -> orderProductId.equals(orderProduct.getOrderProductId()));
+		orderRepository.save(order);
+	}
+
 	private Supplier<NotFoundException> orderNotFound() {
 		return () -> new NotFoundException("The order was not found.");
 	}

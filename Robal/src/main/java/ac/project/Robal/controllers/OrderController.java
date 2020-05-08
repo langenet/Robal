@@ -114,5 +114,36 @@ public class OrderController {
 
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@DeleteMapping("/orders/{oid}/orderProduct/{pid}")
+	public void deleteOrderProduct(Principal principal, @PathVariable Long oid, @PathVariable Long pid)
+			throws Exception {
+
+		logger.info("***deleteOrder method accessed by " + principal.getName() + "***");
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		Customer customer = null;
+		Order order = orderService.findOrder(oid);
+
+		if (order != null) {
+			if (user.getRole() == Role.CUSTOMER) {
+				customer = accountService.findCustomer(user.getAccountId());
+			}
+		} else {
+			throw new Exception("This Order does not exist.");
+		}
+
+		if ((customer != null && customer.getOrders().contains(order))
+				|| user.getRole() == Role.ADMIN) {
+
+			orderService.deleteOrderProduct(oid, pid);
+
+		} else {
+			throw new Exception(
+					"You can only delete orderProducts from your own orders unless you are an Administrator.");
+		}
+
+	}
+
 
 }
