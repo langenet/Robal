@@ -1,14 +1,16 @@
 package ac.project.Robal.controllers;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,11 +56,23 @@ public class StoreController {
 		return storeService.saveStoreProduct(id, product, quantity, price, owner);
 	}
 	
-/*	@GetMapping("/stores/{id}/products")
-	public List<StoreProduct> findStoreProduct(@PathVariable Long id) throws Exception {
-		return storeService.findStoreProducts(id);
-	}*/
+	@GetMapping("/store-products/{id}")
+	public StoreProduct findStoreProduct(@PathVariable Long id) throws Exception {
+		return storeService.findStoreProduct(id);
+	}
 	
+	// TODO Can anyone see all store products? We could have only authenticated
+	// users view them but it's not needed probably
+	@GetMapping("/store-products")
+	public ResponseEntity<List<StoreProduct>> listStoreProducts(@PathVariable Long id) throws Exception {
+		return new ResponseEntity<>(storeService.findStoreProducts(), HttpStatus.OK);
+
+	}
+
+	// TODO search through products as a customer
+	// TODO add product to order
+	// TODO Submit order
+
 	@GetMapping("/stores/{id}")
 	public Store findStore(@PathVariable Long id) throws NotFoundException {
 		return storeService.findStore(id);
@@ -71,10 +85,26 @@ public class StoreController {
 		storeService.deleteStore(id);
 	}
 
-	@PreAuthorize("OWNER")
-	@PutMapping("/store/{id}")
-	public Store updateCustomer(Principal principal, @RequestBody Store store) throws Exception {
-		Owner owner = accountService.findOwnerByEmail(principal.getName());
-		return storeService.saveStore(store, owner);
-	}
+//	@PreAuthorize("OWNER")
+//	@PutMapping("/store/{id}")
+//	public Store updateCustomer(Principal principal, @RequestBody Store store) throws Exception {
+//		Owner owner = accountService.findOwnerByEmail(principal.getName());
+//		return storeService.saveStore(store, owner);
+//	}
+
+	// TODO GET Store owner - Only Admin and the store owner themselves should be
+	// able to see the results.
+	// TODO PUT update store owner - Only the current store owner can update the
+	// owner.
+	// Should we create a method in the service that just updates the owner and use
+	// that in the store post/put request?
+
+
+	// TODO PUT storeProducts
+	// TODO PUT UpdateStoreProductPrice Only the price in the object will be used
+	// with the storeproduct id
+	// TODO PUT UpdateStoreProductInventory Only the inventory in the object will be
+	// used with the storeproduct id
+	// TODO DELETE StoreProduct
+
 }

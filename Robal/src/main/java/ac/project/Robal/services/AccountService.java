@@ -2,7 +2,6 @@ package ac.project.Robal.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ac.project.Robal.controllers.AccountController;
 import ac.project.Robal.exceptions.ClientException;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
@@ -85,13 +83,71 @@ public class AccountService {
 		}
 	}
 
+	public Customer saveCustomerName(Customer customer) throws Exception, NotFoundException {
+
+		String name = customer.getName();
+		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
+		customer.setName(name);
+
+		return saveCustomer(customer);
+
+	}
+
+	public Customer saveCustomerEmail(Customer customer) throws Exception, NotFoundException {
+
+		String email = customer.getEmail();
+		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
+		customer.setName(email);
 		
+		return saveCustomer(customer);
+
+	}
+
+	public Customer saveCustomerPassword(Customer customer) throws Exception, NotFoundException {
+
+		String password = customer.getPassword();
+		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
+		customer.setName(password);
+		customer.setPassword(bCryptPasswordEncoder.encode(password));
+
+		return saveCustomer(customer);
+
+	}
+
+	public Customer saveCustomerBillingAddress(Customer customer) throws Exception, NotFoundException {
+
+		String billingAddress = customer.getBillingAddress();
+		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
+		customer.setName(billingAddress);
+
+		return saveCustomer(customer);
+
+	}
+
+	public Customer saveCustomerPaymentMethod(Customer customer) throws Exception, NotFoundException {
+
+		String paymentMethod = customer.getPaymentMethod();
+		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
+		customer.setName(paymentMethod);
+
+		return saveCustomer(customer);
+
+	}
+
 	public Customer findCustomer(Long id) throws NotFoundException {
 		return customerRepository.findById(id).orElseThrow(accountNotFound("Customer"));
 	}
 
+	public Customer findCustomerByEmail(String email) throws NotFoundException {
+		return customerRepository.findByEmail(email).orElseThrow(accountNotFound("Customer"));
+	}
+
 	public List<Customer> listCustomers() {
 		return new ArrayList<Customer>(customerRepository.findAll());
+	}
+
+	public List<Order> listCustomerOrders(Long customerId) throws NotFoundException {
+		return customerRepository.findById(customerId).orElseThrow(accountNotFound("Customer")).getOrders();
 	}
 
 	public void deleteCustomer(Long id) throws NotFoundException {
@@ -128,6 +184,35 @@ public class AccountService {
 		}
 	}
 	
+	public Owner saveOwnerName(Owner owner) throws Exception, NotFoundException {
+
+		String name = owner.getName();
+		owner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
+		owner.setName(name);
+
+		return saveOwner(owner);
+
+	}
+
+	public Owner saveOwnerEmail(Owner owner) throws Exception, NotFoundException {
+
+		String email = owner.getEmail();
+		owner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
+		owner.setName(email);
+
+		return saveOwner(owner);
+
+	}
+
+	public Owner saveOwnerPassword(Owner owner) throws Exception, NotFoundException {
+
+		String password = owner.getPassword();
+		owner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
+		owner.setPassword(bCryptPasswordEncoder.encode(password));
+
+		return saveOwner(owner);
+
+	}
 
 	public Owner findOwner(Long id) throws NotFoundException {
 
@@ -175,6 +260,37 @@ public class AccountService {
 			return administratorRepository.save(dbAdmin);
 		}
 	}
+
+	public Administrator saveAdministratorName(Administrator admin) throws Exception, NotFoundException {
+
+		String name = admin.getName();
+		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
+		admin.setName(name);
+
+		return saveAdministrator(admin);
+
+	}
+	
+	public Administrator saveAdministratorEmail(Administrator admin) throws Exception, NotFoundException {
+		
+		String email = admin.getEmail();
+		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
+		admin.setName(email);
+		
+		return saveAdministrator(admin);
+		
+	}
+	
+	public Administrator saveAdministratorPassword(Administrator admin) throws Exception, NotFoundException {
+		
+		String password = admin.getPassword();
+		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
+		admin.setPassword(bCryptPasswordEncoder.encode(password));
+		
+		return saveAdministrator(admin);
+		
+	}
+
 
 	public Administrator findAdministrator(Long id) throws NotFoundException {
 		return administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator"));

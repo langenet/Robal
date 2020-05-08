@@ -24,8 +24,10 @@ import ac.project.Robal.enums.Role;
 import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
+import ac.project.Robal.models.Order;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.services.AccountService;
+import ac.project.Robal.services.OrderService;
 import ac.project.Robal.utils.AccountUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -41,13 +43,16 @@ public class AccountController {
 	Logger logger = LoggerFactory.getLogger(AccountController.class);
 
 	private AccountService accountService;
+	private OrderService orderService;
 
 	private Environment environment;
 
 	@Autowired
 	public AccountController(AccountService accountService,
-			Environment environment) {
+			Environment environment,
+			OrderService orderService) {
 		this.accountService = accountService;
+		this.orderService = orderService;
 		this.environment = environment;
 	}
 
@@ -74,6 +79,155 @@ public class AccountController {
 		}
 	}
 
+	// update Customer Name
+
+	@ApiOperation(value = "Update Customer name", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Customer name."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@PutMapping("/customers/{id}/name")
+	public ResponseEntity<Customer> updateCustomerName(Principal principal, @RequestBody Customer customer)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateCustomerName method accessed by " + user.getEmail() + "***");
+
+		Customer result;
+
+		if (user.getAccountId() == customer.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveCustomerName(customer);
+
+		} else {
+			logger.info("***updateCustomerName method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Customer email", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Customer name."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@PutMapping("/customers/{id}/email")
+	public ResponseEntity<Customer> updateCustomerEmail(Principal principal, @RequestBody Customer customer)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateCustomerEmail method accessed by " + user.getEmail() + "***");
+
+		Customer result;
+
+		if (user.getAccountId() == customer.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveCustomerEmail(customer);
+
+		} else {
+			logger.info("***updateCustomerEmail method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Customer password", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Customer name."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@PutMapping("/customers/{id}/password")
+	public ResponseEntity<Customer> updateCustomerPassword(Principal principal, @RequestBody Customer customer)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateCustomerPassword method accessed by " + user.getEmail() + "***");
+
+		Customer result;
+
+		if (user.getAccountId() == customer.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveCustomerPassword(customer);
+
+		} else {
+			logger.info("***updateCustomerPassword method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId() + "/password")).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Customer Billing Address", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Customer Billing Address."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@PutMapping("/customers/{id}/billing-address")
+	public ResponseEntity<Customer> updateCustomerBillingAddress(Principal principal, @RequestBody Customer customer)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateCustomerBillingAddress method accessed by " + user.getEmail() + "***");
+
+		Customer result;
+
+		if (user.getAccountId() == customer.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveCustomerBillingAddress(customer);
+
+		} else {
+			logger.info(
+					"***updateCustomerBillingAddress method failed. No priviledge for: " + user.getEmail() + " role: "
+							+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId() + "/billing-address")).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Customer payment method", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Customer payment method."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@PutMapping("/customers/{id}/payment-method")
+	public ResponseEntity<Customer> updateCustomerPaymentMethod(Principal principal, @RequestBody Customer customer)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateCustomerPaymentMethod method accessed by " + user.getEmail() + "***");
+
+		Customer result;
+
+		if (user.getAccountId() == customer.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveCustomerPaymentMethod(customer);
+
+		} else {
+			logger.info(
+					"***updateCustomerPaymentMethod method failed. No priviledge for: " + user.getEmail() + " role: "
+							+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId() + "/payment-method")).body(result);
+
+	}
+
 	// List all Customers
 	@ApiOperation(value = "List all Customers", response = Customer.class)
 	@ApiResponses(value = {
@@ -95,6 +249,56 @@ public class AccountController {
 			throw new Exception("You are not authorized to view");
 		}
 	}
+
+	@ApiOperation(value = "List all Customer Orders", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Customer Orders"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@GetMapping("/customers/{id}/orders")
+	public ResponseEntity<List<Order>> listCustomerOrders(Principal principal, @PathVariable Long id) throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("******List Customer Orders method accessed by " + user.getEmail() + "***");
+
+		if (user.getAccountId() == id
+				|| user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.listCustomerOrders(id), HttpStatus.OK);
+		} else {
+			logger.info(
+					"******List Customer Orders - Need ADMIN role or you must be the Customer to access their orders. Accessed by "
+							+ user.getEmail()
+							+ " role: " + user.getRole() + "***");
+			throw new Exception("You are not authorized to view");
+		}
+	}
+
+	@ApiOperation(value = "List all Customer Orders", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Customer Orders"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@GetMapping("/customers/{cid}/orders/{oid}")
+	public ResponseEntity<Order> listCustomerOrder(Principal principal, @PathVariable Long cid,
+			@PathVariable Long oid) throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("******View Customer Order method accessed by " + user.getEmail() + "***");
+
+		if (user.getAccountId() == cid
+				|| user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(orderService.findOrder(oid), HttpStatus.OK);
+		} else {
+			logger.info(
+					"******View Customer Order - Need ADMIN role or you must be the Customer to access their order. Accessed by "
+							+ user.getEmail()
+							+ " role: " + user.getRole() + "***");
+			throw new Exception("You are not authorized to view");
+		}
+	}
+
 
 	// Create Customer
 	@ApiOperation(value = "Create a Customer", response = Customer.class)
@@ -215,11 +419,10 @@ public class AccountController {
 			@ApiResponse(code = 201, message = "Successfully create account"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping("/owners")
-	public ResponseEntity<Owner> saveOwner(Principal principal, @RequestBody Owner owner)
+	public ResponseEntity<Owner> saveOwner(@RequestBody Owner owner)
 			throws Exception {
-		logger.info("***saveOwner method accessed " + " by " + principal.getName() + "***");
+		logger.info("***saveOwner method accessed " + " by " + owner.getEmail() + "***");
 
 		Owner result;
 
@@ -254,6 +457,93 @@ public class AccountController {
 			throw new Exception("Only the owner themselves or an Administrator can update this account.");
 		}
 		return ResponseEntity.created(new URI("/owners/" + result.getAccountId())).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Owner name", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Customer name."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/owners/{id}/name")
+	public ResponseEntity<Owner> updateOwnerName(Principal principal, @RequestBody Owner owner)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateOwnerName method accessed by " + user.getEmail() + "***");
+
+		Owner result;
+
+		if (user.getAccountId() == owner.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveOwnerName(owner);
+
+		} else {
+			logger.info("***updateOwnerName method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId() + "/name")).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Owner email", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Owner email."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/owners/{id}/email")
+	public ResponseEntity<Owner> updateOwnerEmail(Principal principal, @RequestBody Owner owner)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateOwnerEmail method accessed by " + user.getEmail() + "***");
+
+		Owner result;
+
+		if (user.getAccountId() == owner.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveOwnerEmail(owner);
+
+		} else {
+			logger.info("***updateOwnerEmail method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/owners/" + result.getAccountId() + "/email")).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Owner password", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Owner password."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/owners/{id}/email")
+	public ResponseEntity<Owner> updateOwnerPassword(Principal principal, @RequestBody Owner owner)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateOwnerPassword method accessed by " + user.getEmail() + "***");
+
+		Owner result;
+
+		if (user.getAccountId() == owner.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveOwnerPassword(owner);
+
+		} else {
+			logger.info("***updateOwnerPassword method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/owners/" + result.getAccountId() + "/password")).body(result);
 
 	}
 
@@ -294,6 +584,92 @@ public class AccountController {
 		}
 
 		return ResponseEntity.created(new URI("/administrator/" + result.getAccountId())).body(result);
+	}
+
+	@ApiOperation(value = "Update Administrator name", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Administrator name."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/administrators/{id}/name")
+	public ResponseEntity<Administrator> updateAdministratorName(Principal principal, @RequestBody Administrator admin)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateAdministratorName method accessed by " + user.getEmail() + "***");
+
+		Administrator result;
+
+		if (user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveAdministratorName(admin);
+
+		} else {
+			logger.info("***updateAdministratorName method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/administrators/" + result.getAccountId() + "/name")).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Administrator email", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Administrator email."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/administrators/{id}/email")
+	public ResponseEntity<Administrator> updateAdministratorEmail(Principal principal, @RequestBody Administrator admin)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateAdministratorEmail method accessed by " + user.getEmail() + "***");
+
+		Administrator result;
+
+		if (user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveAdministratorEmail(admin);
+
+		} else {
+			logger.info("***updateAdministratorEmail method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/administrators/" + result.getAccountId() + "/email")).body(result);
+
+	}
+
+	@ApiOperation(value = "Update Administrator password", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Administrator password."),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/administrators/{id}/password")
+	public ResponseEntity<Administrator> updateAdministratorPassword(Principal principal,
+			@RequestBody Administrator admin)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateAdministratorPassword method accessed by " + user.getEmail() + "***");
+
+		Administrator result;
+
+		if (user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveAdministratorPassword(admin);
+
+		} else {
+			logger.info(
+					"***updateAdministratorPassword method failed. No priviledge for: " + user.getEmail() + " role: "
+							+ user.getRole() + "***");
+			throw new Exception("Only an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/administrators/" + result.getAccountId() + "/password")).body(result);
+
 	}
 
 	// Add Administratrator

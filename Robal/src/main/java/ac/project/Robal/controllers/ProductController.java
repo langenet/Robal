@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import ac.project.Robal.models.Order;
 import ac.project.Robal.models.Product;
 import ac.project.Robal.services.ProductService;
 import javassist.NotFoundException;
@@ -35,12 +34,12 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/prodcuts/{id}")
-	public void deleteOrder(@PathVariable Long id) throws NotFoundException {
+	public void deleteeProduct(@PathVariable Long id) throws NotFoundException {
 		productService.deleteProduct(id);
 	}
 
 	@PutMapping("/prodcuts/{id}")
-	public Product updateOrder(@RequestBody Product product) throws Exception {
+	public Product updateProduct(@RequestBody Product product) throws Exception {
 		return productService.saveProduct(product);
 	}
 
