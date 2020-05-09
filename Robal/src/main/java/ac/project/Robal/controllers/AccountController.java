@@ -323,7 +323,7 @@ public class AccountController {
 	}
 
 	// Update a Customer
-	@ApiOperation(value = "Update a Customer", response = Customer.class)
+	@ApiOperation(value = "Update whole Customer (all fields)", response = Customer.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated account"),
 			@ApiResponse(code = 400, message = "Invalid input")

@@ -28,54 +28,51 @@ public class AccountService {
 	private AdministratorRepository administratorRepository;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
 	@Autowired
-	public AccountService(CustomerRepository customerRepository, 
-							OwnerRepository ownerRepository,
-							AdministratorRepository administratorRepository,
-							BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public AccountService(CustomerRepository customerRepository, OwnerRepository ownerRepository,
+			AdministratorRepository administratorRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
 		this.customerRepository = customerRepository;
 		this.ownerRepository = ownerRepository;
 		this.administratorRepository = administratorRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 
 	}
+
 	Logger logger = LoggerFactory.getLogger(AccountService.class);
 
 	// Customer
 	public Customer saveCustomer(Customer customer) throws Exception {
-		if (customer.getName() == null 
-				|| customer.getEmail() == null
-				|| customer.getPassword() == null) {
+		if (customer.getName() == null || customer.getEmail() == null || customer.getPassword() == null) {
 
-			//TODO jUnit test saveCustomer null values
+			// TODO jUnit test saveCustomer null values
 			throw new ClientException("Cannot create or update customer without Name, Email or Password.");
 		}
-		
-		if (customerRepository.findByEmail(customer.getEmail()).isPresent()) {
-			logger.info("***saveCustomer method account already exists for " + customer.getName() +" with email " + customer.getEmail()  + "***");
-			throw new Exception("Customer account already exist.");
-		}
-		
-		if ((customer.getAccountId() == null ||customer.getAccountId() == 0)) {
+
+		if ((customer.getAccountId() == null || customer.getAccountId() == 0)) {
+			
+			if(emailAlreadyExists(customer.getEmail())) {
+				logger.info("***saveCustomer method account already exists for " + customer.getName() + " with email "
+						+ customer.getEmail() + "***");
+				throw new Exception("Customer account already exist.");
+			}
 			customer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));
 			logger.info("***Repo:saveCustomer(new) attemped for: " + customer.getEmail() + "***");
 			return customerRepository.save(customer);
 		} else {
-			//TODO jUnit test update customer
+			// TODO jUnit test update customer
 			Customer dbCustomer = customerRepository.findById(customer.getAccountId())
 					.orElseThrow(accountNotFound("Customer"));
-			
+
 			dbCustomer.setName(customer.getName());
 			dbCustomer.setBillingAddress(customer.getBillingAddress());
 			dbCustomer.setEmail(customer.getEmail());
-			dbCustomer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));	
+			dbCustomer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));
 			dbCustomer.setRole(customer.getRole());
 			dbCustomer.setPaymentMethod(customer.getPaymentMethod());
 
-			//TODO test that this does not wipe out any orders or duplicate them
-			//TODO validation that order is complete
-			for(Order order:customer.getOrders()) {
+			// TODO test that this does not wipe out any orders or duplicate them
+			// TODO validation that order is complete
+			for (Order order : customer.getOrders()) {
 				if (!dbCustomer.getOrders().contains(order)) {
 					dbCustomer.getOrders().add(order);
 				}
@@ -87,19 +84,35 @@ public class AccountService {
 	public Customer saveCustomerName(Customer customer) throws Exception, NotFoundException {
 
 		String name = customer.getName();
-		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
-		customer.setName(name);
+		customer = customerRepository.findById(customer.getAccountId())
+				.orElse(null)/* .orElseThrow(accountNotFound("Customer")) */;
+		if (customer != null) {
+			customer.setName(name);
 
+		}
+		logger.info("***Repo:update customer name attemped for: " + customer.getEmail() + "***");
 		return saveCustomer(customer);
 
+	}
+
+	private boolean emailAlreadyExists(String email) {
+
+		return customerRepository.findByEmail(email).isPresent() ? true
+				: ownerRepository.findByEmail(email).isPresent() ? true
+						: administratorRepository.findByEmail(email).isPresent() ? true : false;
 	}
 
 	public Customer saveCustomerEmail(Customer customer) throws Exception, NotFoundException {
 
 		String email = customer.getEmail();
+
+		if (emailAlreadyExists(email)) {
+			throw new Exception("Email already taken.");
+		}
+
 		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
 		customer.setName(email);
-		
+
 		return saveCustomer(customer);
 
 	}
@@ -155,37 +168,39 @@ public class AccountService {
 		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound("Customer")));
 	}
 
-
 	// Owner
-	public Owner saveOwner(Owner owner) throws Exception {			
-		if (owner.getName() == null 
-				|| owner.getEmail() == null
-				|| owner.getPassword() == null) {
-			
-			//TODO jUnit test saveowner null values
+	public Owner saveOwner(Owner owner) throws Exception {
+		if (owner.getName() == null || owner.getEmail() == null || owner.getPassword() == null) {
+
+			// TODO jUnit test saveowner null values
 			throw new ClientException("Cannot create or update owner without Name, Email or Password.");
 		}
-		if ((owner.getAccountId() == null ||owner.getAccountId() == 0)) {
+
+		if ((owner.getAccountId() == null || owner.getAccountId() == 0)) {
+			if (emailAlreadyExists(owner.getEmail())) {
+				logger.info("***saveCustomer method account already exists for " + owner.getName() + " with email "
+						+ owner.getEmail() + "***");
+				throw new Exception("Customer account already exist.");
+			}
 			owner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));
 			logger.info("***Repo:saveOwner(new) attemped for: " + owner.getEmail() + "***");
 			return ownerRepository.save(owner);
 		} else {
-			//TODO jUnit test update owner
+			// TODO jUnit test update owner
 			Owner dbOwner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
-			
+
 			dbOwner.setName(owner.getName());
 			dbOwner.setEmail(owner.getEmail());
-			dbOwner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));	
+			dbOwner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));
 			dbOwner.setRole(owner.getRole());
-		
 
-			//TODO test that this does not wipe out any orders or duplicate them
-			//TODO validation that order is complete
+			// TODO test that this does not wipe out any orders or duplicate them
+			// TODO validation that order is complete
 			logger.info("***Repo:saveOwner(update) attemped for: " + owner.getEmail() + "***");
 			return ownerRepository.save(dbOwner);
 		}
 	}
-	
+
 	public Owner saveOwnerName(Owner owner) throws Exception, NotFoundException {
 
 		String name = owner.getName();
@@ -229,7 +244,7 @@ public class AccountService {
 		logger.info("***Repo:Query owner account  for email: " + email + "***");
 		return ownerRepository.findByEmail(email).orElseThrow(accountNotFound("Owner"));
 	}
-	
+
 	public void deleteOwner(Long id) throws NotFoundException {
 		ownerRepository.delete(ownerRepository.findById(id).orElseThrow(accountNotFound("Owner")));
 	}
@@ -237,14 +252,20 @@ public class AccountService {
 	// Administrator
 	public Administrator saveAdministrator(Administrator administrator) throws Exception {
 
-		if (administrator.getName() == null
-				|| administrator.getEmail() == null
+		if (administrator.getName() == null || administrator.getEmail() == null
 				|| administrator.getPassword() == null) {
 			// TODO Logging
 			// TODO jUnit test saveowner null values
 			throw new ClientException("Cannot create or update Administrator without Name, Email or Password.");
 		}
 		if ((administrator.getAccountId() == null || administrator.getAccountId() == 0)) {
+			
+			if(emailAlreadyExists(administrator.getEmail())) {
+				logger.info("***saveCustomer method account already exists for " + administrator.getName() + " with email "
+						+ administrator.getEmail() + "***");
+				throw new Exception("Customer account already exist.");
+			}
+			
 			administrator.setPassword(bCryptPasswordEncoder.encode(administrator.getPassword()));
 			return administratorRepository.save(administrator);
 		} else {
@@ -273,27 +294,26 @@ public class AccountService {
 		return saveAdministrator(admin);
 
 	}
-	
+
 	public Administrator saveAdministratorEmail(Administrator admin) throws Exception, NotFoundException {
-		
+
 		String email = admin.getEmail();
 		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
 		admin.setName(email);
-		
+
 		return saveAdministrator(admin);
-		
+
 	}
-	
+
 	public Administrator saveAdministratorPassword(Administrator admin) throws Exception, NotFoundException {
-		
+
 		String password = admin.getPassword();
 		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
 		admin.setPassword(bCryptPasswordEncoder.encode(password));
-		
-		return saveAdministrator(admin);
-		
-	}
 
+		return saveAdministrator(admin);
+
+	}
 
 	public Administrator findAdministrator(Long id) throws NotFoundException {
 		logger.info("***Repo:Query administrator account attemped for id: " + id + "***");
@@ -309,10 +329,10 @@ public class AccountService {
 				.delete(administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator")));
 	}
 
-	private Supplier<NotFoundException> accountNotFound(String accountType) {				
-		return () -> {
+	private Supplier<NotFoundException> accountNotFound(String accountType) {
+		return () ->/* {
 			logger.info("***Lookup failed for: " + accountType + "***");
-			return new NotFoundException("The " + accountType + " account was not found.");
-		};
+			return */new NotFoundException("The " + accountType + " account was not found.");
+//		};
 	}
 }
