@@ -366,7 +366,7 @@ public class AccountController {
 
 		if (user.getAccountId() == id
 				|| user.getRole() == Role.ADMIN) {
-			accountService.deleteCustomer(id);
+			accountService.deleteCustomer(user.getEmail(), id);
 		}
 	}
 
