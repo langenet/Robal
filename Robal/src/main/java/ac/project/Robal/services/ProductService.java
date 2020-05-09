@@ -2,6 +2,8 @@ package ac.project.Robal.services;
 
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import javassist.NotFoundException;
 @Service
 public class ProductService {
 
+	Logger logger = LoggerFactory.getLogger(ProductService.class);
+	
 	private ProductRepository productRepository;
 
 	@Autowired
@@ -29,6 +33,7 @@ public class ProductService {
 	}
 
 	public Product findProduct(Long id) {
+		logger.info("***findProducts by id method accessed***");
 		return productRepository.findById(id).orElse(null);
 	}
 

@@ -60,6 +60,7 @@ public class AccountService {
 			return customerRepository.save(customer);
 		} else {
 			// TODO jUnit test update customer
+			logger.info("***Repo:updateCustomer attemped for: " + customer.getEmail() + "***");
 			Customer dbCustomer = customerRepository.findById(customer.getAccountId())
 					.orElseThrow(accountNotFound("Customer"));
 
@@ -111,8 +112,8 @@ public class AccountService {
 		}
 
 		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
-		customer.setName(email);
-
+		customer.setEmail(email);
+		logger.info("***Repo:update customer email attemped for: " + customer.getEmail() + "***");
 		return saveCustomer(customer);
 
 	}
@@ -123,7 +124,7 @@ public class AccountService {
 		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
 		customer.setName(password);
 		customer.setPassword(bCryptPasswordEncoder.encode(password));
-
+		logger.info("***Repo:update customer password attemped for: " + customer.getEmail() + "***");
 		return saveCustomer(customer);
 
 	}
@@ -164,7 +165,8 @@ public class AccountService {
 		return customerRepository.findById(customerId).orElseThrow(accountNotFound("Customer")).getOrders();
 	}
 
-	public void deleteCustomer(Long id) throws NotFoundException {
+	public void deleteCustomer(String email, Long id) throws NotFoundException {
+		logger.info("***Repo:deleteCustomer attemped for: " + email + " id of " + id + "***");
 		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound("Customer")));
 	}
 
