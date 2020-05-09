@@ -24,48 +24,57 @@ public class StoreService {
 	private ProductRepository productRepository;
 	private StoreProductRepository storeProductRepository;
 	private OwnerRepository ownerRepository;
+	private ProductService productService;
 
 	@Autowired
 	public StoreService(StoreRepository storeRepository, StoreProductRepository storeProductRepository,
-			ProductRepository productRepository, OwnerRepository ownerRepository) {
+			ProductRepository productRepository, OwnerRepository ownerRepository,
+			ProductService productService) {
 		this.storeRepository = storeRepository;
 		this.productRepository = productRepository;
 		this.storeProductRepository = storeProductRepository;
 		this.ownerRepository = ownerRepository;
+		this.productService = productService;
 	}
 
 	public Store saveStore(Store store, Owner authOwner) throws NotFoundException, ClientException {
 
-		if (store.getName() == null || store.getAddress() == null || store.getOwner().getAccountId() == null
-				|| store.getOwner().getAccountId() == 0) {
-			throw new ClientException("Cannot create store without a name, address or Owner");
+		if (store.getName() == null || store.getAddress() == null) {
+			throw new ClientException("Cannot create store without a name or address.");
 		}
 
-		Owner newOwner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
+		// New store
+		if (store.getStoreId() == null || store.getStoreId() == 0) {
 
-		if (newOwner != null) {
+			// compare if owners are the same
 
-			// New store
-			if (store.getStoreId() == null || store.getStoreId() == 0) {
+//				if (newOwner == authOwner) {
 
-				// compare if owners are the same
+			// Authenticated Owner is the same owner being set for this store.
+			store.setOwner(authOwner);
 
-				if (newOwner == authOwner) {
+//				}
 
-					// Authenticated Owner is the same owner being set for this store.
-					store.setOwner(authOwner);
+			return storeRepository.save(store);
+
+		} else {
+
+			Store dbStore = storeRepository.findById(store.getStoreId()).orElseThrow(storeNotFound());
+			if (dbStore.getOwner() == authOwner) {
+
+				if (store.getOwner() != null) {
+					Owner newOwner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
+					if (newOwner != null
+							&& newOwner != authOwner) {
+						dbStore.setOwner(newOwner);
+					} else {
+						throw new NotFoundException("New Owner doesn't exist in the database yet.");
+					}
 
 				}
 
-				return storeRepository.save(store);
-
-			} else {
-				Store dbStore = storeRepository.findById(store.getStoreId()).orElseThrow(storeNotFound());
-
 				dbStore.setName(store.getName());
 				dbStore.setAddress(store.getAddress());
-
-				dbStore.setOwner(newOwner);
 
 				// TODO validation that the store product is complete
 				for (StoreProduct storeProduct : store.getStoreProducts()) {
@@ -76,9 +85,10 @@ public class StoreService {
 
 				// TODO not sure if we need to saveAll storeproducts first
 				return storeRepository.save(dbStore);
+
+			} else {
+				throw new NotFoundException("Only the Owner of the Store can modify it");
 			}
-		} else {
-			throw new NotFoundException("Only the Owner of the Store can modify it");
 		}
 	}
 
@@ -97,9 +107,9 @@ public class StoreService {
 			if (dbProduct == null) {
 				if (product.getName() != null) {
 
-					dbProduct = Product.builder().description(product.getDescription()).name(product.getName())
-							.sku(product.getSku()).build();
-					dbProduct = productRepository.save(product);
+//					product = Product.builder().description(product.getDescription()).name(product.getName())
+//							.sku(product.getSku()).build();
+					dbProduct = productService.saveProduct(product);
 				} else {
 					throw new Exception("Product must have a name");
 				}
@@ -122,6 +132,7 @@ public class StoreService {
 					}
 				}
 
+				storeProduct.setProduct(dbProduct);
 				storeProduct = storeProductRepository.save(storeProduct);
 
 				dbStore.getStoreProducts().add(storeProduct);
@@ -137,6 +148,11 @@ public class StoreService {
 
 	public StoreProduct findStoreProduct(Long id) throws Exception {
 		return storeProductRepository.findById(id).orElseThrow(storeProductNotFound());
+	}
+
+	public List<StoreProduct> searchStoreProduct(String query) throws Exception {
+
+		return storeProductRepository.findByProduct_NameOrProduct_DescriptionContainingIgnoreCase(query, query);
 	}
 
 	public List<StoreProduct> findStoreProducts() throws Exception {

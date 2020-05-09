@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ac.project.Robal.enums.Role;
@@ -48,13 +49,18 @@ public class StoreController {
 	@ApiOperation(value = "Create a Store", response = Owner.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully created Store"),
-			@ApiResponse(code = 400, message = "Invalid input")
+			@ApiResponse(code = 400, message = "Invalid input"),
+			@ApiResponse(code = 404, message = "Something didn't work")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@PostMapping("/stores")
 	public ResponseEntity<Store> saveStore(Principal principal, @RequestBody Store store) throws Exception {
 
 		logger.info("***saveStore method accessed " + " by " + principal.getName() + "***");
+
+		// TODO if admin is trying to create a store, we would need to have the Owner ID
+		// passed in with the request. Maybe as part of the store, we fill in the owner
+		// ID if we are admin.
 
 		Owner owner = accountService.findOwnerByEmail(principal.getName());
 
@@ -90,25 +96,38 @@ public class StoreController {
 					"This Store does not exist yet.  Please use the Post method to create a new Store first.");
 		}
 
-		if ((owner != null && owner.getStores().contains(store))
+		if ((owner != null && store.getOwner().equals(owner))
 				|| user.getRole() == Role.ADMIN) {
 
-			store.getStoreProducts().add(storeProduct);
+//			store.getStoreProducts().add(storeProduct);
 			return storeService.saveStoreProduct(id, storeProduct, owner);
 
 		} else {
-			throw new Exception("You can only update your own orders unless you are an Administrator.");
+			throw new Exception("You can only update your own Stores Products unless you are an Administrator.");
 		}
 	}
 
+	@ApiOperation(value = "Find a StoreProduct by ID", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "StoreProduct found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
 	@GetMapping("/store-products/{id}")
-	public StoreProduct findStoreProduct(@PathVariable Long id) throws Exception {
-		return storeService.findStoreProduct(id);
+	public ResponseEntity<StoreProduct> findStoreProduct(@PathVariable Long id) throws Exception {
+		return new ResponseEntity<>(storeService.findStoreProduct(id), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
+	@GetMapping("/store-products")
+	public ResponseEntity<List<StoreProduct>> searchStoreProducts(Principal principal, @RequestParam("q") String query)
+			throws Exception {
+		return new ResponseEntity<>(storeService.searchStoreProduct(query), HttpStatus.OK);
 	}
 
 	// TODO Can anyone see all store products? We could have only authenticated
 	// users view them but it's not needed probably
-	@GetMapping("/store-products")
+	@GetMapping("/store-products/search")
 	public ResponseEntity<List<StoreProduct>> listStoreProducts(@PathVariable Long id) throws Exception {
 		return new ResponseEntity<>(storeService.findStoreProducts(), HttpStatus.OK);
 
