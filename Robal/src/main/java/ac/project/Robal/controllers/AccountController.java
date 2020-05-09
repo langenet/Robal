@@ -309,7 +309,7 @@ public class AccountController {
 	@PostMapping("/customers")
 	public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) throws Exception {
 
-		logger.info("***saveCustomer method accessed by " + customer.getName() + "***");
+		logger.info("***saveCustomer method accessed by " + customer.getEmail() + "***");
 		Customer result;
 
 		if (customer.getAccountId() == null

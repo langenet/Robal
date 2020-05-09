@@ -47,7 +47,7 @@ public class AccountService {
 		if (customer.getName() == null 
 				|| customer.getEmail() == null
 				|| customer.getPassword() == null) {
-			//TODO Logging
+
 			//TODO jUnit test saveCustomer null values
 			throw new ClientException("Cannot create or update customer without Name, Email or Password.");
 		}
@@ -59,6 +59,7 @@ public class AccountService {
 		
 		if ((customer.getAccountId() == null ||customer.getAccountId() == 0)) {
 			customer.setPassword(bCryptPasswordEncoder.encode(customer.getPassword()));
+			logger.info("***Repo:saveCustomer(new) attemped for: " + customer.getEmail() + "***");
 			return customerRepository.save(customer);
 		} else {
 			//TODO jUnit test update customer
@@ -160,12 +161,13 @@ public class AccountService {
 		if (owner.getName() == null 
 				|| owner.getEmail() == null
 				|| owner.getPassword() == null) {
-			//TODO Logging
+			
 			//TODO jUnit test saveowner null values
 			throw new ClientException("Cannot create or update owner without Name, Email or Password.");
 		}
 		if ((owner.getAccountId() == null ||owner.getAccountId() == 0)) {
 			owner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));
+			logger.info("***Repo:saveOwner(new) attemped for: " + owner.getEmail() + "***");
 			return ownerRepository.save(owner);
 		} else {
 			//TODO jUnit test update owner
@@ -179,7 +181,7 @@ public class AccountService {
 
 			//TODO test that this does not wipe out any orders or duplicate them
 			//TODO validation that order is complete
-	
+			logger.info("***Repo:saveOwner(update) attemped for: " + owner.getEmail() + "***");
 			return ownerRepository.save(dbOwner);
 		}
 	}
@@ -224,6 +226,7 @@ public class AccountService {
 	}
 
 	public Owner findOwnerByEmail(String email) throws NotFoundException {
+		logger.info("***Repo:Query owner account  for email: " + email + "***");
 		return ownerRepository.findByEmail(email).orElseThrow(accountNotFound("Owner"));
 	}
 	
@@ -293,6 +296,7 @@ public class AccountService {
 
 
 	public Administrator findAdministrator(Long id) throws NotFoundException {
+		logger.info("***Repo:Query administrator account attemped for id: " + id + "***");
 		return administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator"));
 	}
 
@@ -305,11 +309,10 @@ public class AccountService {
 				.delete(administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator")));
 	}
 
-	private Supplier<NotFoundException> accountNotFound(String accountType) {
-		//TODO Logging
-		
-		
-		return () -> new NotFoundException("The " + accountType + " account was not found.");
+	private Supplier<NotFoundException> accountNotFound(String accountType) {				
+		return () -> {
+			logger.info("***Lookup failed for: " + accountType + "***");
+			return new NotFoundException("The " + accountType + " account was not found.");
+		};
 	}
-
 }
