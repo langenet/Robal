@@ -330,9 +330,9 @@ public class AccountService {
 	}
 
 	private Supplier<NotFoundException> accountNotFound(String accountType) {
-		return () ->/* {
+		return () -> {
 			logger.info("***Lookup failed for: " + accountType + "***");
-			return */new NotFoundException("The " + accountType + " account was not found.");
-//		};
+			return new NotFoundException("The " + accountType + " account was not found.");
+		};
 	}
 }
