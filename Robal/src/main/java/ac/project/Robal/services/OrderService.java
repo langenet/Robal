@@ -55,6 +55,13 @@ public class OrderService {
 						.quantity(orderProduct.getQuantity())
 						.build())
 				.collect(Collectors.toList());
+		
+		for(OrderProduct orderProduct:orderProducts) {
+			if(orderProduct.getStoreProduct().getStoreProductid() == null || orderProduct.getStoreProduct().getStoreProductid() == 0) {
+				throw new Exception("StoreProduct does not exist.");
+			}
+		}
+		
 		orderProducts = orderProductRepository.saveAll(orderProducts);
 
 		double subTotal = orderProducts.stream().mapToDouble(orderProduct -> {
@@ -95,6 +102,10 @@ public class OrderService {
 
 	private Supplier<NotFoundException> orderNotFound() {
 		return () -> new NotFoundException("The order was not found.");
+	}
+	
+	private Supplier<NotFoundException> storeProductNotFound() {
+		return () -> new NotFoundException("The StoreProduct does not exist.");
 	}
 
 }

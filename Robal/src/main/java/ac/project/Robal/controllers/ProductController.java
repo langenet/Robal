@@ -78,10 +78,10 @@ public class ProductController {
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@GetMapping("/products/{id}")
+	@GetMapping("/products")
 	public ResponseEntity<List<Product>> listProducts() throws NotFoundException {
 		
-		logger.info("***findProducts by id method accessed***");
+		logger.info("***listProducts controller method accessed***");
 		return new ResponseEntity<>(productService.listProducts(), HttpStatus.OK);
 	}
 
