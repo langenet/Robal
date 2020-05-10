@@ -3,10 +3,10 @@ package ac.project.Robal.services;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
 import ac.project.Robal.models.OrderProduct;
+import ac.project.Robal.models.StoreProduct;
 import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.repositories.OrderProductRepository;
 import ac.project.Robal.repositories.OrderRepository;
@@ -39,6 +40,21 @@ public class OrderService {
 		this.storeProductRepository = storeProductRepository;
 	}
 
+	public Order findOrder(Long id) {
+		return orderRepository.findById(id).orElse(null);
+	}
+
+	public List<Order> findOrders() {
+		return orderRepository.findAll();
+	}
+
+	public List<OrderProduct> findOrderProducts() {
+		return orderProductRepository.findAll();
+	}
+
+	// TODO is there missing a findOrderProduct by ID to return a single order
+	// product?
+
 	public Order saveOrder(Customer customer, List<OrderProduct> orderProducts) throws Exception {
 		/*
 		 * For each order product received from the user, we retrieve each product from
@@ -47,33 +63,41 @@ public class OrderService {
 		 * Furthermore, by going through the repository, product entity gets attached.
 		 * Obviously the product must exist in the db beforehand.
 		 */
-		orderProducts = orderProducts.stream()
-				.map(orderProduct -> OrderProduct.builder()
-						.orderProductId(orderProduct.getOrderProductId())
-						.storeProduct(storeProductRepository.findById(orderProduct.getStoreProduct().getStoreProductid()).orElse(null))
-						.price(orderProduct.getStoreProduct().getPrice())
-						.quantity(orderProduct.getQuantity())
-						.build())
-				.collect(Collectors.toList());
-		
-		for(OrderProduct orderProduct:orderProducts) {
-			if(orderProduct.getStoreProduct().getStoreProductid() == null || orderProduct.getStoreProduct().getStoreProductid() == 0) {
-				throw new Exception("StoreProduct does not exist.");
-			}
-		}
-		
-		orderProducts = orderProductRepository.saveAll(orderProducts);
 
-		double subTotal = orderProducts.stream().mapToDouble(orderProduct -> {
-			return orderProduct.getPrice() * orderProduct.getQuantity();
-		}).sum();
+		double subTotal = 0.0;
+
+		List<StoreProduct> dbStoreProducts = new ArrayList<>();
+
+		for (OrderProduct orderProduct : orderProducts) {
+
+			StoreProduct storeProduct = storeProductRepository
+					.findById(orderProduct.getStoreProduct().getStoreProductid()).orElseThrow(storeProductNotFound());
+
+			if (storeProduct.getInventory() - orderProduct.getQuantity() >= 0) {
+				storeProduct.setInventory(storeProduct.getInventory() - orderProduct.getQuantity());
+				dbStoreProducts.add(storeProduct);
+
+			} else {
+				throw new Exception("Not enough inventory in stock to purchase " + storeProduct.getProduct().getName());
+			}
+
+			orderProduct = OrderProduct.builder()
+					.orderProductId(orderProduct.getOrderProductId())
+					.storeProduct(storeProduct)
+					.price(storeProduct.getPrice())
+					.quantity(orderProduct.getQuantity())
+					.build();
+
+			subTotal += orderProduct.getPrice() * orderProduct.getQuantity();
+		}
+
+		orderProducts = orderProductRepository.saveAll(orderProducts);
 
 		BigDecimal totalPrice = BigDecimal.valueOf(subTotal * GST);
 		totalPrice = totalPrice.setScale(2, RoundingMode.HALF_UP);
 
 		Order order = Order.builder().orderProducts(orderProducts).purchaseDate(LocalDate.now())
 				.invoiceNumber((long) new Random().nextInt(999999)) // number between +1 and +999999
-				// .invoiceNumber(new Random().nextLong())
 				.subTotal(subTotal).total(totalPrice.doubleValue()).build();
 		order = orderRepository.save(order);
 
@@ -83,9 +107,6 @@ public class OrderService {
 		return order;
 	}
 
-	public Order findOrder(Long id) {
-		return orderRepository.findById(id).orElse(null);
-	}
 
 	public void deleteOrder(Long id) throws NotFoundException {
 		orderRepository.delete(orderRepository.findById(id).orElseThrow(orderNotFound()));
@@ -103,7 +124,7 @@ public class OrderService {
 	private Supplier<NotFoundException> orderNotFound() {
 		return () -> new NotFoundException("The order was not found.");
 	}
-	
+
 	private Supplier<NotFoundException> storeProductNotFound() {
 		return () -> new NotFoundException("The StoreProduct does not exist.");
 	}

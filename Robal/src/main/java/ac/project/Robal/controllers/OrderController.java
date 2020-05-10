@@ -23,6 +23,9 @@ import ac.project.Robal.models.OrderProduct;
 import ac.project.Robal.services.AccountService;
 import ac.project.Robal.services.OrderService;
 import ac.project.Robal.utils.AccountUtil;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 public class OrderController {
@@ -39,6 +42,43 @@ public class OrderController {
 		this.accountService = accountService;
 	}
 
+	@ApiOperation(value = "Find an Order", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Order Found"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@GetMapping("/orders/{id}")
+	public Order findOrder(@PathVariable Long id) {
+		return orderService.findOrder(id);
+	}
+
+	@ApiOperation(value = "List all Orders", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "All Orders found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/orders/")
+	public List<Order> listOrders() {
+		return orderService.findOrders();
+	}
+
+	@ApiOperation(value = "List all Order Products", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "All Order Products found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/order-products/")
+	public List<OrderProduct> listOrderProducts() {
+		return orderService.findOrderProducts();
+	}
+
+	@ApiOperation(value = "Save an Order", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully saved Order."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/orders")
 	public Order saveOrder(Principal principal, @RequestBody List<OrderProduct> orderProducts) throws Exception {
@@ -51,6 +91,11 @@ public class OrderController {
 
 	}
 
+	@ApiOperation(value = "List all Customers", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Customers"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@PutMapping("/orders/{id}")
 	public Order updateOrder(Principal principal, @RequestBody List<OrderProduct> orderProducts, @PathVariable Long id)
@@ -80,11 +125,12 @@ public class OrderController {
 
 	}
 
-	@GetMapping("/orders/{id}")
-	public Order findOrder(@PathVariable Long id) {
-		return orderService.findOrder(id);
-	}
 
+	@ApiOperation(value = "List all Customers", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Customers"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@DeleteMapping("/orders/{id}")
 	public void deleteOrder(Principal principal, @PathVariable Long id) throws Exception {
@@ -114,8 +160,13 @@ public class OrderController {
 
 	}
 
+	@ApiOperation(value = "Delete OrderProduct from Order", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 204, message = "Successfully delete OrderProduct"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-	@DeleteMapping("/orders/{oid}/orderProduct/{pid}")
+	@DeleteMapping("/orders/{oid}/order-products/{pid}")
 	public void deleteOrderProduct(Principal principal, @PathVariable Long oid, @PathVariable Long pid)
 			throws Exception {
 

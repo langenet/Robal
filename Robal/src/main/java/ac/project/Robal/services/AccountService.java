@@ -23,6 +23,8 @@ import javassist.NotFoundException;
 @Service
 public class AccountService {
 
+	Logger logger = LoggerFactory.getLogger(AccountService.class);
+
 	private CustomerRepository customerRepository;
 	private OwnerRepository ownerRepository;
 	private AdministratorRepository administratorRepository;
@@ -38,9 +40,46 @@ public class AccountService {
 
 	}
 
-	Logger logger = LoggerFactory.getLogger(AccountService.class);
+	public Customer findCustomer(Long id) throws NotFoundException {
+		return customerRepository.findById(id).orElseThrow(accountNotFound("Customer"));
+	}
 
-	// Customer
+	public Customer findCustomerByEmail(String email) throws NotFoundException {
+		return customerRepository.findByEmail(email).orElseThrow(accountNotFound("Customer"));
+	}
+
+	public List<Customer> listCustomers() {
+		return new ArrayList<Customer>(customerRepository.findAll());
+	}
+
+	public List<Order> listCustomerOrders(Long customerId) throws NotFoundException {
+		return customerRepository.findById(customerId).orElseThrow(accountNotFound("Customer")).getOrders();
+	}
+
+	public Owner findOwner(Long id) throws NotFoundException {
+
+		return ownerRepository.findById(id).orElseThrow(accountNotFound("Owner"));
+	}
+
+	public Owner findOwnerByEmail(String email) throws NotFoundException {
+		logger.info("***Repo:Query owner account  for email: " + email + "***");
+		return ownerRepository.findByEmail(email).orElseThrow(accountNotFound("Owner"));
+	}
+
+	public List<Owner> listOwners() {
+		return new ArrayList<Owner>(ownerRepository.findAll());
+	}
+
+	public Administrator findAdministrator(Long id) throws NotFoundException {
+		logger.info("***Repo:Query administrator account attemped for id: " + id + "***");
+		return administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator"));
+	}
+
+	public List<Administrator> listAdministrators() {
+		return new ArrayList<Administrator>(administratorRepository.findAll());
+	}
+
+
 	public Customer saveCustomer(Customer customer) throws Exception {
 		if (customer.getName() == null || customer.getEmail() == null || customer.getPassword() == null) {
 
@@ -49,8 +88,8 @@ public class AccountService {
 		}
 
 		if ((customer.getAccountId() == null || customer.getAccountId() == 0)) {
-			
-			if(emailAlreadyExists(customer.getEmail())) {
+
+			if (emailAlreadyExists(customer.getEmail())) {
 				logger.info("***saveCustomer method account already exists for " + customer.getName() + " with email "
 						+ customer.getEmail() + "***");
 				throw new Exception("Customer account already exist.");
@@ -96,13 +135,6 @@ public class AccountService {
 
 	}
 
-	private boolean emailAlreadyExists(String email) {
-
-		return customerRepository.findByEmail(email).isPresent() ? true
-				: ownerRepository.findByEmail(email).isPresent() ? true
-						: administratorRepository.findByEmail(email).isPresent() ? true : false;
-	}
-
 	public Customer saveCustomerEmail(Customer customer) throws Exception, NotFoundException {
 
 		String email = customer.getEmail();
@@ -122,7 +154,6 @@ public class AccountService {
 
 		String password = customer.getPassword();
 		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
-		customer.setName(password);
 		customer.setPassword(bCryptPasswordEncoder.encode(password));
 		logger.info("***Repo:update customer password attemped for: " + customer.getEmail() + "***");
 		return saveCustomer(customer);
@@ -147,27 +178,6 @@ public class AccountService {
 
 		return saveCustomer(customer);
 
-	}
-
-	public Customer findCustomer(Long id) throws NotFoundException {
-		return customerRepository.findById(id).orElseThrow(accountNotFound("Customer"));
-	}
-
-	public Customer findCustomerByEmail(String email) throws NotFoundException {
-		return customerRepository.findByEmail(email).orElseThrow(accountNotFound("Customer"));
-	}
-
-	public List<Customer> listCustomers() {
-		return new ArrayList<Customer>(customerRepository.findAll());
-	}
-
-	public List<Order> listCustomerOrders(Long customerId) throws NotFoundException {
-		return customerRepository.findById(customerId).orElseThrow(accountNotFound("Customer")).getOrders();
-	}
-
-	public void deleteCustomer(String email, Long id) throws NotFoundException {
-		logger.info("***Repo:deleteCustomer attemped for: " + email + " id of " + id + "***");
-		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound("Customer")));
 	}
 
 	// Owner
@@ -233,24 +243,6 @@ public class AccountService {
 
 	}
 
-	public Owner findOwner(Long id) throws NotFoundException {
-
-		return ownerRepository.findById(id).orElseThrow(accountNotFound("Owner"));
-	}
-
-	public List<Owner> listOwners() {
-		return new ArrayList<Owner>(ownerRepository.findAll());
-	}
-
-	public Owner findOwnerByEmail(String email) throws NotFoundException {
-		logger.info("***Repo:Query owner account  for email: " + email + "***");
-		return ownerRepository.findByEmail(email).orElseThrow(accountNotFound("Owner"));
-	}
-
-	public void deleteOwner(Long id) throws NotFoundException {
-		ownerRepository.delete(ownerRepository.findById(id).orElseThrow(accountNotFound("Owner")));
-	}
-
 	// Administrator
 	public Administrator saveAdministrator(Administrator administrator) throws Exception {
 
@@ -261,13 +253,14 @@ public class AccountService {
 			throw new ClientException("Cannot create or update Administrator without Name, Email or Password.");
 		}
 		if ((administrator.getAccountId() == null || administrator.getAccountId() == 0)) {
-			
-			if(emailAlreadyExists(administrator.getEmail())) {
-				logger.info("***saveCustomer method account already exists for " + administrator.getName() + " with email "
-						+ administrator.getEmail() + "***");
+
+			if (emailAlreadyExists(administrator.getEmail())) {
+				logger.info(
+						"***saveCustomer method account already exists for " + administrator.getName() + " with email "
+								+ administrator.getEmail() + "***");
 				throw new Exception("Customer account already exist.");
 			}
-			
+
 			administrator.setPassword(bCryptPasswordEncoder.encode(administrator.getPassword()));
 			return administratorRepository.save(administrator);
 		} else {
@@ -317,18 +310,29 @@ public class AccountService {
 
 	}
 
-	public Administrator findAdministrator(Long id) throws NotFoundException {
-		logger.info("***Repo:Query administrator account attemped for id: " + id + "***");
-		return administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator"));
+	public void deleteCustomer(String email, Long id) throws NotFoundException {
+		logger.info("***Repo:deleteCustomer attemped for: " + email + " id of " + id + "***");
+		customerRepository.delete(customerRepository.findById(id).orElseThrow(accountNotFound("Customer")));
 	}
 
-	public List<Administrator> listAdministrators() {
-		return new ArrayList<Administrator>(administratorRepository.findAll());
+	public void deleteOwner(String email, Long id) throws NotFoundException {
+		logger.info("***Repo:deleteOwner attemped for: " + email + " id of " + id + "***");
+
+		ownerRepository.delete(ownerRepository.findById(id).orElseThrow(accountNotFound("Owner")));
 	}
 
-	public void deleteAdministrator(Long id) throws NotFoundException {
+	public void deleteAdministrator(String email, Long id) throws NotFoundException {
+		logger.info("***Repo:deleteAdministrator attemped for: " + email + " id of " + id + "***");
+
 		administratorRepository
 				.delete(administratorRepository.findById(id).orElseThrow(accountNotFound("Administrator")));
+	}
+
+	private boolean emailAlreadyExists(String email) {
+
+		return customerRepository.findByEmail(email).isPresent() ? true
+				: ownerRepository.findByEmail(email).isPresent() ? true
+						: administratorRepository.findByEmail(email).isPresent() ? true : false;
 	}
 
 	private Supplier<NotFoundException> accountNotFound(String accountType) {

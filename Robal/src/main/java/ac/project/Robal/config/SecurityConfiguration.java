@@ -13,48 +13,52 @@ import ac.project.Robal.services.AccountDetailService;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
-	   private final BCryptPasswordEncoder bCryptPasswordEncoder;
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	    private final AccountDetailService userDetailsService;
+	private final AccountDetailService userDetailsService;
 
-	    @Autowired
-	    public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, AccountDetailService userDetailsService) {
-	        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-	        this.userDetailsService = userDetailsService;
-	    }
+	@Autowired
+	public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, AccountDetailService userDetailsService) {
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.userDetailsService = userDetailsService;
+	}
 
-	    @Override
-	    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-	        auth.userDetailsService(userDetailsService)
-	            .passwordEncoder(bCryptPasswordEncoder);
-	    }
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService)
+				.passwordEncoder(bCryptPasswordEncoder);
+	}
 
-	    @Override
-	    protected void configure(HttpSecurity http) throws Exception {
-	        http
-	            .authorizeRequests()
-//				.anyRequest().permitAll()
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+				.authorizeRequests()
 				.antMatchers("/swagger-ui.html").permitAll()
 				.antMatchers("/h2-console/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/admins/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/owners/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/customers/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/stores/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/store-products").permitAll()
 				.antMatchers("/admins/**").authenticated()
 				.antMatchers("/owners/**").authenticated()
 				.antMatchers("/customers/**").authenticated()
 				.antMatchers("/stores/**").authenticated()
+				.antMatchers("/orders/**").authenticated()
+				.antMatchers("/store-products/**").authenticated()
+				.antMatchers("/order-products/**").authenticated()
+				.antMatchers("/products/**").authenticated()
 				.and()
-	            .headers().frameOptions().sameOrigin()
+				.headers().frameOptions().sameOrigin()
 				.and()
-	            .httpBasic()
+				.httpBasic()
 				.and()
-	            .formLogin()
+				.formLogin()
 				.and()
-	            .csrf()
-	            .disable()
-	            .logout();
+				.csrf()
+				.disable()
+				.logout();
 
-	    }
+	}
 }

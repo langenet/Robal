@@ -79,6 +79,198 @@ public class AccountController {
 		}
 	}
 
+	@ApiOperation(value = "Find Customer Order", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Customer Order"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@GetMapping("/customers/{cid}/orders/{oid}")
+	public ResponseEntity<Order> findCustomerOrder(Principal principal, @PathVariable Long cid,
+			@PathVariable Long oid) throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("******View Customer Order method accessed by " + user.getEmail() + "***");
+
+		if (user.getAccountId() == cid
+				|| user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(orderService.findOrder(oid), HttpStatus.OK);
+		} else {
+			logger.info(
+					"******View Customer Order - Need ADMIN role or you must be the Customer to access their order. Accessed by "
+							+ user.getEmail()
+							+ " role: " + user.getRole() + "***");
+			throw new Exception("You are not authorized to view");
+		}
+	}
+
+	// List all Customers
+	@ApiOperation(value = "List all Customers", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Customers"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/customers")
+	public ResponseEntity<List<Customer>> listCustomers(Principal principal) throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("******List Customer method accessed by " + user.getEmail() + "***");
+
+		return new ResponseEntity<>(accountService.listCustomers(), HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "List all Customer Orders", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Customer Orders"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@GetMapping("/customers/{id}/orders")
+	public ResponseEntity<List<Order>> listCustomerOrders(Principal principal, @PathVariable Long id) throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("******List Customer Orders method accessed by " + user.getEmail() + "***");
+
+		if (user.getAccountId() == id
+				|| user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.listCustomerOrders(id), HttpStatus.OK);
+		} else {
+			logger.info(
+					"******List Customer Orders - Need ADMIN role or you must be the Customer to access their orders. Accessed by "
+							+ user.getEmail()
+							+ " role: " + user.getRole() + "***");
+			throw new Exception("You are not authorized to view");
+		}
+	}
+
+	// Find Owner
+	@ApiOperation(value = "Find an owner", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully retrieved Owner"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNERS')")
+	@GetMapping("/owners/{id}")
+	public ResponseEntity<Owner> findOwner(Principal principal, @PathVariable Long id)
+			throws Exception, NotFoundException {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***findOwner method accessed by " + user.getEmail() + "***");
+
+		if (user.getAccountId() == id
+				|| user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.findOwner(id), HttpStatus.OK);
+		} else {
+			logger.info("***findOwner method failed: " + user.getEmail() + " " + user.getRole() + "***");
+			throw new Exception("You are not authorized to view");
+		}
+	}
+
+	// List all owners
+	@ApiOperation(value = "List all Owners", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Owners"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/owners")
+	public ResponseEntity<List<Owner>> listOwners(Principal principal) throws Exception {
+		logger.info("***listOwners method accessed " + " by " + principal.getName() + "***");
+		Account user = AccountUtil.getAccount(principal.getName());
+
+		return new ResponseEntity<>(accountService.listOwners(), HttpStatus.OK);
+
+	}
+
+	// Find Administrator
+	@ApiOperation(value = "Find a Administrator", response = Administrator.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully retrieved Administrator"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@GetMapping("/admins/{id}")
+	public ResponseEntity<Administrator> findAdministrator(Principal principal, @PathVariable Long id)
+			throws Exception, NotFoundException {
+		logger.info("***findAdministrator method accessed by " + principal.getName() + "***");
+		Account user = AccountUtil.getAccount(principal.getName());
+
+		if (user.getAccountId() == id
+				|| user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.findAdministrator(id), HttpStatus.OK);
+		} else {
+			throw new Exception("You are not authorized to view");
+		}
+	}
+
+	// List all Administrators
+	@ApiOperation(value = "List all Adminstrators", response = Administrator.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found Administrator"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/admins")
+	public ResponseEntity<List<Administrator>> listAdministrators(Principal principal) throws Exception {
+		logger.info("***listAdministrator method accessed by " + principal.getName() + "***");
+		Account user = AccountUtil.getAccount(principal.getName());
+
+		return new ResponseEntity<>(accountService.listAdministrators(), HttpStatus.OK);
+	}
+
+	// Create Customer
+	@ApiOperation(value = "Create a Customer", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully created Customer"),
+			@ApiResponse(code = 400, message = "Invalid input"),
+	})
+	@PostMapping("/customers")
+	public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) throws Exception {
+
+		logger.info("***saveCustomer method accessed by " + customer.getEmail() + "***");
+		Customer result;
+
+		if (customer.getAccountId() == null
+				|| customer.getAccountId() == 0) {
+			result = accountService.saveCustomer(customer);
+		} else {
+			throw new Exception("Please use the Put method to update a Customer.");
+		}
+
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
+	}
+
+	// Update a Customer
+	@ApiOperation(value = "Update whole Customer (all fields)", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated account"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@PutMapping("/customers/{id}")
+	public ResponseEntity<Customer> updateCustomer(Principal principal, @RequestBody Customer customer)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		logger.info("***updateCustomer method accessed by " + user.getEmail() + "***");
+
+		Customer result;
+
+		if (user.getAccountId() == customer.getAccountId()
+				|| user.getRole() == Role.ADMIN) {
+
+			result = accountService.saveCustomer(customer);
+
+		} else {
+			logger.info("***updateCustomer method failed. No priviledge for: " + user.getEmail() + " role: "
+					+ user.getRole() + "***");
+			throw new Exception("Only the customer themselves or an Administrator can update this account.");
+		}
+		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
+
+	}
+
 	// update Customer Name
 
 	@ApiOperation(value = "Update Customer name", response = Customer.class)
@@ -228,191 +420,6 @@ public class AccountController {
 
 	}
 
-	// List all Customers
-	@ApiOperation(value = "List all Customers", response = Customer.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully found Customers"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/customers")
-	public ResponseEntity<List<Customer>> listCustomers(Principal principal) throws Exception {
-
-		Account user = AccountUtil.getAccount(principal.getName());
-		logger.info("******List Customer method accessed by " + user.getEmail() + "***");
-
-		if (user.getRole() == Role.ADMIN) {
-			return new ResponseEntity<>(accountService.listCustomers(), HttpStatus.OK);
-		} else {
-			logger.info("******List Customer - Need ADMIN role to list cusomters. Accessed by " + user.getEmail()
-					+ " role: " + user.getRole() + "***");
-			throw new Exception("You are not authorized to view");
-		}
-	}
-
-	@ApiOperation(value = "List all Customer Orders", response = Customer.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully found Customer Orders"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-	@GetMapping("/customers/{id}/orders")
-	public ResponseEntity<List<Order>> listCustomerOrders(Principal principal, @PathVariable Long id) throws Exception {
-
-		Account user = AccountUtil.getAccount(principal.getName());
-		logger.info("******List Customer Orders method accessed by " + user.getEmail() + "***");
-
-		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN) {
-			return new ResponseEntity<>(accountService.listCustomerOrders(id), HttpStatus.OK);
-		} else {
-			logger.info(
-					"******List Customer Orders - Need ADMIN role or you must be the Customer to access their orders. Accessed by "
-							+ user.getEmail()
-							+ " role: " + user.getRole() + "***");
-			throw new Exception("You are not authorized to view");
-		}
-	}
-
-	@ApiOperation(value = "List all Customer Orders", response = Customer.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully found Customer Orders"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-	@GetMapping("/customers/{cid}/orders/{oid}")
-	public ResponseEntity<Order> listCustomerOrder(Principal principal, @PathVariable Long cid,
-			@PathVariable Long oid) throws Exception {
-
-		Account user = AccountUtil.getAccount(principal.getName());
-		logger.info("******View Customer Order method accessed by " + user.getEmail() + "***");
-
-		if (user.getAccountId() == cid
-				|| user.getRole() == Role.ADMIN) {
-			return new ResponseEntity<>(orderService.findOrder(oid), HttpStatus.OK);
-		} else {
-			logger.info(
-					"******View Customer Order - Need ADMIN role or you must be the Customer to access their order. Accessed by "
-							+ user.getEmail()
-							+ " role: " + user.getRole() + "***");
-			throw new Exception("You are not authorized to view");
-		}
-	}
-
-
-	// Create Customer
-	@ApiOperation(value = "Create a Customer", response = Customer.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Successfully created Customer"),
-			@ApiResponse(code = 400, message = "Invalid input"),
-	})
-	@PostMapping("/customers")
-	public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) throws Exception {
-
-		logger.info("***saveCustomer method accessed by " + customer.getEmail() + "***");
-		Customer result;
-
-		if (customer.getAccountId() == null
-				|| customer.getAccountId() == 0) {
-			result = accountService.saveCustomer(customer);
-		} else {
-			throw new Exception("Please use the Put method to update a Customer.");
-		}
-
-		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
-	}
-
-	// Update a Customer
-	@ApiOperation(value = "Update whole Customer (all fields)", response = Customer.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Successfully updated account"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-	@PutMapping("/customers/{id}")
-	public ResponseEntity<Customer> updateCustomer(Principal principal, @RequestBody Customer customer)
-			throws Exception {
-
-		Account user = AccountUtil.getAccount(principal.getName());
-		logger.info("***updateCustomer method accessed by " + user.getEmail() + "***");
-
-		Customer result;
-
-		if (user.getAccountId() == customer.getAccountId()
-				|| user.getRole() == Role.ADMIN) {
-
-			result = accountService.saveCustomer(customer);
-
-		} else {
-			logger.info("***updateCustomer method failed. No priviledge for: " + user.getEmail() + " role: "
-					+ user.getRole() + "***");
-			throw new Exception("Only the customer themselves or an Administrator can update this account.");
-		}
-		return ResponseEntity.created(new URI("/customers/" + result.getAccountId())).body(result);
-
-	}
-
-	// Delete a Customer
-	@ApiOperation(value = "Delete a Customer", response = Customer.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully deleted Customer"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-	@DeleteMapping("/customers/{id}")
-	public void deleteCustomer(Principal principal, @PathVariable Long id) throws NotFoundException {
-		logger.info("***deleteCustomer method accessed by " + principal.getName() + "***");
-		Account user = AccountUtil.getAccount(principal.getName());
-
-		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN) {
-			accountService.deleteCustomer(user.getEmail(), id);
-		}
-	}
-
-	// Find Owner
-	@ApiOperation(value = "Find an owner", response = Owner.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully retrieved Owner"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNERS')")
-	@GetMapping("/owners/{id}")
-	public ResponseEntity<Owner> findOwner(Principal principal, @PathVariable Long id)
-			throws Exception, NotFoundException {
-
-		Account user = AccountUtil.getAccount(principal.getName());
-		logger.info("***findOwner method accessed by " + user.getEmail() + "***");
-
-		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN) {
-			return new ResponseEntity<>(accountService.findOwner(id), HttpStatus.OK);
-		} else {
-			logger.info("***findOwner method failed: " + user.getEmail() + " " + user.getRole() + "***");
-			throw new Exception("You are not authorized to view");
-		}
-	}
-
-	// List all owners
-	@ApiOperation(value = "List all Owners", response = Owner.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully found Owners"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNERS')")
-	@GetMapping("/owners")
-	public ResponseEntity<List<Owner>> listOwners(Principal principal) throws Exception {
-		logger.info("***listOwners method accessed " + " by " + principal.getName() + "***");
-		Account user = AccountUtil.getAccount(principal.getName());
-
-		if (user.getRole() == Role.ADMIN) { // admins should be able to check right?
-			return new ResponseEntity<>(accountService.listOwners(), HttpStatus.OK);
-		} else {
-
-			throw new Exception(user.getName() + " is not authorized to view");
-		}
-	}
-
 	// Update Owner
 	@ApiOperation(value = "Create an Owner", response = Owner.class)
 	@ApiResponses(value = {
@@ -547,40 +554,29 @@ public class AccountController {
 
 	}
 
-	// Delete Owner
-	@ApiOperation(value = "Delete an Owner", response = Owner.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully deleted Owner account"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@DeleteMapping("/owners/{id}")
-	public void deleteOwner(Principal principal, @PathVariable Long id) throws NotFoundException {
-		logger.info("***deleteOwner method accessed " + " by " + principal.getName() + "***");
-		Account user = AccountUtil.getAccount(principal.getName());
-
-		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN) {
-			accountService.deleteOwner(id);
-		}
-	}
-
 	// Add Administratrator
 	@ApiOperation(value = "Create an Administrator", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully created Administrator"),
 			@ApiResponse(code = 400, message = "Invalid input"),
 	})
-	@PostMapping("/administrators")
-	public ResponseEntity<Administrator> saveAdministrator(@RequestBody Administrator administrator) throws Exception {
-		logger.info("***saveAdministrator method accessed by " + administrator.getName() + "***");
-		Administrator result;
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/admins")
+	public ResponseEntity<Administrator> saveAdministrator(Principal principal,
+			@RequestBody Administrator administrator) throws Exception {
+		logger.info("***saveAdministrator method accessed by " + principal.getName() + "***");
+		Administrator result = null;
+
+		Account user = AccountUtil.getAccount(principal.getName());
 
 		if (administrator.getAccountId() == null
 				|| administrator.getAccountId() == 0) {
-			result = accountService.saveAdministrator(administrator);
+			if (user.getRole() == Role.ADMIN) {
+
+				result = accountService.saveAdministrator(administrator);
+			}
 		} else {
-			throw new Exception("Please use the Put method to update a Customer.");
+			throw new Exception("Please use the Put method to update an Administrator.");
 		}
 
 		return ResponseEntity.created(new URI("/administrator/" + result.getAccountId())).body(result);
@@ -591,8 +587,8 @@ public class AccountController {
 			@ApiResponse(code = 201, message = "Successfully updated Administrator name."),
 			@ApiResponse(code = 400, message = "Invalid input"),
 	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@PutMapping("/administrators/{id}/name")
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/admins/{id}/name")
 	public ResponseEntity<Administrator> updateAdministratorName(Principal principal, @RequestBody Administrator admin)
 			throws Exception {
 
@@ -601,15 +597,8 @@ public class AccountController {
 
 		Administrator result;
 
-		if (user.getRole() == Role.ADMIN) {
+		result = accountService.saveAdministratorName(admin);
 
-			result = accountService.saveAdministratorName(admin);
-
-		} else {
-			logger.info("***updateAdministratorName method failed. No priviledge for: " + user.getEmail() + " role: "
-					+ user.getRole() + "***");
-			throw new Exception("Only an Administrator can update this account.");
-		}
 		return ResponseEntity.created(new URI("/administrators/" + result.getAccountId() + "/name")).body(result);
 
 	}
@@ -619,8 +608,8 @@ public class AccountController {
 			@ApiResponse(code = 201, message = "Successfully updated Administrator email."),
 			@ApiResponse(code = 400, message = "Invalid input"),
 	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@PutMapping("/administrators/{id}/email")
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/admins/{id}/email")
 	public ResponseEntity<Administrator> updateAdministratorEmail(Principal principal, @RequestBody Administrator admin)
 			throws Exception {
 
@@ -629,15 +618,8 @@ public class AccountController {
 
 		Administrator result;
 
-		if (user.getRole() == Role.ADMIN) {
+		result = accountService.saveAdministratorEmail(admin);
 
-			result = accountService.saveAdministratorEmail(admin);
-
-		} else {
-			logger.info("***updateAdministratorEmail method failed. No priviledge for: " + user.getEmail() + " role: "
-					+ user.getRole() + "***");
-			throw new Exception("Only an Administrator can update this account.");
-		}
 		return ResponseEntity.created(new URI("/administrators/" + result.getAccountId() + "/email")).body(result);
 
 	}
@@ -647,8 +629,8 @@ public class AccountController {
 			@ApiResponse(code = 201, message = "Successfully updated Administrator password."),
 			@ApiResponse(code = 400, message = "Invalid input"),
 	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@PutMapping("/administrators/{id}/password")
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/admins/{id}/password")
 	public ResponseEntity<Administrator> updateAdministratorPassword(Principal principal,
 			@RequestBody Administrator admin)
 			throws Exception {
@@ -658,16 +640,8 @@ public class AccountController {
 
 		Administrator result;
 
-		if (user.getRole() == Role.ADMIN) {
+		result = accountService.saveAdministratorPassword(admin);
 
-			result = accountService.saveAdministratorPassword(admin);
-
-		} else {
-			logger.info(
-					"***updateAdministratorPassword method failed. No priviledge for: " + user.getEmail() + " role: "
-							+ user.getRole() + "***");
-			throw new Exception("Only an Administrator can update this account.");
-		}
 		return ResponseEntity.created(new URI("/administrators/" + result.getAccountId() + "/password")).body(result);
 
 	}
@@ -697,47 +671,6 @@ public class AccountController {
 		return null;
 	}
 
-	// Find Administrator
-	@ApiOperation(value = "Find a Administrator", response = Administrator.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully retrieved Administrator"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	@GetMapping("/admins/{id}")
-	public ResponseEntity<Administrator> findAdministrator(Principal principal, @PathVariable Long id)
-			throws Exception, NotFoundException {
-		logger.info("***findAdministrator method accessed by " + principal.getName() + "***");
-		Account user = AccountUtil.getAccount(principal.getName());
-
-		if (user.getAccountId() == id
-				|| user.getRole() == Role.ADMIN) {
-			return new ResponseEntity<>(accountService.findAdministrator(id), HttpStatus.OK);
-		} else {
-			throw new Exception("You are not authorized to view");
-		}
-	}
-
-	// List all Administrators
-	@ApiOperation(value = "List all Adminstrators", response = Administrator.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully found Administrator"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/admins")
-	public ResponseEntity<List<Administrator>> listAdministrators(Principal principal) throws Exception {
-		logger.info("***listAdministrator method accessed by " + principal.getName() + "***");
-		Account user = AccountUtil.getAccount(principal.getName());
-
-		if (user.getRole() == Role.ADMIN) {
-			return new ResponseEntity<>(accountService.listAdministrators(), HttpStatus.OK);
-		} else {
-
-			throw new Exception("You are not authorized to view these accounts.");
-		}
-	}
-
 	// Update Administrator
 	@ApiOperation(value = "Update an Administrator", response = Administrator.class)
 	@ApiResponses(value = {
@@ -745,7 +678,7 @@ public class AccountController {
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping("/administrators/{id}")
+	@PutMapping("/admins/{id}")
 	public ResponseEntity<Administrator> updateAdministrator(Principal principal,
 			@RequestBody Administrator administrator)
 			throws Exception {
@@ -766,21 +699,57 @@ public class AccountController {
 
 	}
 
+	// Delete a Customer
+	@ApiOperation(value = "Delete a Customer", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully deleted Customer"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+	@DeleteMapping("/customers/{id}")
+	public void deleteCustomer(Principal principal, @PathVariable Long id) throws NotFoundException {
+		logger.info("***deleteCustomer method accessed by " + principal.getName() + "***");
+		Account user = AccountUtil.getAccount(principal.getName());
+
+		if (user.getAccountId() == id
+				|| user.getRole() == Role.ADMIN) {
+			accountService.deleteCustomer(user.getEmail(), id);
+		}
+	}
+
 	// Delete Owner
+	@ApiOperation(value = "Delete an Owner", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully deleted Owner account"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@DeleteMapping("/owners/{id}")
+	public void deleteOwner(Principal principal, @PathVariable Long id) throws NotFoundException {
+		logger.info("***deleteOwner method accessed " + " by " + principal.getName() + "***");
+		Account user = AccountUtil.getAccount(principal.getName());
+
+		if (user.getAccountId() == id
+				|| user.getRole() == Role.ADMIN) {
+			accountService.deleteOwner(user.getName(), id);
+		}
+	}
+
+	// Delete Admin
 	@ApiOperation(value = "Delete an Administrator", response = Owner.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully deleted Administrator account"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping("/administrators/{id}")
+	@DeleteMapping("/admins/{id}")
 	public void deleteAdministrator(Principal principal, @PathVariable Long id) throws NotFoundException {
 		logger.info("***deleteAdministrator method accessed by " + principal.getName() + "***");
 		Account user = AccountUtil.getAccount(principal.getName());
 
 		if (user.getAccountId() == id
 				|| user.getRole() == Role.ADMIN) { // seems redundant here!
-			accountService.deleteOwner(id);
+			accountService.deleteAdministrator(user.getName(), id);
 		}
 	}
 }

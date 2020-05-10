@@ -37,6 +37,27 @@ public class StoreService {
 		this.productService = productService;
 	}
 
+	public Store findStore(Long id) throws NotFoundException {
+		return storeRepository.findById(id).orElseThrow(storeNotFound());
+	}
+
+	public List<Store> findStores() throws NotFoundException {
+		return storeRepository.findAll();
+	}
+
+	public StoreProduct findStoreProduct(Long id) throws Exception {
+		return storeProductRepository.findById(id).orElseThrow(storeProductNotFound());
+	}
+
+	public List<StoreProduct> findStoreProducts() throws Exception {
+		return storeProductRepository.findAll();
+	}
+
+	public List<StoreProduct> searchStoreProduct(String query) throws Exception {
+
+		return storeProductRepository.findByProduct_NameOrProduct_DescriptionContainingIgnoreCase(query, query);
+	}
+
 	public Store saveStore(Store store, Owner authOwner) throws NotFoundException, ClientException {
 
 		if (store.getName() == null || store.getAddress() == null) {
@@ -84,7 +105,7 @@ public class StoreService {
 		}
 	}
 
-	public StoreProduct saveStoreProduct(Long storeId, StoreProduct storeProduct, Owner owner)
+	public StoreProduct saveStoreProduct(Long storeId, StoreProduct storeProduct)
 			throws Exception {
 
 		Store dbStore = storeRepository.findById(storeId).orElseThrow(storeNotFound());
@@ -93,60 +114,38 @@ public class StoreService {
 		int inventory = storeProduct.getInventory();
 		double price = storeProduct.getPrice();
 
-		if (dbStore.getOwner().equals(owner)) {
+//		if (dbStore.getOwner().equals(owner)) {
 
-			Product dbProduct = productRepository.findById(product.getProductId()).orElse(null);
-			if (dbProduct == null) {
-				dbProduct = productService.saveProduct(product);
-			}
-			
-			if (inventory < 0) {
-				throw new Exception("Must be a positive Inventory numer.");
-			} else if (price < 0) {
-				throw new Exception("Must be a positive Pricer.");
-			} else {
+		Product dbProduct = productRepository.findById(product.getProductId()).orElse(null);
+		if (dbProduct == null) {
+			dbProduct = productService.saveProduct(product);
+		}
 
-//				StoreProduct storeProduct = StoreProduct.builder().inventory(inventory).price(price).product(dbProduct)
-//						.build();
-				for (StoreProduct dbStoreProduct : dbStore.getStoreProducts()) {
-					if (dbStoreProduct.getProduct().getProductId() == storeProduct.getProduct().getProductId()) {
-						dbStoreProduct.setInventory(storeProduct.getInventory());
-						dbStoreProduct.setPrice(storeProduct.getPrice());
-
-						dbStore = storeRepository.save(dbStore);
-						return dbStoreProduct;
-					}
-				}
-
-				storeProduct.setProduct(dbProduct);
-				storeProduct = storeProductRepository.save(storeProduct);
-
-				dbStore.getStoreProducts().add(storeProduct);
-				dbStore = storeRepository.save(dbStore);
-
-				return storeProduct;
-			}
+		if (inventory < 0) {
+			throw new Exception("Must be a positive Inventory number.");
+		} else if (price < 0) {
+			throw new Exception("Must be a positive Price");
 		} else {
 
-			throw new NotFoundException("Only the owner of the store can modify it.");
+			for (StoreProduct dbStoreProduct : dbStore.getStoreProducts()) {
+				if (dbStoreProduct.getProduct().getProductId() == storeProduct.getProduct().getProductId()) {
+
+					dbStoreProduct.setInventory(storeProduct.getInventory());
+					dbStoreProduct.setPrice(storeProduct.getPrice());
+
+					dbStore = storeRepository.save(dbStore);
+					return dbStoreProduct;
+				}
+			}
+
+			storeProduct.setProduct(dbProduct);
+			storeProduct = storeProductRepository.save(storeProduct);
+
+			dbStore.getStoreProducts().add(storeProduct);
+			dbStore = storeRepository.save(dbStore);
+
+			return storeProduct;
 		}
-	}
-
-	public StoreProduct findStoreProduct(Long id) throws Exception {
-		return storeProductRepository.findById(id).orElseThrow(storeProductNotFound());
-	}
-
-	public List<StoreProduct> searchStoreProduct(String query) throws Exception {
-
-		return storeProductRepository.findByProduct_NameOrProduct_DescriptionContainingIgnoreCase(query, query);
-	}
-
-	public List<StoreProduct> findStoreProducts() throws Exception {
-		return storeProductRepository.findAll();
-	}
-
-	public Store findStore(Long id) throws NotFoundException {
-		return storeRepository.findById(id).orElseThrow(storeNotFound());
 	}
 
 	public void deleteStore(Long id) throws NotFoundException {
@@ -154,12 +153,21 @@ public class StoreService {
 
 	}
 
-	private Supplier<NotFoundException> storeProductNotFound() {
-		return () -> new NotFoundException("The storeProduct was not found.");
+	public void deleteStoreProduct(Long storeId, Long storeProductId) throws NotFoundException {
+
+		Store store = storeRepository.findById(storeId).orElseThrow(storeNotFound());
+
+		// TODO This needs to be tested.
+		store.getStoreProducts().removeIf(storeProduct -> storeProductId.equals(storeProduct.getStoreProductid()));
+		storeRepository.save(store);
 	}
 
 	private Supplier<NotFoundException> storeNotFound() {
 		return () -> new NotFoundException("The store was not found.");
+	}
+
+	private Supplier<NotFoundException> storeProductNotFound() {
+		return () -> new NotFoundException("The storeProduct was not found.");
 	}
 
 	private Supplier<NotFoundException> accountNotFound() {
