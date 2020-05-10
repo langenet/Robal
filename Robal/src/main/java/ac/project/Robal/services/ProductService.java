@@ -37,7 +37,7 @@ public class ProductService {
 			}
 		} else {
 			
-			Product dbProduct = productRepository.findById(product.getProductId()).orElseThrow(productNotFound());
+			Product dbProduct = productRepository.findById(product.getProductId()).orElseThrow(productNotFound(product.getProductId()));
 			
 			dbProduct.setDescription(product.getDescription());
 			dbProduct.setName(product.getName());
@@ -50,11 +50,11 @@ public class ProductService {
 
 	public Product findProduct(Long id) throws NotFoundException {
 		logger.info("***findProducts by id method accessed***");
-		return productRepository.findById(id).orElseThrow(productNotFound());
+		return productRepository.findById(id).orElseThrow(productNotFound(id));
 	}
 	
 	public List<Product> listProducts() throws NotFoundException {
-		logger.info("***findProducts by id method accessed***");
+		logger.info("***listProducts method accessed***");
 		return productRepository.findAll();
 	}
 
@@ -65,10 +65,13 @@ public class ProductService {
 	}
 	
 	public void deleteProduct(Long id) throws NotFoundException {
-		productRepository.delete(productRepository.findById(id).orElseThrow(productNotFound()));
+		productRepository.delete(productRepository.findById(id).orElseThrow(productNotFound(id)));
 	}
 
-	private Supplier<NotFoundException> productNotFound() {
-		return () -> new NotFoundException("The order was not found.");
+	private Supplier<NotFoundException> productNotFound(Long id) {
+		return () -> {
+			logger.info("***Product Lookup failed. Id " + id + " ***");
+			return new NotFoundException("The product was not found.");
+		};
 	}
 }
