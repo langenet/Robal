@@ -49,19 +49,17 @@ public class OrderService {
 		 */
 		orderProducts = orderProducts.stream()
 				.map(orderProduct -> OrderProduct.builder()
-						.storeProduct(storeProductRepository
-								.findById(orderProduct.getStoreProduct().getStoreProductid()).orElse(null))
-						.price(orderProduct.getStoreProduct().getPrice()).build())
+						.orderProductId(orderProduct.getOrderProductId())
+						.storeProduct(storeProductRepository.findById(orderProduct.getStoreProduct().getStoreProductid()).orElse(null))
+						.price(orderProduct.getStoreProduct().getPrice())
+						.quantity(orderProduct.getQuantity())
+						.build())
 				.collect(Collectors.toList());
 		orderProducts = orderProductRepository.saveAll(orderProducts);
 
 		double subTotal = orderProducts.stream().mapToDouble(orderProduct -> {
 			return orderProduct.getPrice() * orderProduct.getQuantity();
 		}).sum();
-
-//		double subTotal = orderProducts.stream()
-//				.mapToDouble(OrderProduct::getPrice).
-//				.sum();
 
 		BigDecimal totalPrice = BigDecimal.valueOf(subTotal * GST);
 		totalPrice = totalPrice.setScale(2, RoundingMode.HALF_UP);
@@ -75,7 +73,7 @@ public class OrderService {
 		customer.getOrders().add(order);
 		customerRepository.save(customer);
 
-		return customer.getOrders().get(customer.getOrders().size() - 1);
+		return order;
 	}
 
 	public Order findOrder(Long id) {

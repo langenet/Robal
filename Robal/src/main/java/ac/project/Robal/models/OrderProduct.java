@@ -20,10 +20,6 @@ public class OrderProduct {
 	@ManyToOne
 	@JoinColumn(name="store_product_id_fk")
 	private StoreProduct storeProduct;
-		
-//	@ManyToOne
-//	@JoinColumn(name="product_id_fk")
-//	private Product product;
 	
 	private int quantity;
 	private double price;

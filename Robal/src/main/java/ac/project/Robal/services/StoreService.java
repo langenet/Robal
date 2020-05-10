@@ -46,14 +46,7 @@ public class StoreService {
 		// New store
 		if (store.getStoreId() == null || store.getStoreId() == 0) {
 
-			// compare if owners are the same
-
-//				if (newOwner == authOwner) {
-
-			// Authenticated Owner is the same owner being set for this store.
 			store.setOwner(authOwner);
-
-//				}
 
 			return storeRepository.save(store);
 
@@ -83,7 +76,6 @@ public class StoreService {
 					}
 				}
 
-				// TODO not sure if we need to saveAll storeproducts first
 				return storeRepository.save(dbStore);
 
 			} else {
@@ -105,15 +97,9 @@ public class StoreService {
 
 			Product dbProduct = productRepository.findById(product.getProductId()).orElse(null);
 			if (dbProduct == null) {
-				if (product.getName() != null) {
-
-//					product = Product.builder().description(product.getDescription()).name(product.getName())
-//							.sku(product.getSku()).build();
-					dbProduct = productService.saveProduct(product);
-				} else {
-					throw new Exception("Product must have a name");
-				}
+				dbProduct = productService.saveProduct(product);
 			}
+			
 			if (inventory < 0) {
 				throw new Exception("Must be a positive Inventory numer.");
 			} else if (price < 0) {
