@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,7 +67,7 @@ public class StoreController {
 
 		Store result = storeService.saveStore(store, owner);
 
-		return ResponseEntity.created(new URI("/owners/" + result.getStoreId())).body(result);
+		return ResponseEntity.created(new URI("/stores/" + result.getStoreId())).body(result);
 	}
 
 	@ApiOperation(value = "Create a StoreProduct", response = Owner.class)
@@ -119,23 +120,17 @@ public class StoreController {
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
-	@GetMapping("/store-products")
+	@GetMapping("/store-products/search")
 	public ResponseEntity<List<StoreProduct>> searchStoreProducts(Principal principal, @RequestParam("q") String query)
 			throws Exception {
 		return new ResponseEntity<>(storeService.searchStoreProduct(query), HttpStatus.OK);
 	}
 
-	// TODO Can anyone see all store products? We could have only authenticated
-	// users view them but it's not needed probably
-	@GetMapping("/store-products/search")
+	@GetMapping("/store-products")
 	public ResponseEntity<List<StoreProduct>> listStoreProducts(@PathVariable Long id) throws Exception {
 		return new ResponseEntity<>(storeService.findStoreProducts(), HttpStatus.OK);
 
 	}
-
-	// TODO search through products as a customer
-	// TODO add product to order
-	// TODO Submit order
 
 	@GetMapping("/stores/{id}")
 	public Store findStore(@PathVariable Long id) throws NotFoundException {
@@ -149,12 +144,37 @@ public class StoreController {
 		storeService.deleteStore(id);
 	}
 
-//	@PreAuthorize("OWNER")
-//	@PutMapping("/store/{id}")
-//	public Store updateCustomer(Principal principal, @RequestBody Store store) throws Exception {
-//		Owner owner = accountService.findOwnerByEmail(principal.getName());
-//		return storeService.saveStore(store, owner);
-//	}
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/stores/{id}")
+	public ResponseEntity<Store> updateStore(Principal principal, @RequestBody Store store, @PathVariable Long id) throws Exception {
+		
+		Account user = AccountUtil.getAccount(principal.getName());
+		Owner owner = null;
+		Store dbStore = storeService.findStore(id);
+
+		
+		if (store != null) {
+			if (user.getRole() == Role.OWNER) {
+				owner = accountService.findOwner(user.getAccountId());
+			}
+		} else {
+			throw new Exception(
+					"This Store does not exist yet.  Please use the Post method to create a new Store first.");
+		}
+
+		if ((owner != null && store.getOwner().equals(owner))
+				|| user.getRole() == Role.ADMIN) {
+
+//			store.getStoreProducts().add(storeProduct);
+			dbStore = storeService.saveStore(store, owner);
+			return ResponseEntity.created(new URI("/stores/" + dbStore.getStoreId())).body(dbStore);
+
+		} else {
+			throw new Exception("You can only update your own Stores Products unless you are an Administrator.");
+		}
+		
+		
+	}
 
 	// TODO GET Store owner - Only Admin and the store owner themselves should be
 	// able to see the results.
