@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ac.project.Robal.enums.Role;
 import ac.project.Robal.models.Account;
+import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Store;
 import ac.project.Robal.models.StoreProduct;
@@ -47,6 +48,105 @@ public class StoreController {
 		this.accountService = accountService;
 	}
 
+	@ApiOperation(value = "Find a Store by ID", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Store found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@GetMapping("/stores/{id}")
+	public Store findStore(@PathVariable Long id) throws NotFoundException {
+		return storeService.findStore(id);
+	}
+
+	@ApiOperation(value = "Find all Stores", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Stores found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/stores/")
+	public List<Store> findStores() throws NotFoundException {
+		return storeService.findStores();
+	}
+
+	@ApiOperation(value = "Find a StoreProduct by ID", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "StoreProduct found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
+	@GetMapping("/store-products/{id}")
+	public ResponseEntity<StoreProduct> findStoreProduct(@PathVariable Long id) throws Exception {
+		return new ResponseEntity<>(storeService.findStoreProduct(id), HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "List all Stores", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "All Stores found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@GetMapping("/stores")
+	public ResponseEntity<List<StoreProduct>> listStores() throws Exception {
+		return new ResponseEntity<>(storeService.findStoreProducts(), HttpStatus.OK);
+
+	}
+
+	@ApiOperation(value = "List all StoreProduct", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "All Store products found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
+	@GetMapping("/store-products")
+	public ResponseEntity<List<StoreProduct>> listStoreProducts() throws Exception {
+		return new ResponseEntity<>(storeService.findStoreProducts(), HttpStatus.OK);
+
+	}
+
+	@ApiOperation(value = "Find a Stores StoreProduct", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Store's StoreProducts found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@GetMapping("/stores/{id}/store-products")
+	public ResponseEntity<List<StoreProduct>> listStoresStoreProducts(Principal principal, @PathVariable Long id)
+			throws Exception {
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		Owner owner = accountService.findOwner(user.getAccountId());
+		Store dbStore = storeService.findStore(id);
+
+		if (dbStore != null) {
+			if ((user.getRole() == Role.OWNER
+					&& dbStore.getOwner().equals(owner))
+					|| user.getRole() == Role.ADMIN) {
+
+				return new ResponseEntity<>(storeService.findStore(id).getStoreProducts(), HttpStatus.OK);
+
+			} else {
+
+				throw new Exception("Only the owner or an admin can view a list of products.");
+			}
+		} else {
+			throw new Exception(
+					"This Store does not exist yet.");
+		}
+	}
+
+	@ApiOperation(value = "List all owners StoreProduct", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Owner's StoreProducts found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@GetMapping("/owner/{id}/store-products/")
+	public ResponseEntity<List<StoreProduct>> listOwnerStoreProducts(@PathVariable Long id) throws Exception {
+		return new ResponseEntity<>(storeService.findStore(id).getStoreProducts(), HttpStatus.OK);
+
+	}
+
 	@ApiOperation(value = "Create a Store", response = Owner.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully created Store"),
@@ -59,15 +159,30 @@ public class StoreController {
 
 		logger.info("***saveStore method accessed " + " by " + principal.getName() + "***");
 
-		// TODO if admin is trying to create a store, we would need to have the Owner ID
-		// passed in with the request. Maybe as part of the store, we fill in the owner
-		// ID if we are admin.
+		Account user = AccountUtil.getAccount(principal.getName());
 
-		Owner owner = accountService.findOwnerByEmail(principal.getName());
+		Owner owner;
+		if (user.getRole() == Role.ADMIN) {
+			owner = accountService.findOwner(store.getOwner().getAccountId());
+		} else {
+			owner = accountService.findOwnerByEmail(principal.getName());
+		}
 
 		Store result = storeService.saveStore(store, owner);
 
 		return ResponseEntity.created(new URI("/stores/" + result.getStoreId())).body(result);
+	}
+
+	@ApiOperation(value = "search store products", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "StoreProduct results found."),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
+	@GetMapping("/store-products/search")
+	public ResponseEntity<List<StoreProduct>> searchStoreProducts(Principal principal, @RequestParam("q") String query)
+			throws Exception {
+		return new ResponseEntity<>(storeService.searchStoreProduct(query), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Create a StoreProduct", response = Owner.class)
@@ -87,7 +202,6 @@ public class StoreController {
 		Owner owner = null;
 		Store store = storeService.findStore(id);
 
-		
 		if (store != null) {
 			if (user.getRole() == Role.OWNER) {
 				owner = accountService.findOwner(user.getAccountId());
@@ -101,58 +215,27 @@ public class StoreController {
 				|| user.getRole() == Role.ADMIN) {
 
 //			store.getStoreProducts().add(storeProduct);
-			return storeService.saveStoreProduct(id, storeProduct, owner);
+			return storeService.saveStoreProduct(id, storeProduct);
 
 		} else {
 			throw new Exception("You can only update your own Stores Products unless you are an Administrator.");
 		}
 	}
 
-	@ApiOperation(value = "Find a StoreProduct by ID", response = Owner.class)
+	@ApiOperation(value = "Update Store", response = Owner.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "StoreProduct found."),
+			@ApiResponse(code = 200, message = "Successfully Updated Store"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
-	@GetMapping("/store-products/{id}")
-	public ResponseEntity<StoreProduct> findStoreProduct(@PathVariable Long id) throws Exception {
-		return new ResponseEntity<>(storeService.findStoreProduct(id), HttpStatus.OK);
-	}
-
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
-	@GetMapping("/store-products/search")
-	public ResponseEntity<List<StoreProduct>> searchStoreProducts(Principal principal, @RequestParam("q") String query)
-			throws Exception {
-		return new ResponseEntity<>(storeService.searchStoreProduct(query), HttpStatus.OK);
-	}
-
-	@GetMapping("/store-products")
-	public ResponseEntity<List<StoreProduct>> listStoreProducts(@PathVariable Long id) throws Exception {
-		return new ResponseEntity<>(storeService.findStoreProducts(), HttpStatus.OK);
-
-	}
-
-	@GetMapping("/stores/{id}")
-	public Store findStore(@PathVariable Long id) throws NotFoundException {
-		return storeService.findStore(id);
-	}
-
-	@PreAuthorize("OWNER")
-	@DeleteMapping("/store/{id}")
-	public void deleteStore(Principal principal, @PathVariable Long id) throws NotFoundException {
-		Owner owner = accountService.findOwnerByEmail(principal.getName());
-		storeService.deleteStore(id);
-	}
-
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@PutMapping("/stores/{id}")
-	public ResponseEntity<Store> updateStore(Principal principal, @RequestBody Store store, @PathVariable Long id) throws Exception {
-		
+	public ResponseEntity<Store> updateStore(Principal principal, @RequestBody Store store, @PathVariable Long id)
+			throws Exception {
+
 		Account user = AccountUtil.getAccount(principal.getName());
 		Owner owner = null;
 		Store dbStore = storeService.findStore(id);
 
-		
 		if (store != null) {
 			if (user.getRole() == Role.OWNER) {
 				owner = accountService.findOwner(user.getAccountId());
@@ -172,22 +255,111 @@ public class StoreController {
 		} else {
 			throw new Exception("You can only update your own Stores Products unless you are an Administrator.");
 		}
-		
-		
+
 	}
 
-	// TODO GET Store owner - Only Admin and the store owner themselves should be
-	// able to see the results.
-	// TODO PUT update store owner - Only the current store owner can update the
-	// owner.
-	// Should we create a method in the service that just updates the owner and use
-	// that in the store post/put request?
+	@ApiOperation(value = "Update StoreProduct", response = Owner.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully Updated StoreProduct"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PutMapping("/stores/{sid}/store-products/{pid}")
+	public ResponseEntity<StoreProduct> updateStoreProduct(Principal principal, @RequestBody StoreProduct storeProduct,
+			@PathVariable Long sid, @PathVariable Long pid)
+			throws Exception {
 
-	// TODO PUT storeProducts
-	// TODO PUT UpdateStoreProductPrice Only the price in the object will be used
-	// with the storeproduct id
-	// TODO PUT UpdateStoreProductInventory Only the inventory in the object will be
-	// used with the storeproduct id
-	// TODO DELETE StoreProduct
+		Account user = AccountUtil.getAccount(principal.getName());
+		Owner owner = null;
+		Store dbStore = storeService.findStore(sid);
 
+		if (dbStore != null) {
+			if (user.getRole() == Role.OWNER) {
+				owner = accountService.findOwner(user.getAccountId());
+			}
+		} else {
+			throw new Exception(
+					"This Store does not exist yet.  Please use the Post method to create a new Store first.");
+		}
+
+		if ((owner != null && dbStore.getOwner().equals(owner))
+				|| user.getRole() == Role.ADMIN) {
+
+			storeProduct = storeService.saveStoreProduct(sid, storeProduct);
+			return ResponseEntity.created(new URI("/stores/" + storeProduct.getStoreProductid())).body(storeProduct);
+
+		} else {
+			throw new Exception("You can only update your own Stores Products unless you are an Administrator.");
+		}
+
+	}
+
+	@ApiOperation(value = "Delete Store", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 204, message = "Successfully deleted Store"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("OWNER")
+	@DeleteMapping("/store/{id}")
+	public void deleteStore(Principal principal, @PathVariable Long id) throws Exception {
+
+		logger.info("***deleteStore method accessed by " + principal.getName() + "***");
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		Owner owner = null;
+		Store store = storeService.findStore(id);
+
+		if (store != null) {
+			if (user.getRole() == Role.OWNER) {
+				owner = accountService.findOwner(user.getAccountId());
+			}
+		} else {
+			throw new Exception("This Store does not exist.");
+		}
+
+		if ((owner != null && store.getOwner().equals(owner))
+				|| user.getRole() == Role.ADMIN) {
+
+			storeService.deleteStore(id);
+
+		} else {
+			throw new Exception(
+					"You can only delete you own Stores unless you are an Administrator.");
+		}
+	}
+
+	@ApiOperation(value = "Delete StoreProduct from Store", response = Customer.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully deleted StoreProduct"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@DeleteMapping("/stores/{sid}/store-products/{pid}")
+	public void deleteStoreProduct(Principal principal, @PathVariable Long sid, @PathVariable Long pid)
+			throws Exception {
+
+		logger.info("***deleteStoreProduct method accessed by " + principal.getName() + "***");
+
+		Account user = AccountUtil.getAccount(principal.getName());
+		Owner owner = null;
+		Store store = storeService.findStore(sid);
+
+		if (store != null) {
+			if (user.getRole() == Role.OWNER) {
+				owner = accountService.findOwner(user.getAccountId());
+			}
+		} else {
+			throw new Exception("This Store does not exist.");
+		}
+
+		if ((owner != null && store.getOwner().equals(owner))
+				|| user.getRole() == Role.ADMIN) {
+
+			storeService.deleteStoreProduct(sid, pid);
+
+		} else {
+			throw new Exception(
+					"You can only delete storeProduct from your own Stores unless you are an Administrator.");
+		}
+	}
 }

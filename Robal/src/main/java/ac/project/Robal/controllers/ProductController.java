@@ -37,27 +37,6 @@ public class ProductController {
 	public ProductController(ProductService productService) {
 		this.productService = productService;
 	}
-	@ApiOperation(value = "Save Products", response = StoreProduct.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully added StoreProduct"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@PostMapping("/products")
-	public Product saveProducts(@RequestBody Product products) throws Exception {
-		
-		
-		logger.info("***save Products method accessed***");
-		return productService.saveProduct(products);
-	}
-	
-	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@GetMapping("/products/search")
-	public ResponseEntity<List<Product>> searchProducts(Principal principal, @RequestParam("q") String query)
-			throws Exception {
-		return new ResponseEntity<>(productService.searchProduct(query), HttpStatus.OK);
-	}
-
 	
 	@ApiOperation(value = "Find a Product", response = StoreProduct.class)
 	@ApiResponses(value = {
@@ -85,6 +64,37 @@ public class ProductController {
 		return new ResponseEntity<>(productService.listProducts(), HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@GetMapping("/products/search")
+	public ResponseEntity<List<Product>> searchProducts(Principal principal, @RequestParam("q") String query)
+			throws Exception {
+		return new ResponseEntity<>(productService.searchProduct(query), HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "Save Products", response = StoreProduct.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully added StoreProduct"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@PostMapping("/products")
+	public Product saveProducts(@RequestBody Product products) throws Exception {
+
+		logger.info("***save Products method accessed***");
+		return productService.saveProduct(products);
+	}
+
+	@ApiOperation(value = "Update a Product", response = StoreProduct.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Successfully updated Product"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/products/{id}")
+	public Product updateProduct(@RequestBody Product product) throws Exception {
+		return productService.saveProduct(product);
+	}
+
 	@ApiOperation(value = "Delete a Product", response = StoreProduct.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Successfully deleted Product"),
@@ -94,16 +104,6 @@ public class ProductController {
 	@DeleteMapping("/products/{id}")
 	public void deleteProduct(@PathVariable Long id) throws NotFoundException {
 		productService.deleteProduct(id);
-	}
-
-	@ApiOperation(value = "Update a Product", response = StoreProduct.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Successfully updated Product"),
-			@ApiResponse(code = 400, message = "Invalid input")
-	})
-	@PutMapping("/products/{id}")
-	public Product updateProduct(@RequestBody Product product) throws Exception {
-		return productService.saveProduct(product);
 	}
 
 	
