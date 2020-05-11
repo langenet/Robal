@@ -2,6 +2,7 @@ package ac.project.Robal;
 
 import java.nio.charset.StandardCharsets;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,4 +21,11 @@ public class TestUtil {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         return mapper.writeValueAsBytes(object);
     }
+
+	public static HttpHeaders getAuthorizationBasic(String email, String password) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBasicAuth(email, password);
+		return headers;
+	}
+
 }
