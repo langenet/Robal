@@ -41,6 +41,7 @@ public class AccountService {
 	}
 
 	public Customer findCustomer(Long id) throws NotFoundException {
+		logger.info("***Repo:findCustomer by id: " + id + "***");
 		return customerRepository.findById(id).orElseThrow(accountNotFound("Customer"));
 	}
 
@@ -53,11 +54,12 @@ public class AccountService {
 	}
 
 	public List<Order> listCustomerOrders(Long customerId) throws NotFoundException {
+		logger.info("***Repo:listCustomerOrders by id: " + customerId + "***");
 		return customerRepository.findById(customerId).orElseThrow(accountNotFound("Customer")).getOrders();
 	}
 
 	public Owner findOwner(Long id) throws NotFoundException {
-
+		logger.info("***Repo:findOwners by id: " + id + "***");
 		return ownerRepository.findById(id).orElseThrow(accountNotFound("Owner"));
 	}
 
@@ -67,6 +69,7 @@ public class AccountService {
 	}
 
 	public List<Owner> listOwners() {
+		logger.info("***Repo:Query all owners***");
 		return new ArrayList<Owner>(ownerRepository.findAll());
 	}
 
@@ -155,7 +158,7 @@ public class AccountService {
 		String password = customer.getPassword();
 		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
 		customer.setPassword(bCryptPasswordEncoder.encode(password));
-		logger.info("***Repo:update customer password attemped for: " + customer.getEmail() + "***");
+		logger.info("***Repo:saveCustomerPassword attemped for: " + customer.getEmail() + "***");
 		return saveCustomer(customer);
 
 	}
@@ -165,7 +168,7 @@ public class AccountService {
 		String billingAddress = customer.getBillingAddress();
 		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
 		customer.setName(billingAddress);
-
+		logger.info("***Repo:saveCustomerBillingAddress for: " + customer.getEmail() + "***");
 		return saveCustomer(customer);
 
 	}
@@ -175,7 +178,7 @@ public class AccountService {
 		String paymentMethod = customer.getPaymentMethod();
 		customer = customerRepository.findById(customer.getAccountId()).orElseThrow(accountNotFound("Customer"));
 		customer.setName(paymentMethod);
-
+		logger.info("***saveCustomerPaymentMethod for: " + customer.getEmail() + "***");
 		return saveCustomer(customer);
 
 	}
@@ -218,7 +221,7 @@ public class AccountService {
 		String name = owner.getName();
 		owner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
 		owner.setName(name);
-
+		logger.info("***Repo:saveOwnerName attemped for: " + owner.getEmail() + "***");
 		return saveOwner(owner);
 
 	}
@@ -228,7 +231,7 @@ public class AccountService {
 		String email = owner.getEmail();
 		owner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
 		owner.setName(email);
-
+		logger.info("***Repo:saveOwnerEmail attemped for: " + owner.getEmail() + "***");
 		return saveOwner(owner);
 
 	}
@@ -238,7 +241,7 @@ public class AccountService {
 		String password = owner.getPassword();
 		owner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
 		owner.setPassword(bCryptPasswordEncoder.encode(password));
-
+		logger.info("***Repo:saveOwnerPassword attemped for: " + owner.getEmail() + "***");
 		return saveOwner(owner);
 
 	}
@@ -256,7 +259,7 @@ public class AccountService {
 
 			if (emailAlreadyExists(administrator.getEmail())) {
 				logger.info(
-						"***saveCustomer method account already exists for " + administrator.getName() + " with email "
+						"***saveAdministrator method account already exists for " + administrator.getName() + " with email "
 								+ administrator.getEmail() + "***");
 				throw new Exception("Customer account already exist.");
 			}
@@ -275,7 +278,7 @@ public class AccountService {
 
 			// TODO test that this does not wipe out any orders or duplicate them
 			// TODO validation that order is complete
-
+			logger.info("***Repo:saveAdministrator attemped for: " + dbAdmin.getEmail() + " id of " + dbAdmin.getAccountId() + "***");
 			return administratorRepository.save(dbAdmin);
 		}
 	}
@@ -285,7 +288,7 @@ public class AccountService {
 		String name = admin.getName();
 		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
 		admin.setName(name);
-
+		logger.info("***Repo:saveAdministratorName attemped for: " + admin.getEmail() + " id of " + admin.getAccountId() + "***");
 		return saveAdministrator(admin);
 
 	}
@@ -295,7 +298,7 @@ public class AccountService {
 		String email = admin.getEmail();
 		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
 		admin.setName(email);
-
+		logger.info("***Repo:saveAdministratorEmail attemped for: " + email + " id of " + admin.getAccountId() + "***");
 		return saveAdministrator(admin);
 
 	}
@@ -305,7 +308,7 @@ public class AccountService {
 		String password = admin.getPassword();
 		admin = administratorRepository.findById(admin.getAccountId()).orElseThrow(accountNotFound("Administrator"));
 		admin.setPassword(bCryptPasswordEncoder.encode(password));
-
+		logger.info("***saveAdministratorPassword attemped for: " + admin.getEmail() + " id of " + admin.getAccountId() + "***");
 		return saveAdministrator(admin);
 
 	}

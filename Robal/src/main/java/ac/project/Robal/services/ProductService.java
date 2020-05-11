@@ -35,7 +35,7 @@ public class ProductService {
 	}
 
 	public List<Product> searchProduct(String query) throws Exception {
-
+		logger.info("***searchProducts service method accessed***");
 		return productRepository.findByNameOrDescriptionContainingIgnoreCase(query, query);
 	}
 
@@ -56,13 +56,14 @@ public class ProductService {
 			dbProduct.setDescription(product.getDescription());
 			dbProduct.setName(product.getName());
 			dbProduct.setSku(product.getSku());
-
+			logger.info("***Repo:saveProducts service method accessed***");
 			return productRepository.save(dbProduct);
 		}
 
 	}
 
 	public void deleteProduct(Long id) throws NotFoundException {
+		logger.info("***Repo:deleteProduct service by Id " + id + "***");
 		productRepository.delete(productRepository.findById(id).orElseThrow(productNotFound(id)));
 	}
 
