@@ -2,6 +2,7 @@ package ac.project.Robal.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -100,11 +101,11 @@ public class CustomerControllerTest {
 	
 	@Test
 	void findCustomer() throws Exception {
-		Optional<Customer> customerEmail = customerRepository.findByEmail(EMAIL);
-		this.mockMvc.perform(post("/customers/")
+		List<Customer> customers = customerRepository.findAll();
+		this.mockMvc.perform(get("/customers/")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(this.customer)))
-				.andExpect(status().isCreated())
+				.andExpect(status().isFound())
 				.andExpect(jsonPath("$.accountId").isNumber())
 				.andExpect(jsonPath("$.name").value(NAME))
 				.andExpect(jsonPath("$.email").value(EMAIL))
@@ -112,7 +113,7 @@ public class CustomerControllerTest {
 				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS)) 
 				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD)); 
 		
-			assertThat(customer.getEmail().equals(customerEmail));
+		//	assertThat(customer.);
 	}
 	
 }
