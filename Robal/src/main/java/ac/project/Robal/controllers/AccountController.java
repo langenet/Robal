@@ -210,6 +210,7 @@ public class AccountController {
 			@ApiResponse(code = 200, message = "Successfully found Administrator"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
+	// TODO BUG - Owners can get a list of administrators for some reason.
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/admins")
 	public ResponseEntity<List<Administrator>> listAdministrators(Principal principal) throws Exception {

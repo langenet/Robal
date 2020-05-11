@@ -1,17 +1,13 @@
 spring:
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2-console 
   datasource:
-#    platform: h2
-#    url: jdbc:h2:file:~/projectdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
-#    driverClassName: org.h2.Driver
     url: jdbc:postgresql://localhost:5434/postgres
+    driver-class-name: org.postgresql.Driver
     username: postgres
     password: admin
-    
   jpa:
+    properties: 
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
       ddl-auto: update
