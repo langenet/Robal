@@ -105,7 +105,7 @@ public class AccountController {
 	}
 
 	// List all Customers
-	@ApiOperation(value = "List all Customers", response = Customer.class)
+	@ApiOperation(value = "List all Customers", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully found Customers"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -120,7 +120,7 @@ public class AccountController {
 		return new ResponseEntity<>(accountService.listCustomers(), HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "List all Customer Orders", response = Customer.class)
+	@ApiOperation(value = "List all Customer Orders", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully found Customer Orders"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -168,7 +168,7 @@ public class AccountController {
 	}
 
 	// List all owners
-	@ApiOperation(value = "List all Owners", response = Owner.class)
+	@ApiOperation(value = "List all Owners", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully found Owners"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -178,8 +178,14 @@ public class AccountController {
 	public ResponseEntity<List<Owner>> listOwners(Principal principal) throws Exception {
 		logger.info("***listOwners method accessed " + " by " + principal.getName() + "***");
 		Account user = AccountUtil.getAccount(principal.getName());
+		
+		if (user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.listOwners(), HttpStatus.OK);
 
-		return new ResponseEntity<>(accountService.listOwners(), HttpStatus.OK);
+		} else {
+			logger.info("***findAllOwner method failed: " + user.getEmail() + " " + user.getRole() + "***");
+			throw new Exception("You are not authorized to view");
+		}	
 
 	}
 
@@ -205,7 +211,7 @@ public class AccountController {
 	}
 
 	// List all Administrators
-	@ApiOperation(value = "List all Adminstrators", response = Administrator.class)
+	@ApiOperation(value = "List all Adminstrators", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully found Administrator"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -215,8 +221,12 @@ public class AccountController {
 	public ResponseEntity<List<Administrator>> listAdministrators(Principal principal) throws Exception {
 		logger.info("***listAdministrator method accessed by " + principal.getName() + "***");
 		Account user = AccountUtil.getAccount(principal.getName());
-
-		return new ResponseEntity<>(accountService.listAdministrators(), HttpStatus.OK);
+		
+		if(user.getRole() == Role.ADMIN) {
+			return new ResponseEntity<>(accountService.listAdministrators(), HttpStatus.OK);
+		} else {
+			throw new Exception("You are not authorized to view");
+		}
 	}
 
 	// Create Customer
@@ -525,7 +535,7 @@ public class AccountController {
 
 	}
 
-	@ApiOperation(value = "Update Owner password", response = Customer.class)
+	@ApiOperation(value = "Update Owner password", response = Owner.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated Owner password."),
 			@ApiResponse(code = 400, message = "Invalid input"),
@@ -582,7 +592,7 @@ public class AccountController {
 		return ResponseEntity.created(new URI("/administrator/" + result.getAccountId())).body(result);
 	}
 
-	@ApiOperation(value = "Update Administrator name", response = Customer.class)
+	@ApiOperation(value = "Update Administrator name", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated Administrator name."),
 			@ApiResponse(code = 400, message = "Invalid input"),
@@ -603,7 +613,7 @@ public class AccountController {
 
 	}
 
-	@ApiOperation(value = "Update Administrator email", response = Customer.class)
+	@ApiOperation(value = "Update Administrator email", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated Administrator email."),
 			@ApiResponse(code = 400, message = "Invalid input"),
@@ -624,7 +634,7 @@ public class AccountController {
 
 	}
 
-	@ApiOperation(value = "Update Administrator password", response = Customer.class)
+	@ApiOperation(value = "Update Administrator password", response = Administrator.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully updated Administrator password."),
 			@ApiResponse(code = 400, message = "Invalid input"),

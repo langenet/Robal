@@ -2,11 +2,13 @@ package ac.project.Robal.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -97,9 +99,21 @@ public class CustomerControllerTest {
 		assertThat(customers.size()).isEqualTo(databaseSizeBeforeCreate + 1);
 	}
 	
-//	@Test
-//	void findCustomer() throws Exception {
-//		Customer saved = accountService.saveCustomer(customer);
-//	}
+	@Test
+	void findCustomer() throws Exception {
+		List<Customer> customers = customerRepository.findAll();
+		this.mockMvc.perform(get("/customers/")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(this.customer)))
+				.andExpect(status().isFound())
+				.andExpect(jsonPath("$.accountId").isNumber())
+				.andExpect(jsonPath("$.name").value(NAME))
+				.andExpect(jsonPath("$.email").value(EMAIL))
+				.andExpect(jsonPath("$.role").value(ROLE.name())) /*TODO verify the json name for account type field*/
+				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS)) 
+				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD)); 
+		
+		//	assertThat(customer.);
+	}
 	
 }
