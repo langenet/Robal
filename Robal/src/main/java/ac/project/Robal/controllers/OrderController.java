@@ -42,17 +42,19 @@ public class OrderController {
 		this.accountService = accountService;
 	}
 
-	@ApiOperation(value = "Find an Order", response = Customer.class)
+	@ApiOperation(value = "Find an Order by id", response = Order.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Order Found"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
+	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@GetMapping("/orders/{id}")
 	public Order findOrder(@PathVariable Long id) {
+		logger.info("***findOrder by id method accessed***");
 		return orderService.findOrder(id);
 	}
 
-	@ApiOperation(value = "List all Orders", response = Customer.class)
+	@ApiOperation(value = "List all Orders", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "All Orders found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -60,10 +62,11 @@ public class OrderController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/orders/")
 	public List<Order> listOrders() {
+		logger.info("***listOrders method accessed***");
 		return orderService.findOrders();
 	}
 
-	@ApiOperation(value = "List all Order Products", response = Customer.class)
+	@ApiOperation(value = "List all Order Products", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "All Order Products found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -71,10 +74,11 @@ public class OrderController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/order-products/")
 	public List<OrderProduct> listOrderProducts() {
+		logger.info("***listOrderProducts method accessed***");
 		return orderService.findOrderProducts();
 	}
 
-	@ApiOperation(value = "Save an Order", response = Customer.class)
+	@ApiOperation(value = "Save an Order", response = Order.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully saved Order."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -86,14 +90,13 @@ public class OrderController {
 
 		Customer customer = null;
 		customer = accountService.findCustomerByEmail(principal.getName());
-
 		return orderService.saveOrder(customer, orderProducts);
 
 	}
 
-	@ApiOperation(value = "List all Customers", response = Customer.class)
+	@ApiOperation(value = "Update Order by Id", response = Order.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully found Customers"),
+			@ApiResponse(code = 200, message = "Successfully updated order"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
@@ -126,9 +129,9 @@ public class OrderController {
 	}
 
 
-	@ApiOperation(value = "List all Customers", response = Customer.class)
+	@ApiOperation(value = "Delete order by Id", response = Order.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Successfully found Customers"),
+			@ApiResponse(code = 200, message = "Successfully deleted order"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
@@ -160,7 +163,7 @@ public class OrderController {
 
 	}
 
-	@ApiOperation(value = "Delete OrderProduct from Order", response = Customer.class)
+	@ApiOperation(value = "Delete OrderProduct from Order", response = Order.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Successfully delete OrderProduct"),
 			@ApiResponse(code = 400, message = "Invalid input")

@@ -48,17 +48,19 @@ public class StoreController {
 		this.accountService = accountService;
 	}
 
-	@ApiOperation(value = "Find a Store by ID", response = Owner.class)
+	@ApiOperation(value = "Find a Store by ID", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Store found."),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
 	@GetMapping("/stores/{id}")
 	public Store findStore(@PathVariable Long id) throws NotFoundException {
+		logger.info("***stores method accessed***");
 		return storeService.findStore(id);
 	}
 
-	@ApiOperation(value = "Find all Stores", response = Owner.class)
+	@ApiOperation(value = "Find all Stores", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Stores found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -66,10 +68,11 @@ public class StoreController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/stores/")
 	public List<Store> findStores() throws NotFoundException {
+		logger.info("***findStores method accessed***");
 		return storeService.findStores();
 	}
 
-	@ApiOperation(value = "Find a StoreProduct by ID", response = Owner.class)
+	@ApiOperation(value = "Find a StoreProduct by ID", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "StoreProduct found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -77,10 +80,11 @@ public class StoreController {
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
 	@GetMapping("/store-products/{id}")
 	public ResponseEntity<StoreProduct> findStoreProduct(@PathVariable Long id) throws Exception {
+		logger.info("***findStoreProduct method accessed***");
 		return new ResponseEntity<>(storeService.findStoreProduct(id), HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "List all Stores", response = Owner.class)
+	@ApiOperation(value = "List all Stores", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "All Stores found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -92,7 +96,7 @@ public class StoreController {
 
 	}
 
-	@ApiOperation(value = "List all StoreProduct", response = Owner.class)
+	@ApiOperation(value = "List all StoreProduct", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "All Store products found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -100,11 +104,12 @@ public class StoreController {
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
 	@GetMapping("/store-products")
 	public ResponseEntity<List<StoreProduct>> listStoreProducts() throws Exception {
+		logger.info("***listStoreProducts method accessed***");
 		return new ResponseEntity<>(storeService.findStoreProducts(), HttpStatus.OK);
 
 	}
 
-	@ApiOperation(value = "Find a Stores StoreProduct", response = Owner.class)
+	@ApiOperation(value = "Find a Stores StoreProduct", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Store's StoreProducts found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -135,7 +140,7 @@ public class StoreController {
 		}
 	}
 
-	@ApiOperation(value = "List all owners StoreProduct", response = Owner.class)
+	@ApiOperation(value = "List StoreProduct for each owner Id", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Owner's StoreProducts found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -143,11 +148,12 @@ public class StoreController {
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@GetMapping("/owner/{id}/store-products/")
 	public ResponseEntity<List<StoreProduct>> listOwnerStoreProducts(@PathVariable Long id) throws Exception {
+		logger.info("***listOwnerStoreProducts method accessed***");
 		return new ResponseEntity<>(storeService.findStore(id).getStoreProducts(), HttpStatus.OK);
 
 	}
 
-	@ApiOperation(value = "Create a Store", response = Owner.class)
+	@ApiOperation(value = "Create a Store", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully created Store"),
 			@ApiResponse(code = 400, message = "Invalid input"),
@@ -173,7 +179,7 @@ public class StoreController {
 		return ResponseEntity.created(new URI("/stores/" + result.getStoreId())).body(result);
 	}
 
-	@ApiOperation(value = "search store products", response = Owner.class)
+	@ApiOperation(value = "search store products", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "StoreProduct results found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -182,10 +188,11 @@ public class StoreController {
 	@GetMapping("/store-products/search")
 	public ResponseEntity<List<StoreProduct>> searchStoreProducts(Principal principal, @RequestParam("q") String query)
 			throws Exception {
+		logger.info("***searchStoreProducts method accessed by " + principal.getName() + "***");
 		return new ResponseEntity<>(storeService.searchStoreProduct(query), HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Create a StoreProduct", response = Owner.class)
+	@ApiOperation(value = "Create a StoreProduct", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Successfully created StoreProduct"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -222,7 +229,7 @@ public class StoreController {
 		}
 	}
 
-	@ApiOperation(value = "Update Store", response = Owner.class)
+	@ApiOperation(value = "Update Store", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully Updated Store"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -231,7 +238,7 @@ public class StoreController {
 	@PutMapping("/stores/{id}")
 	public ResponseEntity<Store> updateStore(Principal principal, @RequestBody Store store, @PathVariable Long id)
 			throws Exception {
-
+		logger.info("***updateStore method accessed by " + principal.getName() + "***");
 		Account user = AccountUtil.getAccount(principal.getName());
 		Owner owner = null;
 		Store dbStore = storeService.findStore(id);
@@ -258,7 +265,7 @@ public class StoreController {
 
 	}
 
-	@ApiOperation(value = "Update StoreProduct", response = Owner.class)
+	@ApiOperation(value = "Update StoreProduct", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully Updated StoreProduct"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -268,7 +275,7 @@ public class StoreController {
 	public ResponseEntity<StoreProduct> updateStoreProduct(Principal principal, @RequestBody StoreProduct storeProduct,
 			@PathVariable Long sid, @PathVariable Long pid)
 			throws Exception {
-
+		logger.info("***updateStoreProduct method accessed by " + principal.getName() + "***");
 		Account user = AccountUtil.getAccount(principal.getName());
 		Owner owner = null;
 		Store dbStore = storeService.findStore(sid);
@@ -294,7 +301,7 @@ public class StoreController {
 
 	}
 
-	@ApiOperation(value = "Delete Store", response = Customer.class)
+	@ApiOperation(value = "Delete Store", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Successfully deleted Store"),
 			@ApiResponse(code = 400, message = "Invalid input")
