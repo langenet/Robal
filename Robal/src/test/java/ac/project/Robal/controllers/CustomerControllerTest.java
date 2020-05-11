@@ -25,15 +25,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import ac.project.Robal.TestUtil;
-import ac.project.Robal.enums.Role;
+import ac.project.Robal.enums.Constants;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.services.AccountService;
 
+
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class CustomerControllerTest {
+public class CustomerControllerTest extends Constants {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -52,19 +53,6 @@ public class CustomerControllerTest {
 
 	private Customer customer;
 	
-	private static final String NAME = "Andy Ta";
-	private static final String EMAIL = "Andy@test.com";
-	private static final String PASSWORD = "password";
-	
-	private static final Role ROLE = Role.CUSTOMER;
-//	private static final List<Order> ORDERS = new ArrayList<Order>();
-	private static final String BILLING_ADDRESS = "123 Main Street";
-	private static final String PAYMENT_METHOD = "MasterCard";
-//	private static final List<Order> ORDERS = Order.builder()
-//													.invoiceNumber(1L)
-//													.purchaseDate(LocalDate.now())
-//													.orderProducts(orderProducts)
-	
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
@@ -78,6 +66,7 @@ public class CustomerControllerTest {
 				.build();
 		Mockito.when(bCryptPasswordEncoder.encode(any())).thenReturn(PASSWORD);
 		Mockito.when(bCryptPasswordEncoder.matches(any(), any())).thenReturn(true);
+
 	}
 	
 	@Test
