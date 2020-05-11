@@ -3,20 +3,117 @@ package ac.project.Robal.enums;
 import java.util.ArrayList;
 import java.util.List;
 
+import ac.project.Robal.models.Administrator;
+import ac.project.Robal.models.Customer;
+import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
 import ac.project.Robal.models.StoreProduct;
 
 public class Constants {
 
-	protected static final String NAME = "Andy Ta";
-	protected static final String EMAIL = "Andy@test.com";
+	protected static final String NAME1 = "Andy Ta";
+	protected static final String NAME2 = "Robert Lange";
+	protected static final String NAME3 = "Alex Riccio";
+
+	protected static final String EMAIL_CUSTOMER1 = "andy@customer.com";
+	protected static final String EMAIL_CUSTOMER2 = "robert@customer.com";
+	protected static final String EMAIL_CUSTOMER3 = "alex@customer.com";
+
+	protected static final String EMAIL_OWNER1 = "andy@owner.com";
+	protected static final String EMAIL_OWNER2 = "robert@owner.com";
+	protected static final String EMAIL_OWNER3 = "alex@owner.com";
+
+	protected static final String EMAIL_ADMIN1 = "andy@admin.com";
+	protected static final String EMAIL_ADMIN2 = "robert@admin.com";
+	protected static final String EMAIL_ADMIN3 = "alex@admin.com";
+
 	protected static final String PASSWORD = "password";
 	
-	protected static final Role ROLE = Role.CUSTOMER;
+	protected static final Role CUSTOMER_ROLE = Role.CUSTOMER;
+	protected static final Role OWNER_ROLE = Role.OWNER;
+	protected static final Role ADMIN_ROLE = Role.ADMIN;
+
 //	protected static final List<Order> ORDERS = new ArrayList<Order>();
 	protected static final String BILLING_ADDRESS = "123 Main Street";
 	protected static final String PAYMENT_METHOD = "MasterCard";
+
+	protected static final Customer CUSTOMER1 = Customer.builder()
+			.billingAddress(BILLING_ADDRESS)
+			.email(EMAIL_CUSTOMER1)
+			.name(NAME1)
+			.password(PASSWORD)
+			.paymentMethod(PAYMENT_METHOD)
+			.role(CUSTOMER_ROLE)
+			.build();
+	protected static final Customer CUSTOMER2 = Customer.builder()
+			.billingAddress(BILLING_ADDRESS)
+			.email(EMAIL_CUSTOMER2)
+			.name(NAME2)
+			.password(PASSWORD)
+			.paymentMethod(PAYMENT_METHOD)
+			.role(CUSTOMER_ROLE)
+			.build();
+
+	protected static final Customer CUSTOMER3 = Customer.builder()
+			.billingAddress(BILLING_ADDRESS)
+			.email(EMAIL_CUSTOMER3)
+			.name(NAME3)
+			.password(PASSWORD)
+			.paymentMethod(PAYMENT_METHOD)
+			.role(CUSTOMER_ROLE)
+			.build();
+
+	protected static final Owner OWNER1 = Owner.builder()
+			.email(EMAIL_OWNER1)
+			.name(NAME1)
+			.password(PASSWORD)
+			.role(OWNER_ROLE)
+			.build();
+
+	protected static final Owner OWNER2 = Owner.builder()
+			.email(EMAIL_OWNER2)
+			.name(NAME2)
+			.password(PASSWORD)
+			.role(OWNER_ROLE)
+			.build();
+
+	protected static final Owner OWNER3 = Owner.builder()
+			.email(EMAIL_OWNER3)
+			.name(NAME3)
+			.password(PASSWORD)
+			.role(OWNER_ROLE)
+			.build();
+
+	protected static final Administrator ADMIN1 = Administrator.builder()
+			.email(EMAIL_ADMIN1)
+			.name(NAME1)
+			.password(PASSWORD)
+			.role(ADMIN_ROLE)
+			.build();
+
+	protected static final Administrator ADMIN2 = Administrator.builder()
+			.email(EMAIL_ADMIN2)
+			.name(NAME2)
+			.password(PASSWORD)
+			.role(ADMIN_ROLE)
+			.build();
+
+	protected static final Administrator ADMIN3 = Administrator.builder()
+			.email(EMAIL_ADMIN3)
+			.name(NAME3)
+			.password(PASSWORD)
+			.role(ADMIN_ROLE)
+			.build();
+
+//	SupeAdmin
+//	Administrator admin = Administrator.builder()
+//			.email("super@admin.com")
+//			.name("superAdmin")
+//			.password("password")
+//			.role(Role.ADMIN)
+//			.build();
+
 //	protected static final List<Order> ORDERS = Order.builder()
 //													.invoiceNumber(1L)
 //													.purchaseDate(LocalDate.now())
