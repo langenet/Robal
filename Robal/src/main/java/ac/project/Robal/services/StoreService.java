@@ -3,9 +3,12 @@ package ac.project.Robal.services;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ac.project.Robal.controllers.AccountController;
 import ac.project.Robal.exceptions.ClientException;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Product;
@@ -20,6 +23,8 @@ import javassist.NotFoundException;
 @Service
 public class StoreService {
 
+	Logger logger = LoggerFactory.getLogger(StoreService.class);
+	
 	private StoreRepository storeRepository;
 	private ProductRepository productRepository;
 	private StoreProductRepository storeProductRepository;
@@ -38,28 +43,32 @@ public class StoreService {
 	}
 
 	public Store findStore(Long id) throws NotFoundException {
+		logger.info("***service findStore by id method accessed.***");
 		return storeRepository.findById(id).orElseThrow(storeNotFound());
 	}
 
 	public List<Store> findStores() throws NotFoundException {
+		logger.info("***service findAllStores method accessed.***");
 		return storeRepository.findAll();
 	}
 
 	public StoreProduct findStoreProduct(Long id) throws Exception {
+		logger.info("***service findStoreProduct method accessed by Id: " + id + "***");
 		return storeProductRepository.findById(id).orElseThrow(storeProductNotFound());
 	}
 
 	public List<StoreProduct> findStoreProducts() throws Exception {
+		logger.info("***service findAllStoreProducts method accessed.***");
 		return storeProductRepository.findAll();
 	}
 
 	public List<StoreProduct> searchStoreProduct(String query) throws Exception {
-
+		logger.info("***service searchStoreProducts method accessed.***");
 		return storeProductRepository.findByProduct_NameOrProduct_DescriptionContainingIgnoreCase(query, query);
 	}
 
 	public Store saveStore(Store store, Owner authOwner) throws NotFoundException, ClientException {
-
+		logger.info("***service saveStore method accessed.***");
 		if (store.getName() == null || store.getAddress() == null) {
 			throw new ClientException("Cannot create store without a name or address.");
 		}
@@ -139,16 +148,18 @@ public class StoreService {
 			}
 
 			storeProduct.setProduct(dbProduct);
+			logger.info("***Repo: saveStoreProduct save attempted.***");
 			storeProduct = storeProductRepository.save(storeProduct);
 
 			dbStore.getStoreProducts().add(storeProduct);
-			dbStore = storeRepository.save(dbStore);
-
+			logger.info("***Repo: saveStoreProduct(add) service attempted.***");
+			dbStore = storeRepository.save(dbStore);			
 			return storeProduct;
 		}
 	}
 
 	public void deleteStore(Long id) throws NotFoundException {
+		logger.info("***deleteStore by Id " + id + "***");
 		storeRepository.delete(storeRepository.findById(id).orElseThrow(storeNotFound()));
 
 	}
@@ -158,21 +169,22 @@ public class StoreService {
 		Store store = storeRepository.findById(storeId).orElseThrow(storeNotFound());
 
 		// TODO This needs to be tested.
+		logger.info("***deleteStoreProduct by Id " + storeProductId + "***");
 		store.getStoreProducts().removeIf(storeProduct -> storeProductId.equals(storeProduct.getStoreProductid()));
 		storeRepository.save(store);
 	}
 
 	private Supplier<NotFoundException> storeNotFound() {
-		return () -> new NotFoundException("The store was not found.");
+		return () -> {
+		logger.info("***storeNotFound Exception***");
+		return new NotFoundException("The store was not found.");
+		};
 	}
 
 	private Supplier<NotFoundException> storeProductNotFound() {
-		return () -> new NotFoundException("The storeProduct was not found.");
+		return () -> {
+			logger.info("***storeProductNotFound Exception***");
+			return new NotFoundException("The StoreProduct does not exist.");
+		};
 	}
-
-	private Supplier<NotFoundException> accountNotFound() {
-		// TODO Logging
-		return () -> new NotFoundException("The Owner was not found.");
-	}
-
 }

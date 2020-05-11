@@ -51,7 +51,7 @@ public class ProductController {
 		return productService.findProduct(id);
 	}
 	
-	@ApiOperation(value = "List all Products", response = StoreProduct.class)
+	@ApiOperation(value = "List all Products", response = List.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully retrieved Products"),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -63,11 +63,16 @@ public class ProductController {
 		logger.info("***listProducts controller method accessed***");
 		return new ResponseEntity<>(productService.listProducts(), HttpStatus.OK);
 	}
-
+	@ApiOperation(value = "Search for Particulate Products", response = StoreProduct.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully retrieved Products"),
+			@ApiResponse(code = 400, message = "Invalid input")
+	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@GetMapping("/products/search")
 	public ResponseEntity<List<Product>> searchProducts(Principal principal, @RequestParam("q") String query)
 			throws Exception {
+		logger.info("***searchProducts controller method accessed***");
 		return new ResponseEntity<>(productService.searchProduct(query), HttpStatus.OK);
 	}
 
@@ -89,9 +94,10 @@ public class ProductController {
 			@ApiResponse(code = 201, message = "Successfully updated Product"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN','OWNER')")
 	@PutMapping("/products/{id}")
 	public Product updateProduct(@RequestBody Product product) throws Exception {
+		logger.info("***updateProduct method accessed***");
 		return productService.saveProduct(product);
 	}
 
@@ -100,9 +106,10 @@ public class ProductController {
 			@ApiResponse(code = 204, message = "Successfully deleted Product"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN','OWNER')")
 	@DeleteMapping("/products/{id}")
 	public void deleteProduct(@PathVariable Long id) throws NotFoundException {
+		logger.info("***deleteProduct method accessed***");
 		productService.deleteProduct(id);
 	}
 

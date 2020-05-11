@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ac.project.Robal.controllers.AccountController;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
 import ac.project.Robal.models.OrderProduct;
@@ -24,6 +27,8 @@ import javassist.NotFoundException;
 @Service
 public class OrderService {
 
+	Logger logger = LoggerFactory.getLogger(OrderService.class);
+	
 	private final static double GST = 1.13;
 
 	private OrderRepository orderRepository;
@@ -41,14 +46,17 @@ public class OrderService {
 	}
 
 	public Order findOrder(Long id) {
+		logger.info("***findOrder by id: " + id + "***");
 		return orderRepository.findById(id).orElse(null);
 	}
 
 	public List<Order> findOrders() {
+		logger.info("***OrderService: findOrders (ALL)***");
 		return orderRepository.findAll();
 	}
 
 	public List<OrderProduct> findOrderProducts() {
+		logger.info("***Repo:findOrderProducts***");
 		return orderProductRepository.findAll();
 	}
 
@@ -78,6 +86,7 @@ public class OrderService {
 				dbStoreProducts.add(storeProduct);
 
 			} else {
+				logger.info("***OrderService: Inventory alert < purchase quantity***");
 				throw new Exception("Not enough inventory in stock to purchase " + storeProduct.getProduct().getName());
 			}
 
@@ -102,6 +111,7 @@ public class OrderService {
 		order = orderRepository.save(order);
 
 		customer.getOrders().add(order);
+		logger.info("***Repo:saveOrder by customer: " + customer.getEmail() + "***");
 		customerRepository.save(customer);
 
 		return order;
@@ -109,6 +119,7 @@ public class OrderService {
 
 
 	public void deleteOrder(Long id) throws NotFoundException {
+		logger.info("***Repo:deleteOrder by id: " + id + "***");
 		orderRepository.delete(orderRepository.findById(id).orElseThrow(orderNotFound()));
 	}
 
@@ -118,15 +129,22 @@ public class OrderService {
 
 		// TODO This needs to be tested.
 		order.getOrderProducts().removeIf(orderProduct -> orderProductId.equals(orderProduct.getOrderProductId()));
+		logger.info("***deleteOrderProduct by orderId " + orderId + ", orderProductId " + orderProductId + "***");
 		orderRepository.save(order);
 	}
 
 	private Supplier<NotFoundException> orderNotFound() {
-		return () -> new NotFoundException("The order was not found.");
+		return () -> {
+			logger.info("***orderNotFound Exception***");
+			return new NotFoundException("The order was not found.");
+		};
 	}
 
 	private Supplier<NotFoundException> storeProductNotFound() {
-		return () -> new NotFoundException("The StoreProduct does not exist.");
+		return () -> {
+			logger.info("***storeProductNotFound Exception***");
+			return new NotFoundException("The StoreProduct does not exist.");
+		};
 	}
 
 }
