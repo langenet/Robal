@@ -2,7 +2,6 @@ package ac.project.Robal.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -37,14 +36,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				.antMatchers("/swagger-ui.html").permitAll()
 				.antMatchers("/h2-console/**").permitAll()
-				.antMatchers(HttpMethod.POST, "/admins/**").permitAll()
+//				.antMatchers(HttpMethod.POST, "/admins/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/owners/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/customers/**").permitAll()
-				.antMatchers(HttpMethod.GET, "/stores/**").permitAll()
+//				.antMatchers(HttpMethod.GET, "/stores/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/store-products").permitAll()
-				.antMatchers("/admins/**").authenticated()
-				.antMatchers("/owners/**").authenticated()
 				.antMatchers("/customers/**").authenticated()
+				.antMatchers("/owners/**").authenticated()
+				.antMatchers("/admins/**").authenticated()
 				.antMatchers("/stores/**").authenticated()
 				.antMatchers("/orders/**").authenticated()
 				.antMatchers("/store-products/**").authenticated()
@@ -63,3 +62,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	}
 }
+
