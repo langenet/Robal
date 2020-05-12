@@ -41,6 +41,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,15 +51,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
+import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
+import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.services.AccountService;
 
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class CustomerControllerTest extends Constants {
+public class AdministratorControllerTest2 extends Constants {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -70,7 +73,7 @@ public class CustomerControllerTest extends Constants {
 	private AccountService accountService;
 
 	@Autowired
-	private CustomerRepository customerRepository;
+	private AdministratorRepository administratorRepository;
 
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -88,56 +91,52 @@ public class CustomerControllerTest extends Constants {
 	}
 
 	@Test
-	void createCustomer() throws Exception {
-		int databaseSizeBeforeCreate = customerRepository.findAll().size();
+	void createAdministrator() throws Exception {
+		Administrator admin = accountService.saveAdministrator(getAdmin1());
+		int databaseSizeBeforeCreate = administratorRepository.findAll().size();
 
 		this.mockMvc
-				.perform(post("/customers/").contentType(TestUtil.APPLICATION_JSON_UTF8)
-						.content(TestUtil.convertObjectToJsonBytes(getCustomer1())))
+				.perform(post("/admins/").contentType(TestUtil.APPLICATION_JSON_UTF8)
+						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword()))
+						.content(TestUtil.convertObjectToJsonBytes(getAdmin2())))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1)).andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
-				.andExpect(jsonPath("$.role").value(CUSTOMER_ROLE.name()))
-				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS))
-				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD));
-//		
-		List<Customer> customers = customerRepository.findAll();
-		assertThat(customers.size()).isEqualTo(databaseSizeBeforeCreate + 1);
+				.andExpect(jsonPath("$.name").value(NAME2)).andExpect(jsonPath("$.email").value(EMAIL_ADMIN2))
+				.andExpect(jsonPath("$.role").value(ADMIN_ROLE.name()));
+	
+		List<Administrator> administrator = administratorRepository.findAll();
+		assertThat(administrator.size()).isEqualTo(databaseSizeBeforeCreate + 1);
 	}
 
 	@Test
-	void findCustomer() throws Exception {
+	void findAdministrator() throws Exception {
 
-		// Save getCustomer1()
-		Customer saved = accountService.saveCustomer(getCustomer1());
 		Administrator admin = accountService.saveAdministrator(getAdmin1());
-		// GET on customers/{id} pass in getCustomer1().getAccountId()
-		this.mockMvc.perform(get("/customers/{id}", saved.getAccountId())
+		
+		this.mockMvc.perform(get("/admins/{id}", admin.getAccountId())
 				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1)).andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
-				.andExpect(jsonPath("$.role").value(CUSTOMER_ROLE.name()))
-				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS))
-				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD)).andReturn();
+				.andExpect(jsonPath("$.name").value(NAME1))
+				.andExpect(jsonPath("$.email").value(EMAIL_ADMIN1))
+				.andExpect(jsonPath("$.role").value(ADMIN_ROLE.name()));
 		
 	}
 	
 	@Test
-	void deleteCustomer() throws Exception {
+	void DeleteAdministrator() throws Exception {
 		
-		accountService.saveCustomer(getCustomer1());
-		accountService.saveAdministrator(getAdmin1());
-		int databaseSizeBeforeDelete = customerRepository.findAll().size();
+		Account admin = accountService.saveAdministrator(getAdmin1());
+		int databaseSizeBeforeDelete = administratorRepository.findAll().size();
 	
-		this.mockMvc.perform(delete("/customers/{id}", getCustomer1().getAccountId())
+		this.mockMvc.perform(delete("/admins/{id}", admin.getAccountId())
 				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())				
 				.andReturn();
 				
 				// Validate the database is empty
-				List<Customer> accounts = customerRepository.findAll();
+				List<Administrator> accounts = administratorRepository.findAll();
 				assertThat(accounts.size()).isEqualTo(databaseSizeBeforeDelete - 1);
 		
 	}
@@ -145,7 +144,7 @@ public class CustomerControllerTest extends Constants {
 	
 	
 	@Test
-	void findCustomers() throws Exception {
+	void findAdministrators() throws Exception {
 
 		List<Customer> customers = new ArrayList<>();
 
@@ -161,7 +160,7 @@ public class CustomerControllerTest extends Constants {
 		accountService.saveAdministrator(getAdmin1());
 
 		MvcResult result = mockMvc
-				.perform(get("/customers/")
+				.perform(get("/admins/")
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -180,19 +179,19 @@ public class CustomerControllerTest extends Constants {
 	@Test
 	void updateAccountName() throws Exception {
 		
-		Customer initial = accountService.saveCustomer(getCustomer1());
-		Administrator admin = accountService.saveAdministrator(getAdmin1());
+		Account initial = accountService.saveAdministrator(getAdmin2());
+		Account admin = accountService.saveAdministrator(getAdmin1());
 		
-		int databaseSizeBeforeUpdate = customerRepository.findAll().size();
+		int databaseSizeBeforeUpdate = administratorRepository.findAll().size();
 
-		Customer updated = customerRepository.findById(initial.getAccountId()).orElse(null);
+		Account updated = administratorRepository.findById(initial.getAccountId()).orElse(null);
 		assertThat(updated).isNotNull();
 		entityManager.detach(updated);
 		
 		updated.setName(UPDATED_NAME);
 
 		
-		mockMvc.perform(put("/customers/{id}/name", initial.getAccountId())
+		mockMvc.perform(put("/admins/{id}/name", initial.getAccountId())
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(updated))
 				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
@@ -202,10 +201,10 @@ public class CustomerControllerTest extends Constants {
 
 
 
-		List<Customer> accounts = customerRepository.findAll();
-		assertThat(accounts.size()).isEqualTo(databaseSizeBeforeUpdate);
+		List<Administrator> adminAccounts = administratorRepository.findAll();
+		assertThat(adminAccounts.size()).isEqualTo(databaseSizeBeforeUpdate);
 		// It is also helpful to verify that the database has indeed changed
-		Customer databaseAccount = customerRepository.findById(initial.getAccountId()).orElse(null);
+		Account databaseAccount = administratorRepository.findById(initial.getAccountId()).orElse(null);
 		assertThat(databaseAccount).isNotNull();
 		assertThat(databaseAccount.getName()).isEqualTo(updated.getName());
 
