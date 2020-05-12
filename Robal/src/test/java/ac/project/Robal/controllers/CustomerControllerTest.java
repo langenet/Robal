@@ -2,6 +2,7 @@ package ac.project.Robal.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -39,6 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,10 +50,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
+import ac.project.Robal.models.Account;
+import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.services.AccountService;
-
 
 @SpringBootTest
 @Transactional
@@ -69,29 +72,32 @@ public class CustomerControllerTest extends Constants {
 
 	@Autowired
 	private CustomerRepository customerRepository;
-	
+
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
+		
+		setupTests();
+	
+		
 		Mockito.when(bCryptPasswordEncoder.encode(any())).thenReturn(PASSWORD);
 		Mockito.when(bCryptPasswordEncoder.matches(any(), any())).thenReturn(true);
 
 	}
-	
+
 	@Test
 	void createCustomer() throws Exception {
 		int databaseSizeBeforeCreate = customerRepository.findAll().size();
 
-		this.mockMvc.perform(post("/customers/")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(CUSTOMER1)))
-				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1))
-				.andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
+		this.mockMvc
+				.perform(post("/customers/").contentType(TestUtil.APPLICATION_JSON_UTF8)
+						.content(TestUtil.convertObjectToJsonBytes(getCustomer1())))
+				.andExpect(status().isCreated()).andExpect(jsonPath("$.accountId").isNumber())
+				.andExpect(jsonPath("$.name").value(NAME1)).andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
 				.andExpect(jsonPath("$.role").value(CUSTOMER_ROLE.name()))
 				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS))
 				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD));
@@ -99,54 +105,68 @@ public class CustomerControllerTest extends Constants {
 		List<Customer> customers = customerRepository.findAll();
 		assertThat(customers.size()).isEqualTo(databaseSizeBeforeCreate + 1);
 	}
-	
+
 	@Test
 	void findCustomer() throws Exception {
-		int databaseSizeBeforeCreate = customerRepository.findAll().size();
 
-		// Save customer1
-
-		// GET on customers/{id} pass in CUSTOMER1.getAccountId()
-		this.mockMvc.perform(post("/customers/")
+		// Save getCustomer1()
+		Account saved = accountService.saveCustomer(getCustomer1());
+		Account admin = accountService.saveAdministrator(getAdmin1());
+		// GET on customers/{id} pass in getCustomer1().getAccountId()
+		this.mockMvc.perform(get("/customers/{id}", saved.getAccountId())
 				// Pass in the header
-
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(CUSTOMER1)))
-
-				.andExpect(status().isCreated())
+						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1))
-				.andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
+				.andExpect(jsonPath("$.name").value(NAME1)).andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
 				.andExpect(jsonPath("$.role").value(CUSTOMER_ROLE.name()))
 				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS))
-				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD));
-//		
+				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD)).andReturn();
+		
+	}
+	
+	@Test
+	void DeleteCustomer() throws Exception {
+		
+		Account saved = accountService.saveCustomer(getCustomer1());
+		Account admin = accountService.saveAdministrator(getAdmin1());
+		int databaseSizeBeforeDelete = customerRepository.findAll().size();
+	
+		this.mockMvc.perform(delete("/customers/{id}", saved.getAccountId())
+				// Pass in the header
+						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
+				.andExpect(status().isOk())				
+				.andReturn();
+				
+				// Validate the database is empty
+				List<Customer> accounts = customerRepository.findAll();
+				assertThat(accounts.size()).isEqualTo(databaseSizeBeforeDelete - 1);
+		
 	}
 
+	
+	
 	@Test
 	void findCustomers() throws Exception {
 
 		List<Customer> customers = new ArrayList<>();
 
-		accountService.saveCustomer(CUSTOMER1);
-		customers.add(CUSTOMER1);
+		accountService.saveCustomer(getCustomer1());
+		customers.add(getCustomer1());
 
-		accountService.saveCustomer(CUSTOMER2);
-		customers.add(CUSTOMER2);
+		accountService.saveCustomer(getCustomer2());
+		customers.add(getCustomer2());
 
-		accountService.saveCustomer(CUSTOMER3);
-		customers.add(CUSTOMER3);
+		accountService.saveCustomer(getCustomer3());
+		customers.add(getCustomer3());
 
+		accountService.saveAdministrator(getAdmin1());
 
-		accountService.saveAdministrator(ADMIN1);
+		MvcResult result = mockMvc
+				.perform(get("/customers/")
+						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 
-		MvcResult result = mockMvc.perform(get("/customers/")
-				.headers(TestUtil.getAuthorizationBasic(ADMIN1.getEmail(),
-						ADMIN1.getPassword())))
-
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andReturn();
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -155,9 +175,8 @@ public class CustomerControllerTest extends Constants {
 				new TypeReference<List<Customer>>() {
 				});
 
-
 		assertThat(actual.equals(customers));
 
 	}
-	
+
 }
