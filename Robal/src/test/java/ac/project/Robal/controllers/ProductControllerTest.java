@@ -95,15 +95,14 @@ public class ProductControllerTest extends Constants {
 	void createProduct() throws Exception {
 		Administrator admin = accountService.saveAdministrator(getAdmin1());
 		int databaseSizeBeforeCreate = productRepository.findAll().size();
-	
-		productRepository.save(getProduct1());
+
 
 		this.mockMvc
 				.perform(post("/products/").contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword()))
-						.content(TestUtil.convertObjectToJsonBytes(getAdmin2())))
+						.content(TestUtil.convertObjectToJsonBytes(getProduct1())))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.productId").isNumber())
-				.andExpect(jsonPath("$.discription").value(PRO_DESC1))
+				.andExpect(jsonPath("$.description").value(PRO_DESC1))
 				.andExpect(jsonPath("$.name").value(PRO_NAME1))
 				.andExpect(jsonPath("$.sku").value(PRO_SKU1));
 		
@@ -115,15 +114,15 @@ public class ProductControllerTest extends Constants {
 	void findProduct() throws Exception {
 
 		Administrator admin = accountService.saveAdministrator(getAdmin1());
+		productRepository.save(getProduct1());
 		
-		this.mockMvc.perform(get("/products/{id}", admin.getAccountId())
+		this.mockMvc.perform(get("/products/{id}", getProduct1().getProductId())
 				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1))
-				.andExpect(jsonPath("$.email").value(EMAIL_ADMIN1))
-				.andExpect(jsonPath("$.role").value(ADMIN_ROLE.name()));
+				.andExpect(jsonPath("$.description").value(PRO_DESC1))
+				.andExpect(jsonPath("$.name").value(PRO_NAME1))
+				.andExpect(jsonPath("$.sku").value(PRO_SKU1));
 		
 	}
 	
@@ -131,9 +130,11 @@ public class ProductControllerTest extends Constants {
 	void DeleteProduct() throws Exception {
 		
 		Account admin = accountService.saveAdministrator(getAdmin1());
+		productRepository.save(getProduct1());
 		int databaseSizeBeforeDelete = productRepository.findAll().size();
+		
 	
-		this.mockMvc.perform(delete("/products/{id}", admin.getAccountId())
+		this.mockMvc.perform(delete("/products/{id}", getProduct1().getProductId())
 				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())				
@@ -158,58 +159,24 @@ public class ProductControllerTest extends Constants {
 		productRepository.save(getProduct2());
 		products.add(getProduct2());
 
-		productRepository.save(getProduct2());
-		products.add(getProduct2());
+		productRepository.save(getProduct3());
+		products.add(getProduct3());
 
 		accountService.saveAdministrator(getAdmin1());
 
 		MvcResult result = mockMvc
-				.perform(get("/admins/")
+				.perform(get("/products/")
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
-
-				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
+						.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 
 		ObjectMapper mapper = new ObjectMapper();
 
 		// this uses a TypeReference to inform Jackson about the Lists's generic type
-		List<Customer> actual = mapper.readValue(result.getResponse().getContentAsString(),
-				new TypeReference<List<Customer>>() {
+		List<Product> actual = mapper.readValue(result.getResponse().getContentAsString(),
+				new TypeReference<List<Product>>() {
 				});
 
 		assertThat(actual.equals(products));
 
-	}
-	
-//	@Test
-//	void updateProduct() throws Exception {
-//	
-//		Account admin = accountService.saveAdministrator(getAdmin1());
-//		
-//		int databaseSizeBeforeUpdate = productRepository.findAll().size();
-//
-//		Product updated = productRepository.findById(initial.getAccountId()).orElse(null);
-//		assertThat(updated).isNotNull();
-//		entityManager.detach(updated);
-//		
-//		updated.setName(UPDATED_NAME);
-//
-//		
-//		mockMvc.perform(put("/admins/{id}/name", initial.getAccountId())
-//				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-//				.content(TestUtil.convertObjectToJsonBytes(updated))
-//				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
-//				.andExpect(status().isCreated())
-//				.andExpect(jsonPath("$.accountId").value(initial.getAccountId()))
-//				.andExpect(jsonPath("$.name").value(updated.getName())).andReturn();
-//
-//
-//
-//		List<Administrator> adminAccounts = administratorRepository.findAll();
-//		assertThat(adminAccounts.size()).isEqualTo(databaseSizeBeforeUpdate);
-//		// It is also helpful to verify that the database has indeed changed
-//		Account databaseAccount = administratorRepository.findById(initial.getAccountId()).orElse(null);
-//		assertThat(databaseAccount).isNotNull();
-//		assertThat(databaseAccount.getName()).isEqualTo(updated.getName());
-//
-//	}
+	}	
 }
