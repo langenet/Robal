@@ -55,9 +55,9 @@ public class StoreController {
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")
 	@GetMapping("/stores/{id}")
-	public Store findStore(@PathVariable Long id) throws NotFoundException {
+	public ResponseEntity<Store> findStore(@PathVariable Long id) throws NotFoundException {
 		logger.info("***stores method accessed***");
-		return storeService.findStore(id);
+		return new ResponseEntity<>(storeService.findStore(id), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Find all Stores", response = StoreController.class)
@@ -67,9 +67,9 @@ public class StoreController {
 	})
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/stores/")
-	public List<Store> findStores() throws NotFoundException {
+	public ResponseEntity<List<Store>> findStores() throws NotFoundException {
 		logger.info("***findStores method accessed***");
-		return storeService.findStores();
+		return new ResponseEntity<>(storeService.findStores(), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Find a StoreProduct by ID", response = StoreController.class)
@@ -199,7 +199,7 @@ public class StoreController {
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@PostMapping("/stores/{id}/products")
-	public StoreProduct saveStoreProduct(Principal principal,
+	public ResponseEntity<StoreProduct> saveStoreProduct(Principal principal,
 			@PathVariable Long id,
 			@RequestBody StoreProduct storeProduct) throws Exception {
 
@@ -222,7 +222,7 @@ public class StoreController {
 				|| user.getRole() == Role.ADMIN) {
 
 //			store.getStoreProducts().add(storeProduct);
-			return storeService.saveStoreProduct(id, storeProduct);
+			return new ResponseEntity<>(storeService.saveStoreProduct(id, storeProduct),HttpStatus.OK);
 
 		} else {
 			throw new Exception("You can only update your own Stores Products unless you are an Administrator.");
