@@ -1,12 +1,14 @@
 package ac.project.Robal.enums;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
+import ac.project.Robal.models.Order;
+import ac.project.Robal.models.OrderProduct;
 import ac.project.Robal.models.Owner;
-import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
 import ac.project.Robal.models.StoreProduct;
 import lombok.Getter;
@@ -20,6 +22,7 @@ public class Constants {
 	protected static final String NAME1 = "Andy Ta";
 	protected static final String NAME2 = "Robert Lange";
 	protected static final String NAME3 = "Alex Riccio";
+	protected static final String UPDATED_NAME = "superman";
 
 	protected static final String EMAIL_CUSTOMER1 = "andy@customer.com";
 	protected static final String EMAIL_CUSTOMER2 = "robert@customer.com";
@@ -55,50 +58,73 @@ public class Constants {
 	private Administrator admin2;
 	private Administrator admin3;
 
-//	SupeAdmin
-//	Administrator admin = Administrator.builder()
-//			.email("super@admin.com")
-//			.name("superAdmin")
-//			.password("password")
-//			.role(Role.ADMIN)
-//			.build();
+	protected static final String STORE_ADDRESS1 = "123 Store Street";
+	protected static final String STORE_ADDRESS2 = "456 Store Ave";
+	protected static final String STORE_ADDRESS3 = "789 Store Road";
+	protected static final String STORE_NAME1 = "Walmart";
+	protected static final String STORE_NAME2 = "Shoppers";
+	protected static final String STORE_NAME3 = "Loblaws";
 
-//	protected static final List<Order> ORDERS = Order.builder()
-//													.invoiceNumber(1L)
-//													.purchaseDate(LocalDate.now())
-//													.orderProducts(orderProducts)
+	protected static final int INVENTORY1 = 1;
+	protected static final int INVENTORY2 = 2;
+	protected static final int INVENTORY3 = 3;
 
-	protected static final List<Store> STORES = new ArrayList<>();
+	protected static final double PRICE1 = 1.25;
+	protected static final double PRICE2 = 2.50;
+	protected static final double PRICE3 = 3.75;
+	protected static final double GST = 1.13;
 
-	protected static final String STORE_ADDRESS = "123 Store Stree";
-	protected static final String STORE_NAME = "Walmart";
+	private Store store1;
+	private Store store2;
+	private Store store3;
 
-	protected static final List<StoreProduct> STORE_PRODUCTS = new ArrayList<>();
+	private List<Store> stores1;
+	private List<Store> stores2;
+	private List<Store> stores3;
 
-	protected static final int INVENTORY = 1;
-	protected static final double PRICE = 5.25;
+	private StoreProduct storeProduct1;
+	private StoreProduct storeProduct2;
+	private StoreProduct storeProduct3;
 
-	protected static final String DESCRIPTION = "Toilet Paper";
-	protected static final String PRODUCT_NAME = "Charmen";
+	private List<StoreProduct> storeProducts1 = new ArrayList<>();
+	private List<StoreProduct> storeProducts2 = new ArrayList<>();
+	private List<StoreProduct> storeProducts3 = new ArrayList<>();
 
-	protected static final Long SKU = 123L;
-	protected static final Long PRODUCT_ID = 1L;
+	protected static final Long INVOICE_NUMBER1 = 123456789L;
+	protected static final Long INVOICE_NUMBER2 = 123456789L;
+	protected static final Long INVOICE_NUMBER3 = 123456789L;
 
-	protected static final Product PRODUCT = Product.builder().description(DESCRIPTION).name(PRODUCT_NAME).sku(SKU)
-			.productId(PRODUCT_ID).build();
+	protected static final LocalDate PURCHASE_DATE1 = LocalDate.of(2020, 05, 11);
+	protected static final LocalDate PURCHASE_DATE2 = LocalDate.of(2017, 01, 03);
+	protected static final LocalDate PURCHASE_DATE3 = LocalDate.of(2019, 12, 31);
 
+	protected static final int QUANTITY1 = 1;
+	protected static final int QUANTITY2 = 1;
+	protected static final int QUANTITY3 = 1;
 
-//	owner = Owner.builder().name(NAME).email(EMAIL).password(PASSWORD).role(ROLE).build();
-//
-//		STORE_PRODUCTS.add(StoreProduct.builder().inventory(INVENTORY).price(PRICE).product(PRODUCT).build());
-//
-//		STORES.add(Store.builder().address(STORE_ADDRESS).name(STORE_NAME).owner(owner).storeProducts(STORE_PRODUCTS)
-//				.build());
+	protected static final Double SUB_TOTAL1 = PRICE1;
+	protected static final Double SUB_TOTAL2 = PRICE2;
+	protected static final Double SUB_TOTAL3 = PRICE3;
 
+	protected static final Double TOTAL1 = SUB_TOTAL1 * GST;
+	protected static final Double TOTAL2 = SUB_TOTAL2 * GST;
+	protected static final Double TOTAL3 = SUB_TOTAL3 * GST;
 
-	
-	protected static final String UPDATED_NAME  = "superman";
-	
+	private Order order1;
+	private Order order2;
+	private Order order3;
+
+	private List<Order> orders1;
+	private List<Order> orders2;
+	private List<Order> orders3;
+
+	private OrderProduct orderProduct1;
+	private OrderProduct orderProduct2;
+	private OrderProduct orderProduct3;
+
+	private List<OrderProduct> orderProducts1;
+	private List<OrderProduct> orderProducts2;
+	private List<OrderProduct> orderProducts3;
 
 	public void setupTests() {
 
@@ -109,6 +135,7 @@ public class Constants {
 				.password(PASSWORD)
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
+				.orders(orders1)
 				.build();
 
 		customer2 = Customer.builder()
@@ -118,6 +145,7 @@ public class Constants {
 				.password(PASSWORD)
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
+				.orders(orders2)
 				.build();
 
 		customer3 = Customer.builder()
@@ -127,6 +155,7 @@ public class Constants {
 				.password(PASSWORD)
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
+				.orders(orders3)
 				.build();
 
 		owner1 = Owner.builder()
@@ -134,6 +163,7 @@ public class Constants {
 				.name(NAME1)
 				.password(PASSWORD)
 				.role(OWNER_ROLE)
+				.stores(stores1)
 				.build();
 				
 		owner2 = Owner.builder()
@@ -141,6 +171,7 @@ public class Constants {
 				.name(NAME2)
 				.password(PASSWORD)
 				.role(OWNER_ROLE)
+				.stores(stores2)
 				.build();
 				
 		owner3 = Owner.builder()
@@ -148,6 +179,7 @@ public class Constants {
 				.name(NAME3)
 				.password(PASSWORD)
 				.role(OWNER_ROLE)
+				.stores(stores3)
 				.build();
 		
 		admin1 = Administrator.builder()
@@ -172,6 +204,101 @@ public class Constants {
 				.role(ADMIN_ROLE)
 				.build();
 
+
+
+		storeProduct1 = StoreProduct.builder()
+				.inventory(INVENTORY1)
+				.price(PRICE1)
+				.product(product1)
+				.build();
+
+		storeProduct2 = StoreProduct.builder()
+				.inventory(INVENTORY1)
+				.price(PRICE2)
+				.product(product2)
+				.build();
+		
+		storeProduct3 = StoreProduct.builder()
+				.inventory(INVENTORY1)
+				.price(PRICE3)
+				.product(product3)
+				.build();
+
+		storeProducts1.add(storeProduct1);
+		storeProducts2.add(storeProduct2);
+		storeProducts3.add(storeProduct3);
+		
+		
+		store1 = Store.builder()
+				.address(STORE_ADDRESS1)
+				.name(STORE_NAME1)
+				.owner(owner1)
+				.storeProducts(storeProducts1)
+				.build();
+		
+		store2 = Store.builder()
+				.address(STORE_ADDRESS2)
+				.name(STORE_NAME2)
+				.owner(owner2)
+				.storeProducts(storeProducts2)
+				.build();
+		
+		store3 = Store.builder()
+				.address(STORE_ADDRESS3)
+				.name(STORE_NAME3)
+				.owner(owner3)
+				.storeProducts(storeProducts3)
+				.build();
+		
+		orderProduct1 = OrderProduct.builder()
+				.price(PRICE1)
+				.quantity(QUANTITY1)
+				.storeProduct(storeProduct1)
+				.build();
+
+		orderProduct2 = OrderProduct.builder()
+				.price(PRICE2)
+				.quantity(QUANTITY2)
+				.storeProduct(storeProduct1)
+				.build();
+
+		orderProduct3 = OrderProduct.builder()
+				.price(PRICE3)
+				.quantity(QUANTITY3)
+				.storeProduct(storeProduct1)
+				.build();
+		
+		orderProducts1.add(orderProduct1);
+		orderProducts2.add(orderProduct2);
+		orderProducts3.add(orderProduct3);
+
+		order1 = Order.builder()
+				.invoiceNumber(INVOICE_NUMBER1)
+				.orderProducts(orderProducts1)
+				.purchaseDate(PURCHASE_DATE1)
+				.subTotal(SUB_TOTAL1)
+				.total(TOTAL1)
+				.build();
+
+		order2 = Order.builder()
+				.invoiceNumber(INVOICE_NUMBER2)
+				.orderProducts(orderProducts2)
+				.purchaseDate(PURCHASE_DATE2)
+				.subTotal(SUB_TOTAL2)
+				.total(TOTAL2)
+				.build();
+
+		order3 = Order.builder()
+				.invoiceNumber(INVOICE_NUMBER3)
+				.orderProducts(orderProducts3)
+				.purchaseDate(PURCHASE_DATE3)
+				.subTotal(SUB_TOTAL3)
+				.total(TOTAL3)
+				.build();
+
+		orders1.add(order1);
+		orders2.add(order2);
+		orders3.add(order3);
 	}
 
 }

@@ -49,15 +49,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
-import ac.project.Robal.models.Owner;
+import ac.project.Robal.models.Administrator;
+import ac.project.Robal.models.Store;
 import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.OwnerRepository;
+import ac.project.Robal.repositories.ProductRepository;
 import ac.project.Robal.repositories.StoreRepository;
 
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class OwnerControllerTest extends Constants {
+public class StoreControllerTest extends Constants {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -74,6 +76,9 @@ public class OwnerControllerTest extends Constants {
 	@Autowired
 	private StoreRepository storeRepository;
 
+	@Autowired
+	private ProductRepository productRepository;
+
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -88,90 +93,86 @@ public class OwnerControllerTest extends Constants {
 	}
 
 	@Test
-	void createOwner() throws Exception {
+	void createStore() throws Exception {
 
-		int databaseSizeBeforeCreate = ownerRepository.findAll().size();
+		int databaseSizeBeforeCreate = storeRepository.findAll().size();
 
 		this.mockMvc
-				.perform(post("/owners/").contentType(TestUtil.APPLICATION_JSON_UTF8)
-						.content(TestUtil.convertObjectToJsonBytes(getOwner1())))
+				.perform(post("/stores/").contentType(TestUtil.APPLICATION_JSON_UTF8)
+						.content(TestUtil.convertObjectToJsonBytes(getStore1())))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1))
-				.andExpect(jsonPath("$.email").value(EMAIL_OWNER1))
-				.andExpect(jsonPath("$.role").value(OWNER_ROLE.name()));
+				.andExpect(jsonPath("$.storeId").isNumber())
+				.andExpect(jsonPath("$.name").value(STORE_NAME1))
+				.andExpect(jsonPath("$.address").value(STORE_ADDRESS1));
 
-		List<Owner> owners = ownerRepository.findAll();
-		assertThat(owners.size()).isEqualTo(databaseSizeBeforeCreate + 1);
+		List<Store> stores = storeRepository.findAll();
+		assertThat(stores.size()).isEqualTo(databaseSizeBeforeCreate + 1);
 	}
 
 	@Test
-	void updateOwner() throws Exception {
+	void updateStore() throws Exception {
 
-		ownerRepository.save(getOwner1());
+		storeRepository.save(getStore1());
 		adminRepository.save(getAdmin1());
 
-		int databaseSizeBeforeCreate = ownerRepository.findAll().size();
+		int databaseSizeBeforeCreate = storeRepository.findAll().size();
 
-		Owner updated = ownerRepository.findById(getOwner1().getAccountId()).orElse(null);
+		Store updated = storeRepository.findById(getStore1().getStoreId()).orElse(null);
 		assertThat(updated).isNotNull();
 
 		entityManager.detach(updated);
-		updated.setName(NAME2);
-		updated.setEmail(EMAIL_OWNER2);
+		updated.setName(STORE_NAME2);
+		updated.setAddress(STORE_ADDRESS2);
 
 		this.mockMvc
-				.perform(put("/owners/{id}", getOwner1().getAccountId())
+				.perform(put("/stores/{id}", getStore1().getStoreId())
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword()))
 						.contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.content(TestUtil.convertObjectToJsonBytes(updated)))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME2))
-				.andExpect(jsonPath("$.email").value(EMAIL_OWNER2))
-				.andExpect(jsonPath("$.role").value(OWNER_ROLE.name()));
+				.andExpect(jsonPath("$.storeId").isNumber())
+				.andExpect(jsonPath("$.name").value(STORE_NAME2))
+				.andExpect(jsonPath("$.address").value(STORE_ADDRESS2));
 
 		// It is also helpful to verify that the database has indeed changed
-		Owner databaseAccount = ownerRepository.findById(getOwner1().getAccountId()).orElse(null);
+		Store databaseAccount = storeRepository.findById(getStore1().getStoreId()).orElse(null);
 		assertThat(databaseAccount).isNotNull();
-		assertThat(databaseAccount.getName()).isEqualTo(getOwner1().getName());
-		assertThat(databaseAccount.getEmail()).isEqualTo(getOwner1().getEmail());
-		assertThat(databaseAccount.getRole()).isEqualTo(getOwner1().getRole());
+		assertThat(databaseAccount.getName()).isEqualTo(getStore1().getName());
+		assertThat(databaseAccount.getAddress()).isEqualTo(getStore1().getAddress());
 	}
 
 	@Test
-	void findOwner() throws Exception {
+	void findStore() throws Exception {
 
-		ownerRepository.save(getOwner1());
-		adminRepository.save(getAdmin1());
-		this.mockMvc.perform(get("/owners/{id}", getOwner1().getAccountId())
+		Store saved = storeRepository.save(getStore1());
+		Administrator admin = adminRepository.save(getAdmin1());
+		this.mockMvc.perform(get("/stores/{id}", saved.getStoreId())
 				// Pass in the header
 				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1))
-				.andExpect(jsonPath("$.email").value(EMAIL_OWNER1))
-				.andExpect(jsonPath("$.role").value(OWNER_ROLE.name()));
+				.andExpect(jsonPath("$.storeId").isNumber())
+				.andExpect(jsonPath("$.name").value(STORE_NAME2))
+				.andExpect(jsonPath("$.address").value(STORE_ADDRESS2));
 	}
 
 	@Test
-	void findOwners() throws Exception {
+	void findStores() throws Exception {
 
-		List<Owner> owners = new ArrayList<>();
+		List<Store> stores = new ArrayList<>();
 
-		ownerRepository.save(getOwner1());
-		owners.add(getOwner1());
+		storeRepository.save(getStore1());
+		stores.add(getStore1());
 
-		ownerRepository.save(getOwner2());
-		owners.add(getOwner2());
+		storeRepository.save(getStore2());
+		stores.add(getStore2());
 
-		ownerRepository.save(getOwner3());
-		owners.add(getOwner3());
+		storeRepository.save(getStore3());
+		stores.add(getStore3());
 
 		adminRepository.save(getAdmin1());
 
 		MvcResult result = mockMvc
-				.perform(get("/owners/")
+				.perform(get("/stores/")
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -180,29 +181,29 @@ public class OwnerControllerTest extends Constants {
 		ObjectMapper mapper = new ObjectMapper();
 
 		// this uses a TypeReference to inform Jackson about the Lists's generic type
-		List<Owner> actual = mapper.readValue(result.getResponse().getContentAsString(),
-				new TypeReference<List<Owner>>() {
+		List<Store> actual = mapper.readValue(result.getResponse().getContentAsString(),
+				new TypeReference<List<Store>>() {
 				});
 
-		assertThat(actual.equals(owners));
+		assertThat(actual.equals(stores));
 
 	}
 
 	@Test
 	void deleteOwner() throws Exception {
 
-		ownerRepository.save(getOwner1());
+		storeRepository.save(getStore1());
 		adminRepository.save(getAdmin1());
-		int databaseSizeBeforeDelete = ownerRepository.findAll().size();
+		int databaseSizeBeforeDelete = storeRepository.findAll().size();
 
-		this.mockMvc.perform(delete("/owners/{id}", getOwner1().getAccountId())
+		this.mockMvc.perform(delete("/stores/{id}", getStore1().getStoreId())
 				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())
 				.andReturn();
 
 		// Validate the database is empty
-		List<Owner> accounts = ownerRepository.findAll();
-		assertThat(accounts.size()).isEqualTo(databaseSizeBeforeDelete - 1);
+		List<Store> stores = storeRepository.findAll();
+		assertThat(stores.size()).isEqualTo(databaseSizeBeforeDelete - 1);
 
 	}
 
