@@ -87,12 +87,18 @@ public class Constants {
 	protected static final Product PRODUCT = Product.builder().description(DESCRIPTION).name(PRODUCT_NAME).sku(SKU)
 			.productId(PRODUCT_ID).build();
 
+
 //	owner = Owner.builder().name(NAME).email(EMAIL).password(PASSWORD).role(ROLE).build();
 //
 //		STORE_PRODUCTS.add(StoreProduct.builder().inventory(INVENTORY).price(PRICE).product(PRODUCT).build());
 //
 //		STORES.add(Store.builder().address(STORE_ADDRESS).name(STORE_NAME).owner(owner).storeProducts(STORE_PRODUCTS)
 //				.build());
+
+
+	
+	protected static final String UPDATED_NAME  = "superman";
+	
 
 	public void setupTests() {
 
@@ -151,6 +157,7 @@ public class Constants {
 				.role(ADMIN_ROLE)
 				.build();
 		
+
 		admin2 = Administrator.builder()
 				.email(EMAIL_ADMIN2)
 				.name(NAME2)
@@ -164,6 +171,7 @@ public class Constants {
 				.password(PASSWORD)
 				.role(ADMIN_ROLE)
 				.build();
+
 	}
 
 }

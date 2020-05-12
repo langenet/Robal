@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -79,8 +80,7 @@ public class CustomerControllerTest extends Constants {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		
-		setupTests();
-	
+		setupTests();	
 		
 		Mockito.when(bCryptPasswordEncoder.encode(any())).thenReturn(PASSWORD);
 		Mockito.when(bCryptPasswordEncoder.matches(any(), any())).thenReturn(true);
@@ -176,5 +176,38 @@ public class CustomerControllerTest extends Constants {
 		assertThat(actual.equals(customers));
 
 	}
+	
+	@Test
+	void updateAccountName() throws Exception {
+		
+		Account initial = accountService.saveCustomer(getCustomer1());
+		Account admin = accountService.saveAdministrator(getAdmin1());
+		
+		int databaseSizeBeforeUpdate = customerRepository.findAll().size();
 
+		Account updated = customerRepository.findById(initial.getAccountId()).orElse(null);
+		assertThat(updated).isNotNull();
+		entityManager.detach(updated);
+		
+		updated.setName(UPDATED_NAME);
+
+		
+		mockMvc.perform(put("/customers/{id}/name", initial.getAccountId())
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(updated))
+				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.accountId").value(initial.getAccountId()))
+				.andExpect(jsonPath("$.name").value(updated.getName())).andReturn();
+
+
+
+		List<Customer> accounts = customerRepository.findAll();
+		assertThat(accounts.size()).isEqualTo(databaseSizeBeforeUpdate);
+		// It is also helpful to verify that the database has indeed changed
+		Account databaseAccount = customerRepository.findById(initial.getAccountId()).orElse(null);
+		assertThat(databaseAccount).isNotNull();
+		assertThat(databaseAccount.getName()).isEqualTo(updated.getName());
+
+	}
 }
