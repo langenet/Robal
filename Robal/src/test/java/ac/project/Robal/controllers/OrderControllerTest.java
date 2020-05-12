@@ -51,11 +51,16 @@ import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Order;
+import ac.project.Robal.models.OrderProduct;
+import ac.project.Robal.models.Product;
+import ac.project.Robal.models.StoreProduct;
 import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.CustomerRepository;
+import ac.project.Robal.repositories.OrderProductRepository;
 import ac.project.Robal.repositories.OrderRepository;
 import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.ProductRepository;
+import ac.project.Robal.repositories.StoreProductRepository;
 import ac.project.Robal.repositories.StoreRepository;
 
 @SpringBootTest
@@ -75,7 +80,6 @@ public class OrderControllerTest extends Constants {
 	@Autowired
 	private CustomerRepository customerRepository;
 
-
 	@Autowired
 	private AdministratorRepository adminRepository;
 
@@ -86,7 +90,13 @@ public class OrderControllerTest extends Constants {
 	private ProductRepository productRepository;
 
 	@Autowired
+	private StoreProductRepository storeProductRepository;
+
+	@Autowired
 	private OrderRepository orderRepository;
+
+	@Autowired
+	private OrderProductRepository orderProductRepository;
 
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -126,7 +136,9 @@ public class OrderControllerTest extends Constants {
 	@Test
 	void updateOrder() throws Exception {
 
-		orderRepository.save(getOrder1());
+		saveOrder(getOrder1(), getOrderProduct1(), getStoreProduct1(), getProduct1());
+//		orderRepository.save(getOrder1());
+
 		adminRepository.save(getAdmin1());
 
 		int databaseSizeBeforeCreate = orderRepository.findAll().size();
@@ -163,7 +175,9 @@ public class OrderControllerTest extends Constants {
 	@Test
 	void findOrder() throws Exception {
 
-		Order saved = orderRepository.save(getOrder1());
+		Order saved = saveOrder(getOrder1(), getOrderProduct1(), getStoreProduct1(), getProduct1());
+
+//		Order saved = orderRepository.save(getOrder1());
 		Administrator admin = adminRepository.save(getAdmin1());
 		this.mockMvc.perform(get("/orders/{id}", saved.getOrderId())
 				// Pass in the header
@@ -180,13 +194,19 @@ public class OrderControllerTest extends Constants {
 
 		List<Order> orders = new ArrayList<>();
 
-		orderRepository.save(getOrder1());
+		saveOrder(getOrder1(), getOrderProduct1(), getStoreProduct1(), getProduct1());
+
+//		orderRepository.save(getOrder1());
 		orders.add(getOrder1());
 
-		orderRepository.save(getOrder2());
+		saveOrder(getOrder2(), getOrderProduct2(), getStoreProduct2(), getProduct2());
+
+//		orderRepository.save(getOrder2());
 		orders.add(getOrder2());
 
-		orderRepository.save(getOrder3());
+		saveOrder(getOrder3(), getOrderProduct3(), getStoreProduct3(), getProduct3());
+
+//		orderRepository.save(getOrder3());
 		orders.add(getOrder3());
 
 		adminRepository.save(getAdmin1());
@@ -212,19 +232,31 @@ public class OrderControllerTest extends Constants {
 	@Test
 	void deleteOrder() throws Exception {
 
-		orderRepository.save(getOrder1());
+		saveOrder(getOrder1(), getOrderProduct1(), getStoreProduct1(), getProduct1());
+
+//		orderRepository.save(getOrder1());
 		adminRepository.save(getAdmin1());
 		int databaseSizeBeforeDelete = orderRepository.findAll().size();
 
 		this.mockMvc.perform(delete("/orders/{id}", getOrder1().getOrderId())
 				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
-				.andExpect(status().isOk())
+				.andExpect(status().isNoContent())
 				.andReturn();
 
 		// Validate the database is empty
-		List<Order> stores = orderRepository.findAll();
-		assertThat(stores.size()).isEqualTo(databaseSizeBeforeDelete - 1);
+		List<Order> orders = orderRepository.findAll();
+		assertThat(orders.size()).isEqualTo(databaseSizeBeforeDelete - 1);
 
+	}
+
+	private Order saveOrder(Order order, OrderProduct orderProduct, StoreProduct storeProduct, Product product) {
+
+		productRepository.save(product);
+		storeProductRepository.save(storeProduct);
+		orderProductRepository.save(orderProduct);
+		orderRepository.save(order);
+
+		return order;
 	}
 
 }

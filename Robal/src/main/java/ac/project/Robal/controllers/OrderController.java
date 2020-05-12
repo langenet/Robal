@@ -1,11 +1,14 @@
 package ac.project.Robal.controllers;
 
+import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,9 +52,9 @@ public class OrderController {
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@GetMapping("/orders/{id}")
-	public Order findOrder(@PathVariable Long id) {
+	public ResponseEntity<Order> findOrder(@PathVariable Long id) {
 		logger.info("***findOrder by id method accessed***");
-		return orderService.findOrder(id);
+		return new ResponseEntity<>(orderService.findOrder(id), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "List all Orders", response = List.class)
@@ -61,9 +64,9 @@ public class OrderController {
 	})
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/orders/")
-	public List<Order> listOrders() {
+	public ResponseEntity<List<Order>> listOrders() {
 		logger.info("***listOrders method accessed***");
-		return orderService.findOrders();
+		return new ResponseEntity<>(orderService.findOrders(), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "List all Order Products", response = List.class)
@@ -73,9 +76,9 @@ public class OrderController {
 	})
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/order-products/")
-	public List<OrderProduct> listOrderProducts() {
+	public ResponseEntity<List<OrderProduct>> listOrderProducts() {
 		logger.info("***listOrderProducts method accessed***");
-		return orderService.findOrderProducts();
+		return new ResponseEntity<>(orderService.findOrderProducts(), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Save an Order", response = Order.class)
@@ -85,12 +88,12 @@ public class OrderController {
 	})
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/orders")
-	public Order saveOrder(Principal principal, @RequestBody List<OrderProduct> orderProducts) throws Exception {
+	public ResponseEntity<Order> saveOrder(Principal principal, @RequestBody List<OrderProduct> orderProducts) throws Exception {
 		logger.info("***saveOrder method accessed by " + principal.getName() + "***");
 
 		Customer customer = null;
 		customer = accountService.findCustomerByEmail(principal.getName());
-		return orderService.saveOrder(customer, orderProducts);
+		return ResponseEntity.created(new URI("/orders")).body(orderService.saveOrder(customer, orderProducts));
 
 	}
 
@@ -101,7 +104,8 @@ public class OrderController {
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@PutMapping("/orders/{id}")
-	public Order updateOrder(Principal principal, @RequestBody List<OrderProduct> orderProducts, @PathVariable Long id)
+	public ResponseEntity<Order> updateOrder(Principal principal, @RequestBody List<OrderProduct> orderProducts,
+			@PathVariable Long id)
 			throws Exception {
 		logger.info("***updateOrder method accessed by " + principal.getName() + "***");
 
@@ -119,8 +123,8 @@ public class OrderController {
 
 		if ((customer != null && customer.getOrders().contains(order))
 				|| user.getRole() == Role.ADMIN) {
-
-			return orderService.saveOrder(customer, orderProducts);
+			order = orderService.saveOrder(customer, orderProducts);
+			return ResponseEntity.created(new URI("/orders/" + order.getOrderId())).body(order);
 
 		} else {
 			throw new Exception("You can only update your own orders unless you are an Administrator.");

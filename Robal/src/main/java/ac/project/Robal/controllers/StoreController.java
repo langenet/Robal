@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -306,9 +307,9 @@ public class StoreController {
 			@ApiResponse(code = 204, message = "Successfully deleted Store"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
-	@PreAuthorize("OWNER")
+//	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@DeleteMapping("/store/{id}")
-	public void deleteStore(Principal principal, @PathVariable Long id) throws Exception {
+	public void deleteStore(Authentication principal, @PathVariable Long id) throws Exception {
 
 		logger.info("***deleteStore method accessed by " + principal.getName() + "***");
 
