@@ -1,5 +1,6 @@
 package ac.project.Robal.controllers;
 
+import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
@@ -38,17 +39,17 @@ public class ProductController {
 		this.productService = productService;
 	}
 	
-	@ApiOperation(value = "Find a Product", response = StoreProduct.class)
+	@ApiOperation(value = "Find a Product", response = Product.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully retrieved Product"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@GetMapping("/products/{id}")
-	public Product findProduct(@PathVariable Long id) throws NotFoundException {
+	public ResponseEntity<Product> findProduct(@PathVariable Long id) throws NotFoundException {
 		
 		logger.info("***findProducts by id method accessed***");
-		return productService.findProduct(id);
+		return new ResponseEntity<>(productService.findProduct(id),HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "List all Products", response = List.class)
@@ -83,10 +84,11 @@ public class ProductController {
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
 	@PostMapping("/products")
-	public Product saveProducts(@RequestBody Product products) throws Exception {
-
+	public ResponseEntity<Product> saveProduct(@RequestBody Product products) throws Exception {
+	
 		logger.info("***save Products method accessed***");
-		return productService.saveProduct(products);
+		Product result = productService.saveProduct(products);
+		return  ResponseEntity.created(new URI("/products/" + result.getProductId())).body(result);
 	}
 
 	@ApiOperation(value = "Update a Product", response = StoreProduct.class)
@@ -96,9 +98,10 @@ public class ProductController {
 	})
 	@PreAuthorize("hasRole('ADMIN','OWNER')")
 	@PutMapping("/products/{id}")
-	public Product updateProduct(@RequestBody Product product) throws Exception {
+	public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws Exception {
 		logger.info("***updateProduct method accessed***");
-		return productService.saveProduct(product);
+		Product result = productService.saveProduct(product);
+		return  ResponseEntity.created(new URI("/products/" + result.getProductId())).body(result);
 	}
 
 	@ApiOperation(value = "Delete a Product", response = StoreProduct.class)
