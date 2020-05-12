@@ -9,6 +9,7 @@ import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
 import ac.project.Robal.models.OrderProduct;
 import ac.project.Robal.models.Owner;
+import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
 import ac.project.Robal.models.StoreProduct;
 import lombok.Getter;
@@ -57,6 +58,22 @@ public class Constants {
 	private Administrator admin1;
 	private Administrator admin2;
 	private Administrator admin3;
+
+	protected static final String PRO_DESC1 = "Toilet Paper";
+	protected static final String PRO_DESC2 = "Tooth Paste";
+	protected static final String PRO_DESC3 = "Lysol Cleaner";
+
+	protected static final String PRO_NAME1 = "Charman";
+	protected static final String PRO_NAME2 = "Colgate";
+	protected static final String PRO_NAME3 = "Trump Juice";
+
+	protected static final long PRO_SKU1 = 123L;
+	protected static final long PRO_SKU2 = 456L;
+	protected static final long PRO_SKU3 = 789L;
+
+	private Product product1;
+	private Product product2;
+	private Product product3;
 
 	protected static final String STORE_ADDRESS1 = "123 Store Street";
 	protected static final String STORE_ADDRESS2 = "456 Store Ave";
@@ -204,7 +221,23 @@ public class Constants {
 				.role(ADMIN_ROLE)
 				.build();
 
+		product1 = Product.builder()
+				.description(PRO_DESC1)
+				.name(PRO_NAME1)
+				.sku(PRO_SKU1)
+				.build();
 
+		product2 = Product.builder()
+				.description(PRO_DESC2)
+				.name(PRO_NAME2)
+				.sku(PRO_SKU2)
+				.build();
+
+		product2 = Product.builder()
+				.description(PRO_DESC3)
+				.name(PRO_NAME3)
+				.sku(PRO_SKU3)
+				.build();
 
 		storeProduct1 = StoreProduct.builder()
 				.inventory(INVENTORY1)
