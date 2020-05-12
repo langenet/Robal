@@ -23,7 +23,6 @@ import lombok.Setter;
 @Setter
 @Getter
 
-// TODO cascade deletes. not sure where to add that.  Deleting a customer from the account table did not cascade.
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="accounts")

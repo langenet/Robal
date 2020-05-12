@@ -1,5 +1,7 @@
 package ac.project.Robal.enums;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,13 +121,19 @@ public class Constants {
 	protected static final int QUANTITY2 = 1;
 	protected static final int QUANTITY3 = 1;
 
-	protected static final Double SUB_TOTAL1 = PRICE1;
-	protected static final Double SUB_TOTAL2 = PRICE2;
-	protected static final Double SUB_TOTAL3 = PRICE3;
+	protected static final Double SUB_TOTAL1 = BigDecimal.valueOf(PRICE1).setScale(2, RoundingMode.HALF_UP)
+			.doubleValue();
+	protected static final Double SUB_TOTAL2 = BigDecimal.valueOf(PRICE2).setScale(2, RoundingMode.HALF_UP)
+			.doubleValue();
+	protected static final Double SUB_TOTAL3 = BigDecimal.valueOf(PRICE3).setScale(2, RoundingMode.HALF_UP)
+			.doubleValue();
 
-	protected static final Double TOTAL1 = SUB_TOTAL1 * GST;
-	protected static final Double TOTAL2 = SUB_TOTAL2 * GST;
-	protected static final Double TOTAL3 = SUB_TOTAL3 * GST;
+	protected static final Double TOTAL1 = BigDecimal.valueOf(SUB_TOTAL1 * GST).setScale(2, RoundingMode.HALF_UP)
+			.doubleValue();
+	protected static final Double TOTAL2 = BigDecimal.valueOf(SUB_TOTAL2 * GST).setScale(2, RoundingMode.HALF_UP)
+			.doubleValue();
+	protected static final Double TOTAL3 = BigDecimal.valueOf(SUB_TOTAL3 * GST).setScale(2, RoundingMode.HALF_UP)
+			.doubleValue();
 
 	private Order order1;
 	private Order order2;
@@ -152,7 +160,7 @@ public class Constants {
 				.password(PASSWORD)
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
-				.orders(orders1)
+//				.orders(orders1)
 				.build();
 
 		customer2 = Customer.builder()
@@ -162,7 +170,7 @@ public class Constants {
 				.password(PASSWORD)
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
-				.orders(orders2)
+//				.orders(orders2)
 				.build();
 
 		customer3 = Customer.builder()
@@ -172,7 +180,7 @@ public class Constants {
 				.password(PASSWORD)
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
-				.orders(orders3)
+//				.orders(orders3)
 				.build();
 
 		owner1 = Owner.builder()
@@ -245,13 +253,13 @@ public class Constants {
 				.build();
 
 		storeProduct2 = StoreProduct.builder()
-				.inventory(INVENTORY1)
+				.inventory(INVENTORY2)
 				.price(PRICE2)
 				.product(product2)
 				.build();
 
 		storeProduct3 = StoreProduct.builder()
-				.inventory(INVENTORY1)
+				.inventory(INVENTORY3)
 				.price(PRICE3)
 				.product(product3)
 				.build();
@@ -291,13 +299,13 @@ public class Constants {
 		orderProduct2 = OrderProduct.builder()
 				.price(PRICE2)
 				.quantity(QUANTITY2)
-				.storeProduct(storeProduct1)
+				.storeProduct(storeProduct2)
 				.build();
 
 		orderProduct3 = OrderProduct.builder()
 				.price(PRICE3)
 				.quantity(QUANTITY3)
-				.storeProduct(storeProduct1)
+				.storeProduct(storeProduct3)
 				.build();
 
 		orderProducts1.add(orderProduct1);

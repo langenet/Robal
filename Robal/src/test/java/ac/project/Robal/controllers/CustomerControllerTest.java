@@ -50,7 +50,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
-import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.repositories.CustomerRepository;
@@ -92,12 +91,14 @@ public class CustomerControllerTest extends Constants {
 	void createCustomer() throws Exception {
 		int databaseSizeBeforeCreate = customerRepository.findAll().size();
 
+
 		this.mockMvc
 				.perform(post("/customers/").contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.content(TestUtil.convertObjectToJsonBytes(getCustomer1())))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1)).andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
+				.andExpect(jsonPath("$.name").value(NAME1))
+				.andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
 				.andExpect(jsonPath("$.role").value(CUSTOMER_ROLE.name()))
 				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS))
 				.andExpect(jsonPath("$.paymentMethod").value(PAYMENT_METHOD));
@@ -109,12 +110,9 @@ public class CustomerControllerTest extends Constants {
 	@Test
 	void findCustomer() throws Exception {
 
-		// Save getCustomer1()
 		Customer saved = accountService.saveCustomer(getCustomer1());
 		Administrator admin = accountService.saveAdministrator(getAdmin1());
-		// GET on customers/{id} pass in getCustomer1().getAccountId()
 		this.mockMvc.perform(get("/customers/{id}", saved.getAccountId())
-				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.accountId").isNumber())
@@ -133,7 +131,6 @@ public class CustomerControllerTest extends Constants {
 		int databaseSizeBeforeDelete = customerRepository.findAll().size();
 	
 		this.mockMvc.perform(delete("/customers/{id}", getCustomer1().getAccountId())
-				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())				
 				.andReturn();

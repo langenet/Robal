@@ -140,7 +140,7 @@ public class OrderController {
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@DeleteMapping("/orders/{id}")
-	public void deleteOrder(Principal principal, @PathVariable Long id) throws Exception {
+	public ResponseEntity deleteOrder(Principal principal, @PathVariable Long id) throws Exception {
 
 		logger.info("***deleteOrder method accessed by " + principal.getName() + "***");
 
@@ -160,6 +160,7 @@ public class OrderController {
 				|| user.getRole() == Role.ADMIN) {
 
 			orderService.deleteOrder(id);
+			return ResponseEntity.noContent().build();
 
 		} else {
 			throw new Exception("You can only delete your own orders unless you are an Administrator.");
@@ -174,7 +175,7 @@ public class OrderController {
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@DeleteMapping("/orders/{oid}/order-products/{pid}")
-	public void deleteOrderProduct(Principal principal, @PathVariable Long oid, @PathVariable Long pid)
+	public ResponseEntity deleteOrderProduct(Principal principal, @PathVariable Long oid, @PathVariable Long pid)
 			throws Exception {
 
 		logger.info("***deleteOrder method accessed by " + principal.getName() + "***");
@@ -195,6 +196,7 @@ public class OrderController {
 				|| user.getRole() == Role.ADMIN) {
 
 			orderService.deleteOrderProduct(oid, pid);
+			return ResponseEntity.noContent().build();
 
 		} else {
 			throw new Exception(

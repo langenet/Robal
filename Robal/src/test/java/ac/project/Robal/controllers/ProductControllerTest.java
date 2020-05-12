@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,12 +51,9 @@ import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
 import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
-import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Product;
-import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.ProductRepository;
 import ac.project.Robal.services.AccountService;
-import ac.project.Robal.services.ProductService;
 
 @SpringBootTest
 @Transactional
@@ -117,7 +113,6 @@ public class ProductControllerTest extends Constants {
 		productRepository.save(getProduct1());
 		
 		this.mockMvc.perform(get("/products/{id}", getProduct1().getProductId())
-				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.description").value(PRO_DESC1))
@@ -135,7 +130,6 @@ public class ProductControllerTest extends Constants {
 		
 	
 		this.mockMvc.perform(delete("/products/{id}", getProduct1().getProductId())
-				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())				
 				.andReturn();
@@ -146,7 +140,6 @@ public class ProductControllerTest extends Constants {
 		
 	}
 
-	//testing
 	
 	@Test
 	void findProducts() throws Exception {

@@ -86,7 +86,6 @@ public class AccountService {
 	public Customer saveCustomer(Customer customer) throws Exception {
 		if (customer.getName() == null || customer.getEmail() == null || customer.getPassword() == null) {
 
-			// TODO jUnit test saveCustomer null values
 			throw new ClientException("Cannot create or update customer without Name, Email or Password.");
 		}
 
@@ -101,7 +100,6 @@ public class AccountService {
 			logger.info("***Repo:saveCustomer(new) attemped for: " + customer.getEmail() + "***");
 			return customerRepository.save(customer);
 		} else {
-			// TODO jUnit test update customer
 			logger.info("***Repo:updateCustomer attemped for: " + customer.getEmail() + "***");
 			Customer dbCustomer = customerRepository.findById(customer.getAccountId())
 					.orElseThrow(accountNotFound("Customer"));
@@ -113,8 +111,6 @@ public class AccountService {
 			dbCustomer.setRole(customer.getRole());
 			dbCustomer.setPaymentMethod(customer.getPaymentMethod());
 
-			// TODO test that this does not wipe out any orders or duplicate them
-			// TODO validation that order is complete
 			for (Order order : customer.getOrders()) {
 				if (!dbCustomer.getOrders().contains(order)) {
 					dbCustomer.getOrders().add(order);
@@ -187,7 +183,6 @@ public class AccountService {
 	public Owner saveOwner(Owner owner) throws Exception {
 		if (owner.getName() == null || owner.getEmail() == null || owner.getPassword() == null) {
 
-			// TODO jUnit test saveowner null values
 			throw new ClientException("Cannot create or update owner without Name, Email or Password.");
 		}
 
@@ -201,7 +196,6 @@ public class AccountService {
 			logger.info("***Repo:saveOwner(new) attemped for: " + owner.getEmail() + "***");
 			return ownerRepository.save(owner);
 		} else {
-			// TODO jUnit test update owner
 			Owner dbOwner = ownerRepository.findById(owner.getAccountId()).orElseThrow(accountNotFound("Owner"));
 
 			dbOwner.setName(owner.getName());
@@ -209,8 +203,6 @@ public class AccountService {
 			dbOwner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));
 			dbOwner.setRole(owner.getRole());
 
-			// TODO test that this does not wipe out any orders or duplicate them
-			// TODO validation that order is complete
 			logger.info("***Repo:saveOwner(update) attemped for: " + owner.getEmail() + "***");
 			return ownerRepository.save(dbOwner);
 		}
@@ -251,8 +243,6 @@ public class AccountService {
 
 		if (administrator.getName() == null || administrator.getEmail() == null
 				|| administrator.getPassword() == null) {
-			// TODO Logging
-			// TODO jUnit test saveowner null values
 			throw new ClientException("Cannot create or update Administrator without Name, Email or Password.");
 		}
 		if ((administrator.getAccountId() == null || administrator.getAccountId() == 0)) {
@@ -267,7 +257,6 @@ public class AccountService {
 			administrator.setPassword(bCryptPasswordEncoder.encode(administrator.getPassword()));
 			return administratorRepository.save(administrator);
 		} else {
-			// TODO jUnit test update owner
 			Administrator dbAdmin = administratorRepository.findById(administrator.getAccountId())
 					.orElseThrow(accountNotFound("Administrator"));
 
@@ -276,8 +265,6 @@ public class AccountService {
 			dbAdmin.setPassword(bCryptPasswordEncoder.encode(administrator.getPassword()));
 			dbAdmin.setRole(administrator.getRole());
 
-			// TODO test that this does not wipe out any orders or duplicate them
-			// TODO validation that order is complete
 			logger.info("***Repo:saveAdministrator attemped for: " + dbAdmin.getEmail() + " id of " + dbAdmin.getAccountId() + "***");
 			return administratorRepository.save(dbAdmin);
 		}

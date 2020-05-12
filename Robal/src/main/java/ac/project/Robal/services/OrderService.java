@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ac.project.Robal.controllers.AccountController;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.models.Order;
 import ac.project.Robal.models.OrderProduct;
@@ -60,9 +59,6 @@ public class OrderService {
 		return orderProductRepository.findAll();
 	}
 
-	// TODO is there missing a findOrderProduct by ID to return a single order
-	// product?
-
 	public Order saveOrder(Customer customer, List<OrderProduct> orderProducts) throws Exception {
 		/*
 		 * For each order product received from the user, we retrieve each product from
@@ -102,18 +98,28 @@ public class OrderService {
 
 		orderProducts = orderProductRepository.saveAll(orderProducts);
 
+		BigDecimal subTotalFormatted = BigDecimal.valueOf(subTotal);
+		subTotalFormatted = subTotalFormatted.setScale(2, RoundingMode.HALF_UP);
+
 		BigDecimal totalPrice = BigDecimal.valueOf(subTotal * GST);
 		totalPrice = totalPrice.setScale(2, RoundingMode.HALF_UP);
 
-		Order order = Order.builder().orderProducts(orderProducts).purchaseDate(LocalDate.now())
+		Order order = Order.builder()
+				.orderProducts(orderProducts)
+				.purchaseDate(LocalDate.now())
 				.invoiceNumber((long) new Random().nextInt(999999)) // number between +1 and +999999
-				.subTotal(subTotal).total(totalPrice.doubleValue()).build();
+				.subTotal(subTotalFormatted.doubleValue())
+				.total(totalPrice.doubleValue())
+				.build();
 		order = orderRepository.save(order);
 
-		customer.getOrders().add(order);
-		logger.info("***Repo:saveOrder by customer: " + customer.getEmail() + "***");
-		customerRepository.save(customer);
+		if (customer == null) {
+			logger.info("***Repo:saveOrder by Administrator***");
 
+		} else {
+			logger.info("***Repo:saveOrder by customer: " + customer.getEmail() + "***");
+
+		}
 		return order;
 	}
 
@@ -127,10 +133,14 @@ public class OrderService {
 
 		Order order = orderRepository.findById(orderId).orElseThrow(orderNotFound());
 
-		// TODO This needs to be tested.
-		order.getOrderProducts().removeIf(orderProduct -> orderProductId.equals(orderProduct.getOrderProductId()));
-		logger.info("***deleteOrderProduct by orderId " + orderId + ", orderProductId " + orderProductId + "***");
-		orderRepository.save(order);
+		for (OrderProduct orderProduct : order.getOrderProducts()) {
+			if (orderProductId.equals(orderProduct.getOrderProductId())) {
+				orderProductRepository.delete(
+						orderProductRepository.findById(orderProductId).orElseThrow(orderProductNotFound()));
+				logger.info(
+						"***deleteOrderProduct by orderId " + orderId + ", orderProductId " + orderProductId + "***");
+			}
+		}
 	}
 
 	private Supplier<NotFoundException> orderNotFound() {
@@ -144,6 +154,13 @@ public class OrderService {
 		return () -> {
 			logger.info("***storeProductNotFound Exception***");
 			return new NotFoundException("The StoreProduct does not exist.");
+		};
+	}
+
+	private Supplier<NotFoundException> orderProductNotFound() {
+		return () -> {
+			logger.info("***orderNotFound Exception***");
+			return new NotFoundException("The orderProduct does not exist.");
 		};
 	}
 

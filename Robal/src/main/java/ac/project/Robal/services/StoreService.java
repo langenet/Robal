@@ -8,8 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ac.project.Robal.controllers.AccountController;
+import ac.project.Robal.enums.Role;
 import ac.project.Robal.exceptions.ClientException;
+import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
@@ -67,28 +68,37 @@ public class StoreService {
 		return storeProductRepository.findByProduct_NameOrProduct_DescriptionContainingIgnoreCase(query, query);
 	}
 
-	public Store saveStore(Store store, Owner authOwner) throws NotFoundException, ClientException {
+	public Store saveStore(Store store, Account authOwner) throws NotFoundException, ClientException {
 		logger.info("***service saveStore method accessed.***");
 		if (store.getName() == null || store.getAddress() == null) {
 			throw new ClientException("Cannot create store without a name or address.");
 		}
-
+		
+		Owner storeOwner = null;
 		// New store
 		if (store.getStoreId() == null || store.getStoreId() == 0) {
-
-			store.setOwner(authOwner);
+			if (authOwner.getRole() == Role.ADMIN
+					&& store.getOwner() != null) {
+				storeOwner = ownerRepository.findById(store.getOwner().getAccountId()).orElseThrow(ownerNotFound());
+			} else {
+				storeOwner = (Owner) authOwner;
+			}
+			
+			store.setOwner(storeOwner);
 
 			return storeRepository.save(store);
 
 		} else {
 
 			Store dbStore = storeRepository.findById(store.getStoreId()).orElseThrow(storeNotFound());
-			if (dbStore.getOwner() == authOwner) {
+			if (dbStore.getOwner().getAccountId() == authOwner.getAccountId()
+					|| authOwner.getRole() == Role.ADMIN) {
+
 
 				if (store.getOwner() != null) {
 					Owner newOwner = ownerRepository.findById(store.getOwner().getAccountId()).orElse(null);
 					if (newOwner != null
-							&& newOwner != authOwner) {
+							&& newOwner.getAccountId() != authOwner.getAccountId()) {
 						dbStore.setOwner(newOwner);
 					} else {
 						throw new NotFoundException("New Owner doesn't exist in the database yet.");
@@ -99,7 +109,6 @@ public class StoreService {
 				dbStore.setName(store.getName());
 				dbStore.setAddress(store.getAddress());
 
-				// TODO validation that the store product is complete
 				for (StoreProduct storeProduct : store.getStoreProducts()) {
 					if (!dbStore.getStoreProducts().contains(storeProduct)) {
 						dbStore.getStoreProducts().add(storeProduct);
@@ -168,7 +177,6 @@ public class StoreService {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(storeNotFound());
 
-		// TODO This needs to be tested.
 		logger.info("***deleteStoreProduct by Id " + storeProductId + "***");
 		store.getStoreProducts().removeIf(storeProduct -> storeProductId.equals(storeProduct.getStoreProductid()));
 		storeRepository.save(store);
@@ -185,6 +193,13 @@ public class StoreService {
 		return () -> {
 			logger.info("***storeProductNotFound Exception***");
 			return new NotFoundException("The StoreProduct does not exist.");
+		};
+	}
+
+	private Supplier<NotFoundException> ownerNotFound() {
+		return () -> {
+			logger.info("***ownerNotFound Exception***");
+			return new NotFoundException("The owner was not set or does not exist.");
 		};
 	}
 }

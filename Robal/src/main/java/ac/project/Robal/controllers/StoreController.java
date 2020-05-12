@@ -230,6 +230,7 @@ public class StoreController {
 		}
 	}
 
+	// TODO UpdateStore not passing Junit. Not hitting the method.
 	@ApiOperation(value = "Update Store", response = StoreController.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully Updated Store"),
@@ -256,12 +257,11 @@ public class StoreController {
 		if ((owner != null && store.getOwner().equals(owner))
 				|| user.getRole() == Role.ADMIN) {
 
-//			store.getStoreProducts().add(storeProduct);
 			dbStore = storeService.saveStore(store, owner);
 			return ResponseEntity.created(new URI("/stores/" + dbStore.getStoreId())).body(dbStore);
 
 		} else {
-			throw new Exception("You can only update your own Stores Products unless you are an Administrator.");
+			throw new Exception("You can only update your own Stores unless you are an Administrator.");
 		}
 
 	}
@@ -307,9 +307,9 @@ public class StoreController {
 			@ApiResponse(code = 204, message = "Successfully deleted Store"),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
-//	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
-	@DeleteMapping("/store/{id}")
-	public void deleteStore(Authentication principal, @PathVariable Long id) throws Exception {
+	@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+	@DeleteMapping("/stores/{id}")
+	public ResponseEntity deleteStore(Authentication principal, @PathVariable Long id) throws Exception {
 
 		logger.info("***deleteStore method accessed by " + principal.getName() + "***");
 
@@ -329,7 +329,9 @@ public class StoreController {
 				|| user.getRole() == Role.ADMIN) {
 
 			storeService.deleteStore(id);
-
+			return ResponseEntity.noContent().build();
+			
+			
 		} else {
 			throw new Exception(
 					"You can only delete you own Stores unless you are an Administrator.");
