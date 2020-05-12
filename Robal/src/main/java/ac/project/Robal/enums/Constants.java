@@ -120,6 +120,8 @@ public class Constants {
 	protected static final Product PRODUCT = Product.builder().description(DESCRIPTION).name(PRODUCT_NAME).sku(SKU)
 			.productId(PRODUCT_ID).build();
 	
+	protected static final String UPDATED_NAME  = "superman";
+	
 	public void setupTests() {
 		
 		
@@ -156,6 +158,7 @@ public class Constants {
 				.password(PASSWORD)
 				.role(ADMIN_ROLE)
 				.build();
+		
 	}
 
 }
