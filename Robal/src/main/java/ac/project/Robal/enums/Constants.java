@@ -95,9 +95,9 @@ public class Constants {
 	private Store store2;
 	private Store store3;
 
-	private List<Store> stores1;
-	private List<Store> stores2;
-	private List<Store> stores3;
+	private List<Store> stores1 = new ArrayList<>();
+	private List<Store> stores2 = new ArrayList<>();
+	private List<Store> stores3 = new ArrayList<>();
 
 	private StoreProduct storeProduct1;
 	private StoreProduct storeProduct2;
@@ -131,17 +131,17 @@ public class Constants {
 	private Order order2;
 	private Order order3;
 
-	private List<Order> orders1;
-	private List<Order> orders2;
-	private List<Order> orders3;
+	private List<Order> orders1 = new ArrayList<>();
+	private List<Order> orders2 = new ArrayList<>();
+	private List<Order> orders3 = new ArrayList<>();
 
 	private OrderProduct orderProduct1;
 	private OrderProduct orderProduct2;
 	private OrderProduct orderProduct3;
 
-	private List<OrderProduct> orderProducts1;
-	private List<OrderProduct> orderProducts2;
-	private List<OrderProduct> orderProducts3;
+	private List<OrderProduct> orderProducts1 = new ArrayList<>();
+	private List<OrderProduct> orderProducts2 = new ArrayList<>();
+	private List<OrderProduct> orderProducts3 = new ArrayList<>();
 
 	public void setupTests() {
 
@@ -182,7 +182,7 @@ public class Constants {
 				.role(OWNER_ROLE)
 				.stores(stores1)
 				.build();
-				
+
 		owner2 = Owner.builder()
 				.email(EMAIL_OWNER2)
 				.name(NAME2)
@@ -190,7 +190,7 @@ public class Constants {
 				.role(OWNER_ROLE)
 				.stores(stores2)
 				.build();
-				
+
 		owner3 = Owner.builder()
 				.email(EMAIL_OWNER3)
 				.name(NAME3)
@@ -198,14 +198,13 @@ public class Constants {
 				.role(OWNER_ROLE)
 				.stores(stores3)
 				.build();
-		
+
 		admin1 = Administrator.builder()
 				.email(EMAIL_ADMIN1)
 				.name(NAME1)
 				.password(PASSWORD)
 				.role(ADMIN_ROLE)
 				.build();
-		
 
 		admin2 = Administrator.builder()
 				.email(EMAIL_ADMIN2)
@@ -250,7 +249,7 @@ public class Constants {
 				.price(PRICE2)
 				.product(product2)
 				.build();
-		
+
 		storeProduct3 = StoreProduct.builder()
 				.inventory(INVENTORY1)
 				.price(PRICE3)
@@ -260,29 +259,28 @@ public class Constants {
 		storeProducts1.add(storeProduct1);
 		storeProducts2.add(storeProduct2);
 		storeProducts3.add(storeProduct3);
-		
-		
+
 		store1 = Store.builder()
 				.address(STORE_ADDRESS1)
 				.name(STORE_NAME1)
 				.owner(owner1)
 				.storeProducts(storeProducts1)
 				.build();
-		
+
 		store2 = Store.builder()
 				.address(STORE_ADDRESS2)
 				.name(STORE_NAME2)
 				.owner(owner2)
 				.storeProducts(storeProducts2)
 				.build();
-		
+
 		store3 = Store.builder()
 				.address(STORE_ADDRESS3)
 				.name(STORE_NAME3)
 				.owner(owner3)
 				.storeProducts(storeProducts3)
 				.build();
-		
+
 		orderProduct1 = OrderProduct.builder()
 				.price(PRICE1)
 				.quantity(QUANTITY1)
@@ -300,7 +298,7 @@ public class Constants {
 				.quantity(QUANTITY3)
 				.storeProduct(storeProduct1)
 				.build();
-		
+
 		orderProducts1.add(orderProduct1);
 		orderProducts2.add(orderProduct2);
 		orderProducts3.add(orderProduct3);
