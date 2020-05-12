@@ -50,9 +50,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
 import ac.project.Robal.models.Administrator;
-import ac.project.Robal.models.Store;
+import ac.project.Robal.models.Order;
 import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.CustomerRepository;
+import ac.project.Robal.repositories.OrderRepository;
 import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.ProductRepository;
 import ac.project.Robal.repositories.StoreRepository;
@@ -84,6 +85,9 @@ public class OrderControllerTest extends Constants {
 	@Autowired
 	private ProductRepository productRepository;
 
+	@Autowired
+	private OrderRepository orderRepository;
+
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -98,86 +102,97 @@ public class OrderControllerTest extends Constants {
 	}
 
 	@Test
-	void createStore() throws Exception {
+	void createOrder() throws Exception {
 
-		int databaseSizeBeforeCreate = storeRepository.findAll().size();
+		int databaseSizeBeforeCreate = orderRepository.findAll().size();
 
 		this.mockMvc
-				.perform(post("/stores/").contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.perform(post("/orders/").contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.content(TestUtil.convertObjectToJsonBytes(getStore1())))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.storeId").isNumber())
-				.andExpect(jsonPath("$.name").value(STORE_NAME1))
-				.andExpect(jsonPath("$.address").value(STORE_ADDRESS1));
+				.andExpect(jsonPath("$.orderId").isNumber())
+				.andExpect(jsonPath("$.invoiceNumber").value(INVOICE_NUMBER1))
+				.andExpect(jsonPath("$.subTotal").value(SUB_TOTAL1))
+				.andExpect(jsonPath("$.total").value(TOTAL1));
+		/*
+		 * .andExpect(jsonPath("$.purchaseDate").value(PURCHASE_DATE1)); //this might
+		 * fail. need to pass a string not a date
+		 */
 
-		List<Store> stores = storeRepository.findAll();
-		assertThat(stores.size()).isEqualTo(databaseSizeBeforeCreate + 1);
+		List<Order> orders = orderRepository.findAll();
+		assertThat(orders.size()).isEqualTo(databaseSizeBeforeCreate + 1);
 	}
 
 	@Test
-	void updateStore() throws Exception {
+	void updateOrder() throws Exception {
 
-		storeRepository.save(getStore1());
+		orderRepository.save(getOrder1());
 		adminRepository.save(getAdmin1());
 
-		int databaseSizeBeforeCreate = storeRepository.findAll().size();
+		int databaseSizeBeforeCreate = orderRepository.findAll().size();
 
-		Store updated = storeRepository.findById(getStore1().getStoreId()).orElse(null);
+		Order updated = orderRepository.findById(getOrder1().getOrderId()).orElse(null);
 		assertThat(updated).isNotNull();
 
 		entityManager.detach(updated);
-		updated.setName(STORE_NAME2);
-		updated.setAddress(STORE_ADDRESS2);
+		updated.setInvoiceNumber(INVOICE_NUMBER1);
+		updated.setSubTotal(SUB_TOTAL1);
+		updated.setTotal(TOTAL1);
+		updated.setPurchaseDate(PURCHASE_DATE1);
 
 		this.mockMvc
-				.perform(put("/stores/{id}", getStore1().getStoreId())
+				.perform(put("/orders/{id}", getOrder1().getOrderId())
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword()))
 						.contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.content(TestUtil.convertObjectToJsonBytes(updated)))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.storeId").isNumber())
-				.andExpect(jsonPath("$.name").value(STORE_NAME2))
-				.andExpect(jsonPath("$.address").value(STORE_ADDRESS2));
+				.andExpect(jsonPath("$.orderId").isNumber())
+				.andExpect(jsonPath("$.invoiceNumber").value(INVOICE_NUMBER1))
+				.andExpect(jsonPath("$.subTotal").value(SUB_TOTAL1))
+				.andExpect(jsonPath("$.total").value(TOTAL1));
 
 		// It is also helpful to verify that the database has indeed changed
-		Store databaseAccount = storeRepository.findById(getStore1().getStoreId()).orElse(null);
+		Order databaseAccount = orderRepository.findById(getOrder1().getOrderId()).orElse(null);
 		assertThat(databaseAccount).isNotNull();
-		assertThat(databaseAccount.getName()).isEqualTo(getStore1().getName());
-		assertThat(databaseAccount.getAddress()).isEqualTo(getStore1().getAddress());
+		assertThat(databaseAccount.getInvoiceNumber()).isEqualTo(getOrder1().getInvoiceNumber());
+		assertThat(databaseAccount.getSubTotal()).isEqualTo(getOrder1().getSubTotal());
+		assertThat(databaseAccount.getTotal()).isEqualTo(getOrder1().getTotal());
+		assertThat(databaseAccount.getPurchaseDate()).isEqualTo(getOrder1().getPurchaseDate());
 	}
 
 	@Test
-	void findStore() throws Exception {
+	void findOrder() throws Exception {
 
-		Store saved = storeRepository.save(getStore1());
+		Order saved = orderRepository.save(getOrder1());
 		Administrator admin = adminRepository.save(getAdmin1());
-		this.mockMvc.perform(get("/stores/{id}", saved.getStoreId())
+		this.mockMvc.perform(get("/orders/{id}", saved.getOrderId())
 				// Pass in the header
 				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.storeId").isNumber())
-				.andExpect(jsonPath("$.name").value(STORE_NAME2))
-				.andExpect(jsonPath("$.address").value(STORE_ADDRESS2));
+				.andExpect(jsonPath("$.orderId").isNumber())
+				.andExpect(jsonPath("$.invoiceNumber").value(INVOICE_NUMBER1))
+				.andExpect(jsonPath("$.subTotal").value(SUB_TOTAL1))
+				.andExpect(jsonPath("$.total").value(TOTAL1));
 	}
 
 	@Test
 	void findStores() throws Exception {
 
-		List<Store> stores = new ArrayList<>();
+		List<Order> orders = new ArrayList<>();
 
-		storeRepository.save(getStore1());
-		stores.add(getStore1());
+		orderRepository.save(getOrder1());
+		orders.add(getOrder1());
 
-		storeRepository.save(getStore2());
-		stores.add(getStore2());
+		orderRepository.save(getOrder2());
+		orders.add(getOrder2());
 
-		storeRepository.save(getStore3());
-		stores.add(getStore3());
+		orderRepository.save(getOrder3());
+		orders.add(getOrder3());
 
 		adminRepository.save(getAdmin1());
 
 		MvcResult result = mockMvc
-				.perform(get("/stores/")
+				.perform(get("/orders/")
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -186,28 +201,28 @@ public class OrderControllerTest extends Constants {
 		ObjectMapper mapper = new ObjectMapper();
 
 		// this uses a TypeReference to inform Jackson about the Lists's generic type
-		List<Store> actual = mapper.readValue(result.getResponse().getContentAsString(),
-				new TypeReference<List<Store>>() {
+		List<Order> actual = mapper.readValue(result.getResponse().getContentAsString(),
+				new TypeReference<List<Order>>() {
 				});
 
-		assertThat(actual.equals(stores));
+		assertThat(actual.equals(orders));
 
 	}
 
 	@Test
-	void deleteOwner() throws Exception {
+	void deleteOrder() throws Exception {
 
-		storeRepository.save(getStore1());
+		orderRepository.save(getOrder1());
 		adminRepository.save(getAdmin1());
-		int databaseSizeBeforeDelete = storeRepository.findAll().size();
+		int databaseSizeBeforeDelete = orderRepository.findAll().size();
 
-		this.mockMvc.perform(delete("/stores/{id}", getStore1().getStoreId())
+		this.mockMvc.perform(delete("/orders/{id}", getOrder1().getOrderId())
 				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())
 				.andReturn();
 
 		// Validate the database is empty
-		List<Store> stores = storeRepository.findAll();
+		List<Order> stores = orderRepository.findAll();
 		assertThat(stores.size()).isEqualTo(databaseSizeBeforeDelete - 1);
 
 	}
