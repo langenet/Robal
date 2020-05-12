@@ -33,6 +33,18 @@ public class Constants {
 	protected static final String EMAIL_ADMIN2 = "robert@admin.com";
 	protected static final String EMAIL_ADMIN3 = "alex@admin.com";
 
+	protected static final String PRO_DESC1 = "Toilet Paper";
+	protected static final String PRO_DESC2 = "Tooth Paste";
+	protected static final String PRO_DESC3 = "Lysol Cleaner";
+	
+	protected static final String PRO_NAME1 = "Charman";
+	protected static final String PRO_NAME2 = "Colgate";
+	protected static final String PRO_NAME3 = "Trump Juice";
+	
+	protected static final long PRO_SKU1 = 123L;
+	protected static final long PRO_SKU2 = 456L;
+	protected static final long PRO_SKU3 = 789L;
+	
 	protected static final String PASSWORD = "password";
 
 	protected static final Role CUSTOMER_ROLE = Role.CUSTOMER;
@@ -54,6 +66,11 @@ public class Constants {
 	private Administrator admin1;
 	private Administrator admin2;
 	private Administrator admin3;
+	
+	private Product product1;
+	private Product product2;
+	private Product product3;
+	
 
 //	SupeAdmin
 //	Administrator admin = Administrator.builder()
@@ -171,6 +188,26 @@ public class Constants {
 				.password(PASSWORD)
 				.role(ADMIN_ROLE)
 				.build();
+		
+		product1 = Product.builder()
+				.description(PRO_DESC1)
+				.name(PRO_NAME1)
+				.sku(PRO_SKU1)
+				.build();
+		
+		product2 = Product.builder()
+				.description(PRO_DESC2)
+				.name(PRO_NAME2)
+				.sku(PRO_SKU2)
+				.build();
+
+		
+		product2 = Product.builder()
+				.description(PRO_DESC3)
+				.name(PRO_NAME3)
+				.sku(PRO_SKU3)
+				.build();
+
 
 	}
 
