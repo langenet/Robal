@@ -107,9 +107,9 @@ public class Constants {
 	private List<StoreProduct> storeProducts2 = new ArrayList<>();
 	private List<StoreProduct> storeProducts3 = new ArrayList<>();
 
-	protected static final Long INVOICE_NUMBER1 = 123456789L;
-	protected static final Long INVOICE_NUMBER2 = 123456789L;
-	protected static final Long INVOICE_NUMBER3 = 123456789L;
+	protected static final Long INVOICE_NUMBER1 = 234567L;
+	protected static final Long INVOICE_NUMBER2 = 456789L;
+	protected static final Long INVOICE_NUMBER3 = 6789L;
 
 	protected static final LocalDate PURCHASE_DATE1 = LocalDate.of(2020, 05, 11);
 	protected static final LocalDate PURCHASE_DATE2 = LocalDate.of(2017, 01, 03);
@@ -281,6 +281,7 @@ public class Constants {
 				.storeProducts(storeProducts3)
 				.build();
 
+
 		orderProduct1 = OrderProduct.builder()
 				.price(PRICE1)
 				.quantity(QUANTITY1)
@@ -304,27 +305,27 @@ public class Constants {
 		orderProducts3.add(orderProduct3);
 
 		order1 = Order.builder()
-				.invoiceNumber(INVOICE_NUMBER1)
+//				.invoiceNumber(INVOICE_NUMBER1)
 				.orderProducts(orderProducts1)
 				.purchaseDate(PURCHASE_DATE1)
-				.subTotal(SUB_TOTAL1)
-				.total(TOTAL1)
+//				.subTotal(SUB_TOTAL1)
+//				.total(TOTAL1)
 				.build();
 
 		order2 = Order.builder()
-				.invoiceNumber(INVOICE_NUMBER2)
+//				.invoiceNumber(INVOICE_NUMBER2)
 				.orderProducts(orderProducts2)
 				.purchaseDate(PURCHASE_DATE2)
-				.subTotal(SUB_TOTAL2)
-				.total(TOTAL2)
+//				.subTotal(SUB_TOTAL2)
+//				.total(TOTAL2)
 				.build();
 
 		order3 = Order.builder()
-				.invoiceNumber(INVOICE_NUMBER3)
+//				.invoiceNumber(INVOICE_NUMBER3)
 				.orderProducts(orderProducts3)
 				.purchaseDate(PURCHASE_DATE3)
-				.subTotal(SUB_TOTAL3)
-				.total(TOTAL3)
+//				.subTotal(SUB_TOTAL3)
+//				.total(TOTAL3)
 				.build();
 
 		orders1.add(order1);

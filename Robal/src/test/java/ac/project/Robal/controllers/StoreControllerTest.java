@@ -50,10 +50,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
 import ac.project.Robal.models.Administrator;
+import ac.project.Robal.models.Owner;
+import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
+import ac.project.Robal.models.StoreProduct;
 import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.ProductRepository;
+import ac.project.Robal.repositories.StoreProductRepository;
 import ac.project.Robal.repositories.StoreRepository;
 
 @SpringBootTest
@@ -78,6 +82,9 @@ public class StoreControllerTest extends Constants {
 
 	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private StoreProductRepository storeProductRepository;
 
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -112,7 +119,8 @@ public class StoreControllerTest extends Constants {
 	@Test
 	void updateStore() throws Exception {
 
-		storeRepository.save(getStore1());
+		saveStore(getStore1(), getOwner1(), getStoreProduct1(), getProduct1());
+//		storeRepository.save(getStore1());
 		adminRepository.save(getAdmin1());
 
 		int databaseSizeBeforeCreate = storeRepository.findAll().size();
@@ -144,7 +152,9 @@ public class StoreControllerTest extends Constants {
 	@Test
 	void findStore() throws Exception {
 
-		Store saved = storeRepository.save(getStore1());
+		Store saved = saveStore(getStore1(), getOwner1(), getStoreProduct1(), getProduct1());
+
+//		Store saved = storeRepository.save(getStore1());
 		Administrator admin = adminRepository.save(getAdmin1());
 		this.mockMvc.perform(get("/stores/{id}", saved.getStoreId())
 				// Pass in the header
@@ -160,13 +170,19 @@ public class StoreControllerTest extends Constants {
 
 		List<Store> stores = new ArrayList<>();
 
-		storeRepository.save(getStore1());
+		saveStore(getStore1(), getOwner1(), getStoreProduct1(), getProduct1());
+
+//		storeRepository.save(getStore1());
 		stores.add(getStore1());
 
-		storeRepository.save(getStore2());
+		saveStore(getStore2(), getOwner2(), getStoreProduct2(), getProduct2());
+
+//		storeRepository.save(getStore2());
 		stores.add(getStore2());
 
-		storeRepository.save(getStore3());
+		saveStore(getStore3(), getOwner3(), getStoreProduct3(), getProduct3());
+
+//		storeRepository.save(getStore3());
 		stores.add(getStore3());
 
 		adminRepository.save(getAdmin1());
@@ -190,21 +206,32 @@ public class StoreControllerTest extends Constants {
 	}
 
 	@Test
-	void deleteOwner() throws Exception {
+	void deleteStore() throws Exception {
 
-		storeRepository.save(getStore1());
-		adminRepository.save(getAdmin1());
+		Store saved = saveStore(getStore1(), getOwner1(), getStoreProduct1(), getProduct1());
+
+//		storeRepository.save(getStore1());
+//		adminRepository.save(getAdmin1());
 		int databaseSizeBeforeDelete = storeRepository.findAll().size();
 
-		this.mockMvc.perform(delete("/stores/{id}", getStore1().getStoreId())
-				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
-				.andExpect(status().isOk())
-				.andReturn();
+		this.mockMvc.perform(delete("/stores/{id}", saved.getStoreId())
+				.headers(TestUtil.getAuthorizationBasic(getOwner1().getEmail(), getOwner1().getPassword())))
+				.andExpect(status().isNoContent());
 
 		// Validate the database is empty
 		List<Store> stores = storeRepository.findAll();
 		assertThat(stores.size()).isEqualTo(databaseSizeBeforeDelete - 1);
 
+	}
+
+	private Store saveStore(Store store, Owner owner, StoreProduct storeProduct, Product product) {
+
+		productRepository.save(product);
+		storeProductRepository.save(storeProduct);
+		ownerRepository.save(owner);
+		storeRepository.save(store);
+
+		return store;
 	}
 
 }
