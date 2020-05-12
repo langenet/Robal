@@ -32,10 +32,6 @@ public class AccountUtil {
 		AccountUtil.administratorRepository = administratorRepository;
 	}
 
-	// TODO Andy, how can i return either a Customer, Owner or administrator with a
-	// generic?
-	// I've been trying <A extends Account> Account but it only allows me to create
-	// Account type objects.
 	public static <A extends Account> Account getAccount(String email) throws UsernameNotFoundException {
 
 		Customer customer = customerRepository.findByEmail(email).orElse(null);

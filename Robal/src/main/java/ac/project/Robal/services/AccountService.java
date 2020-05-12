@@ -195,7 +195,7 @@ public class AccountService {
 			if (emailAlreadyExists(owner.getEmail())) {
 				logger.info("***saveCustomer method account already exists for " + owner.getName() + " with email "
 						+ owner.getEmail() + "***");
-				throw new Exception("Customer account already exist.");
+				throw new Exception("Owner account already exist.");
 			}
 			owner.setPassword(bCryptPasswordEncoder.encode(owner.getPassword()));
 			logger.info("***Repo:saveOwner(new) attemped for: " + owner.getEmail() + "***");
@@ -261,7 +261,7 @@ public class AccountService {
 				logger.info(
 						"***saveAdministrator method account already exists for " + administrator.getName() + " with email "
 								+ administrator.getEmail() + "***");
-				throw new Exception("Customer account already exist.");
+				throw new Exception("Admin account already exist.");
 			}
 
 			administrator.setPassword(bCryptPasswordEncoder.encode(administrator.getPassword()));

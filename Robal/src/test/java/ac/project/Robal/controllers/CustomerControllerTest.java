@@ -41,7 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +51,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
 import ac.project.Robal.models.Account;
-import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.repositories.CustomerRepository;
 import ac.project.Robal.services.AccountService;
@@ -126,13 +124,13 @@ public class CustomerControllerTest extends Constants {
 	}
 	
 	@Test
-	void DeleteCustomer() throws Exception {
+	void deleteCustomer() throws Exception {
 		
-		Account saved = accountService.saveCustomer(getCustomer1());
-		Account admin = accountService.saveAdministrator(getAdmin1());
+		accountService.saveCustomer(getCustomer1());
+		accountService.saveAdministrator(getAdmin1());
 		int databaseSizeBeforeDelete = customerRepository.findAll().size();
 	
-		this.mockMvc.perform(delete("/customers/{id}", saved.getAccountId())
+		this.mockMvc.perform(delete("/customers/{id}", getCustomer1().getAccountId())
 				// Pass in the header
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
 				.andExpect(status().isOk())				
