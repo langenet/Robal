@@ -65,7 +65,7 @@ public class StoreController {
 			@ApiResponse(code = 200, message = "Stores found."),
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN','OWNER')") //RL
 	@GetMapping("/stores/")
 	public ResponseEntity<List<Store>> findStores() throws NotFoundException {
 		logger.info("***findStores method accessed***");
@@ -84,7 +84,7 @@ public class StoreController {
 		return new ResponseEntity<>(storeService.findStoreProduct(id), HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "List all Stores", response = List.class)
+	@ApiOperation(value = "List all StorePoducts", response = List.class) //RL
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "All Stores found."),
 			@ApiResponse(code = 400, message = "Invalid input")
@@ -98,7 +98,7 @@ public class StoreController {
 
 	@ApiOperation(value = "List all StoreProduct", response = StoreController.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "All Store products found."),
+			@ApiResponse(code = 200, message = "All Store products found."), 
 			@ApiResponse(code = 400, message = "Invalid input")
 	})
 	@PreAuthorize("hasAnyRole('ADMIN','OWNER','CUSTOMER')")

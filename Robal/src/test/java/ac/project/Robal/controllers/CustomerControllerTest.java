@@ -50,6 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
+import ac.project.Robal.models.Account;
 import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Customer;
 import ac.project.Robal.repositories.CustomerRepository;
@@ -94,7 +95,8 @@ public class CustomerControllerTest extends Constants {
 		this.mockMvc
 				.perform(post("/customers/").contentType(TestUtil.APPLICATION_JSON_UTF8)
 						.content(TestUtil.convertObjectToJsonBytes(getCustomer1())))
-				.andExpect(status().isCreated()).andExpect(jsonPath("$.accountId").isNumber())
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.accountId").isNumber())
 				.andExpect(jsonPath("$.name").value(NAME1)).andExpect(jsonPath("$.email").value(EMAIL_CUSTOMER1))
 				.andExpect(jsonPath("$.role").value(CUSTOMER_ROLE.name()))
 				.andExpect(jsonPath("$.billingAddress").value(BILLING_ADDRESS))

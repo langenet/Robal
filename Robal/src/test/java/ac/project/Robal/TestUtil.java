@@ -27,5 +27,10 @@ public class TestUtil {
 		headers.setBasicAuth(email, password);
 		return headers;
 	}
+	public static HttpHeaders getAuthorizationOwner(String email, String password) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBasicAuth(email, password);
+		return headers;
+	}
 
 }

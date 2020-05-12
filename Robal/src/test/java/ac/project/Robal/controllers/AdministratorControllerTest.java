@@ -144,16 +144,16 @@ public class AdministratorControllerTest extends Constants {
 	@Test
 	void findAdministrators() throws Exception {
 
-		List<Customer> customers = new ArrayList<>();
+		List<Administrator> administrators = new ArrayList<>();
 
-		accountService.saveCustomer(getCustomer1());
-		customers.add(getCustomer1());
+		accountService.saveAdministrator(getAdmin1());
+		administrators.add(getAdmin1());
 
-		accountService.saveCustomer(getCustomer2());
-		customers.add(getCustomer2());
+		accountService.saveAdministrator(getAdmin2());
+		administrators.add(getAdmin2());
 
-		accountService.saveCustomer(getCustomer3());
-		customers.add(getCustomer3());
+		accountService.saveAdministrator(getAdmin3());
+		administrators.add(getAdmin3());
 
 		accountService.saveAdministrator(getAdmin1());
 
@@ -166,11 +166,11 @@ public class AdministratorControllerTest extends Constants {
 		ObjectMapper mapper = new ObjectMapper();
 
 		// this uses a TypeReference to inform Jackson about the Lists's generic type
-		List<Customer> actual = mapper.readValue(result.getResponse().getContentAsString(),
-				new TypeReference<List<Customer>>() {
+		List<Administrator> actual = mapper.readValue(result.getResponse().getContentAsString(),
+				new TypeReference<List<Administrator>>() {
 				});
 
-		assertThat(actual.equals(customers));
+		assertThat(actual.equals(administrators));
 
 	}
 	

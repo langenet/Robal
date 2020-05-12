@@ -50,11 +50,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
 import ac.project.Robal.models.Administrator;
+import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Store;
 import ac.project.Robal.repositories.AdministratorRepository;
 import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.ProductRepository;
 import ac.project.Robal.repositories.StoreRepository;
+import ac.project.Robal.services.AccountService;
 
 @SpringBootTest
 @Transactional
@@ -69,6 +71,9 @@ public class StoreControllerTest extends Constants {
 
 	@Autowired
 	private OwnerRepository ownerRepository;
+
+	@Autowired
+	private AccountService accountService;
 
 	@Autowired
 	private AdministratorRepository adminRepository;
@@ -96,9 +101,10 @@ public class StoreControllerTest extends Constants {
 	void createStore() throws Exception {
 
 		int databaseSizeBeforeCreate = storeRepository.findAll().size();
-
+		Owner owner = accountService.saveOwner(getOwner1());
 		this.mockMvc
 				.perform(post("/stores/").contentType(TestUtil.APPLICATION_JSON_UTF8)
+						.headers(TestUtil.getAuthorizationOwner(getOwner1().getEmail(), getOwner1().getPassword()))
 						.content(TestUtil.convertObjectToJsonBytes(getStore1())))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.storeId").isNumber())

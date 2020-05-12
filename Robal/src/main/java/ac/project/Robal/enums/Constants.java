@@ -232,7 +232,7 @@ public class Constants {
 				.sku(PRO_SKU2)
 				.build();
 
-		product2 = Product.builder()
+		product3 = Product.builder()
 				.description(PRO_DESC3)
 				.name(PRO_NAME3)
 				.sku(PRO_SKU3)
