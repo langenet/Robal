@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,19 +42,21 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ac.project.Robal.TestUtil;
 import ac.project.Robal.enums.Constants;
-import ac.project.Robal.models.Account;
+import ac.project.Robal.models.Administrator;
 import ac.project.Robal.models.Owner;
 import ac.project.Robal.repositories.OwnerRepository;
 import ac.project.Robal.repositories.StoreRepository;
 import ac.project.Robal.services.AccountService;
 
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 public class OwnerControllerTest extends Constants {
 
@@ -111,7 +114,7 @@ public class OwnerControllerTest extends Constants {
 
 		int databaseSizeBeforeCreate = ownerRepository.findAll().size();
 
-		Account updated = ownerRepository.findById(getOwner1().getAccountId()).orElse(null);
+		Owner updated = ownerRepository.findById(getOwner1().getAccountId()).orElse(null);
 		assertThat(updated).isNotNull();
 
 		entityManager.detach(updated);
@@ -119,21 +122,18 @@ public class OwnerControllerTest extends Constants {
 		updated.setEmail(EMAIL_OWNER2);
 
 		this.mockMvc
-				.perform(post("/owners/{id}", getOwner1().getAccountId())
+				.perform(put("/owners/{id}", getOwner1().getAccountId())
 						.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword()))
 						.contentType(TestUtil.APPLICATION_JSON_UTF8)
-						.content(TestUtil.convertObjectToJsonBytes(getOwner1())))
+						.content(TestUtil.convertObjectToJsonBytes(updated)))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.accountId").isNumber())
-				.andExpect(jsonPath("$.name").value(NAME1))
-				.andExpect(jsonPath("$.email").value(EMAIL_OWNER1))
+				.andExpect(jsonPath("$.name").value(NAME2))
+				.andExpect(jsonPath("$.email").value(EMAIL_OWNER2))
 				.andExpect(jsonPath("$.role").value(OWNER_ROLE.name()));
 
-		List<Owner> owners = ownerRepository.findAll();
-		assertThat(owners.size()).isEqualTo(databaseSizeBeforeCreate + 1);
-
 		// It is also helpful to verify that the database has indeed changed
-		Account databaseAccount = ownerRepository.findById(getOwner1().getAccountId()).orElse(null);
+		Owner databaseAccount = ownerRepository.findById(getOwner1().getAccountId()).orElse(null);
 		assertThat(databaseAccount).isNotNull();
 		assertThat(databaseAccount.getName()).isEqualTo(getOwner1().getName());
 		assertThat(databaseAccount.getEmail()).isEqualTo(getOwner1().getEmail());
@@ -143,8 +143,8 @@ public class OwnerControllerTest extends Constants {
 	@Test
 	void findOwner() throws Exception {
 
-		Account saved = accountService.saveOwner(getOwner1());
-		Account admin = accountService.saveAdministrator(getAdmin1());
+		Owner saved = accountService.saveOwner(getOwner1());
+		Administrator admin = accountService.saveAdministrator(getAdmin1());
 		this.mockMvc.perform(get("/owners/{id}", saved.getAccountId())
 				// Pass in the header
 				.headers(TestUtil.getAuthorizationBasic(getAdmin1().getEmail(), getAdmin1().getPassword())))
