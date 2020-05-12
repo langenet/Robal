@@ -34,7 +34,7 @@ public class Constants {
 	protected static final String EMAIL_ADMIN3 = "alex@admin.com";
 
 	protected static final String PASSWORD = "password";
-	
+
 	protected static final Role CUSTOMER_ROLE = Role.CUSTOMER;
 	protected static final Role OWNER_ROLE = Role.OWNER;
 	protected static final Role ADMIN_ROLE = Role.ADMIN;
@@ -43,50 +43,17 @@ public class Constants {
 	protected static final String BILLING_ADDRESS = "123 Main Street";
 	protected static final String PAYMENT_METHOD = "MasterCard";
 
-	
 	private Customer customer1;
 	private Customer customer2;
 	private Customer customer3;
-	
+
+	private Owner owner1;
+	private Owner owner2;
+	private Owner owner3;
+
 	private Administrator admin1;
-	
-
-	protected static final Owner OWNER1 = Owner.builder()
-			.email(EMAIL_OWNER1)
-			.name(NAME1)
-			.password(PASSWORD)
-			.role(OWNER_ROLE)
-			.build();
-
-	protected static final Owner OWNER2 = Owner.builder()
-			.email(EMAIL_OWNER2)
-			.name(NAME2)
-			.password(PASSWORD)
-			.role(OWNER_ROLE)
-			.build();
-
-	protected static final Owner OWNER3 = Owner.builder()
-			.email(EMAIL_OWNER3)
-			.name(NAME3)
-			.password(PASSWORD)
-			.role(OWNER_ROLE)
-			.build();
-
-	
-
-	protected static final Administrator ADMIN2 = Administrator.builder()
-			.email(EMAIL_ADMIN2)
-			.name(NAME2)
-			.password(PASSWORD)
-			.role(ADMIN_ROLE)
-			.build();
-
-	protected static final Administrator ADMIN3 = Administrator.builder()
-			.email(EMAIL_ADMIN3)
-			.name(NAME3)
-			.password(PASSWORD)
-			.role(ADMIN_ROLE)
-			.build();
+	private Administrator admin2;
+	private Administrator admin3;
 
 //	SupeAdmin
 //	Administrator admin = Administrator.builder()
@@ -119,10 +86,16 @@ public class Constants {
 
 	protected static final Product PRODUCT = Product.builder().description(DESCRIPTION).name(PRODUCT_NAME).sku(SKU)
 			.productId(PRODUCT_ID).build();
-	
+
+//	owner = Owner.builder().name(NAME).email(EMAIL).password(PASSWORD).role(ROLE).build();
+//
+//		STORE_PRODUCTS.add(StoreProduct.builder().inventory(INVENTORY).price(PRICE).product(PRODUCT).build());
+//
+//		STORES.add(Store.builder().address(STORE_ADDRESS).name(STORE_NAME).owner(owner).storeProducts(STORE_PRODUCTS)
+//				.build());
+
 	public void setupTests() {
-		
-		
+
 		customer1 = Customer.builder()
 				.billingAddress(BILLING_ADDRESS)
 				.email(EMAIL_CUSTOMER1)
@@ -131,7 +104,7 @@ public class Constants {
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
 				.build();
-		
+
 		customer2 = Customer.builder()
 				.billingAddress(BILLING_ADDRESS)
 				.email(EMAIL_CUSTOMER2)
@@ -149,10 +122,45 @@ public class Constants {
 				.paymentMethod(PAYMENT_METHOD)
 				.role(CUSTOMER_ROLE)
 				.build();
+
+		owner1 = Owner.builder()
+				.email(EMAIL_OWNER1)
+				.name(NAME1)
+				.password(PASSWORD)
+				.role(OWNER_ROLE)
+				.build();
+				
+		owner2 = Owner.builder()
+				.email(EMAIL_OWNER2)
+				.name(NAME2)
+				.password(PASSWORD)
+				.role(OWNER_ROLE)
+				.build();
+				
+		owner3 = Owner.builder()
+				.email(EMAIL_OWNER3)
+				.name(NAME3)
+				.password(PASSWORD)
+				.role(OWNER_ROLE)
+				.build();
 		
 		admin1 = Administrator.builder()
 				.email(EMAIL_ADMIN1)
 				.name(NAME1)
+				.password(PASSWORD)
+				.role(ADMIN_ROLE)
+				.build();
+		
+		admin2 = Administrator.builder()
+				.email(EMAIL_ADMIN2)
+				.name(NAME2)
+				.password(PASSWORD)
+				.role(ADMIN_ROLE)
+				.build();
+
+		admin3 = Administrator.builder()
+				.email(EMAIL_ADMIN3)
+				.name(NAME3)
 				.password(PASSWORD)
 				.role(ADMIN_ROLE)
 				.build();
