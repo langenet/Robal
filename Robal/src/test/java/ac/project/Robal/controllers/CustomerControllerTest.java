@@ -90,7 +90,6 @@ public class CustomerControllerTest extends Constants {
 	}
 
 	@Test
-//	@DirtiesContext
 	void createCustomer() throws Exception {
 		int databaseSizeBeforeCreate = customerRepository.findAll().size();
 
@@ -108,7 +107,6 @@ public class CustomerControllerTest extends Constants {
 	}
 
 	@Test
-//	@DirtiesContext
 	void findCustomer() throws Exception {
 
 		// Save getCustomer1()
@@ -128,7 +126,6 @@ public class CustomerControllerTest extends Constants {
 	}
 	
 	@Test
-//	@DirtiesContext
 	void DeleteCustomer() throws Exception {
 		
 		Account saved = accountService.saveCustomer(getCustomer1());
