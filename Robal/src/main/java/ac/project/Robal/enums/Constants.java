@@ -9,6 +9,11 @@ import ac.project.Robal.models.Owner;
 import ac.project.Robal.models.Product;
 import ac.project.Robal.models.Store;
 import ac.project.Robal.models.StoreProduct;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 
 public class Constants {
 
@@ -38,31 +43,13 @@ public class Constants {
 	protected static final String BILLING_ADDRESS = "123 Main Street";
 	protected static final String PAYMENT_METHOD = "MasterCard";
 
-	protected static final Customer CUSTOMER1 = Customer.builder()
-			.billingAddress(BILLING_ADDRESS)
-			.email(EMAIL_CUSTOMER1)
-			.name(NAME1)
-			.password(PASSWORD)
-			.paymentMethod(PAYMENT_METHOD)
-			.role(CUSTOMER_ROLE)
-			.build();
-	protected static final Customer CUSTOMER2 = Customer.builder()
-			.billingAddress(BILLING_ADDRESS)
-			.email(EMAIL_CUSTOMER2)
-			.name(NAME2)
-			.password(PASSWORD)
-			.paymentMethod(PAYMENT_METHOD)
-			.role(CUSTOMER_ROLE)
-			.build();
-
-	protected static final Customer CUSTOMER3 = Customer.builder()
-			.billingAddress(BILLING_ADDRESS)
-			.email(EMAIL_CUSTOMER3)
-			.name(NAME3)
-			.password(PASSWORD)
-			.paymentMethod(PAYMENT_METHOD)
-			.role(CUSTOMER_ROLE)
-			.build();
+	
+	private Customer customer1;
+	private Customer customer2;
+	private Customer customer3;
+	
+	private Administrator admin1;
+	
 
 	protected static final Owner OWNER1 = Owner.builder()
 			.email(EMAIL_OWNER1)
@@ -85,12 +72,7 @@ public class Constants {
 			.role(OWNER_ROLE)
 			.build();
 
-	protected static final Administrator ADMIN1 = Administrator.builder()
-			.email(EMAIL_ADMIN1)
-			.name(NAME1)
-			.password(PASSWORD)
-			.role(ADMIN_ROLE)
-			.build();
+	
 
 	protected static final Administrator ADMIN2 = Administrator.builder()
 			.email(EMAIL_ADMIN2)
@@ -137,5 +119,43 @@ public class Constants {
 
 	protected static final Product PRODUCT = Product.builder().description(DESCRIPTION).name(PRODUCT_NAME).sku(SKU)
 			.productId(PRODUCT_ID).build();
+	
+	public void setupTests() {
+		
+		
+		customer1 = Customer.builder()
+				.billingAddress(BILLING_ADDRESS)
+				.email(EMAIL_CUSTOMER1)
+				.name(NAME1)
+				.password(PASSWORD)
+				.paymentMethod(PAYMENT_METHOD)
+				.role(CUSTOMER_ROLE)
+				.build();
+		
+		customer2 = Customer.builder()
+				.billingAddress(BILLING_ADDRESS)
+				.email(EMAIL_CUSTOMER2)
+				.name(NAME2)
+				.password(PASSWORD)
+				.paymentMethod(PAYMENT_METHOD)
+				.role(CUSTOMER_ROLE)
+				.build();
+
+		customer3 = Customer.builder()
+				.billingAddress(BILLING_ADDRESS)
+				.email(EMAIL_CUSTOMER3)
+				.name(NAME3)
+				.password(PASSWORD)
+				.paymentMethod(PAYMENT_METHOD)
+				.role(CUSTOMER_ROLE)
+				.build();
+		
+		admin1 = Administrator.builder()
+				.email(EMAIL_ADMIN1)
+				.name(NAME1)
+				.password(PASSWORD)
+				.role(ADMIN_ROLE)
+				.build();
+	}
 
 }
